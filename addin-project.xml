@@ -1,0 +1,7 @@
+<AddinProject appVersion="5.0">
+  <Project platforms="Linux Mac Win32">
+    <AddinFile>bin/MonoDevelop.Dnx.dll</AddinFile>
+    <BuildFile>src/MonoDevelop.Dnx.sln</BuildFile>
+    <BuildConfiguration>Debug</BuildConfiguration>
+  </Project>
+</AddinProject>

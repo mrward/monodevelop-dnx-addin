@@ -1,0 +1,7 @@
+﻿<ExtensionModel>
+
+	<Runtime>
+		<Import assembly="MonoDevelop.Dnx.dll" />
+	</Runtime>
+
+</ExtensionModel>
