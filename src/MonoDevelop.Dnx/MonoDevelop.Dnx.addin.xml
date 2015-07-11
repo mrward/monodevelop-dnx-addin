@@ -1,7 +1,17 @@
 ﻿<ExtensionModel>
-
 	<Runtime>
 		<Import assembly="MonoDevelop.Dnx.dll" />
 	</Runtime>
 
+	<Extension path="/MonoDevelop/ProjectModel/ProjectBindings">
+		<ProjectBinding id="DnxProject" class="MonoDevelop.Dnx.DnxProjectBinding" />
+	</Extension>
+
+	<Extension path = "/MonoDevelop/ProjectModel/MSBuildItemTypes">
+		<SolutionItem
+			guid="{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}"
+			type="MonoDevelop.Dnx.DnxProject"
+			extension="xproj"
+			handlerType="MonoDevelop.Dnx.DnxMSBuildProjectHandler" />
+	</Extension>
 </ExtensionModel>
