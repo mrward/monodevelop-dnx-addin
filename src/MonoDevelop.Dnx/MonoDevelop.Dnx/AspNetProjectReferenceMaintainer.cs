@@ -1,5 +1,5 @@
 ﻿//
-// SolutionExtensions.cs
+// AspNetProjectReferenceMaintainer.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -25,25 +25,40 @@
 // THE SOFTWARE.
 //
 
-using System.IO;
-using System.Linq;
-using MonoDevelop.Core;
-using MonoDevelop.Projects;
+using Microsoft.CodeAnalysis;
+using OmniSharp.AspNet5;
 
 namespace MonoDevelop.Dnx
 {
-	public static class SolutionExtensions
+	public class AspNetProjectReferenceMaintainer
 	{
-		public static bool HasAspNetProjects (this Solution solution)
+		readonly AspNet5Context context;
+
+		public AspNetProjectReferenceMaintainer(AspNet5Context context)
 		{
-			return solution.GetAllSolutionItems<DnxProject> ().Any ();
+			this.context = context;
 		}
 
-		public static DnxProject FindProjectByProjectJsonFileName(this Solution solution, string fileName)
+		public void UpdateReferences (ProjectId projectId, FrameworkProject frameworkProject)
 		{
-			var directory = new FilePath (Path.GetDirectoryName(fileName));
-			return solution.GetAllSolutionItems<DnxProject> ()
-				.FirstOrDefault (project => project.BaseDirectory == directory);
+			DnxProject project = FindProject (projectId);
+			if (project != null) {
+				UpdateReferences (project, frameworkProject);
+			}
+		}
+
+		DnxProject FindProject (ProjectId projectId)
+		{
+			var locator = new AspNetProjectLocator (context);
+			return locator.FindProject (projectId);
+		}
+
+		void UpdateReferences (DnxProject project, FrameworkProject frameworkProject)
+		{
+			if (!project.IsCurrentFramework (frameworkProject.Framework, frameworkProject.Project.ProjectsByFramework.Keys))
+				return;
+
+			project.UpdateReferences (frameworkProject.FileReferences.Keys);
 		}
 	}
 }

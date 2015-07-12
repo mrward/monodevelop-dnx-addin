@@ -28,6 +28,7 @@
 using System;
 using Microsoft.CodeAnalysis;
 using MonoDevelop.Dnx.Omnisharp;
+using MonoDevelop.Core;
 using MonoDevelop.Ide;
 using MonoDevelop.Projects;
 using OmniSharp.AspNet5;
@@ -87,10 +88,29 @@ namespace MonoDevelop.Dnx
 
 		public void OnReferencesUpdated (ProjectId projectId, FrameworkProject frameworkProject)
 		{
+			DispatchService.GuiDispatch (()  => {
+				var maintainer = new AspNetProjectReferenceMaintainer (context);
+				maintainer.UpdateReferences (projectId, frameworkProject);
+			});
 		}
 
 		public void OnProjectChanged (AspNet5Project project)
 		{
+			DispatchService.GuiDispatch (() => UpdateProject (project));
+		}
+
+		void UpdateProject (AspNet5Project project)
+		{
+			Solution solution = IdeApp.ProjectOperations.CurrentSelectedSolution;
+			if (solution == null)
+				return;
+
+			DnxProject matchedProject = solution.FindProjectByProjectJsonFileName (project.Path);
+			if (matchedProject != null) {
+				matchedProject.Update (project);
+			} else {
+				LoggingService.LogWarning (String.Format("Unable to find project by json file. '{0}'", project.Path));
+			}
 		}
 	}
 }

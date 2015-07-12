@@ -28,15 +28,19 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
-using MonoDevelop.Core;
 using MonoDevelop.Projects;
+using OmniSharp.Models;
 
 namespace MonoDevelop.Dnx
 {
-	public class DnxProject : Project
+	public class DnxProject : DotNetAssemblyProject
 	{
+		AspNet5Project project;
+
 		public DnxProject ()
+			: base ("C#")
 		{
 		}
 
@@ -89,6 +93,38 @@ namespace MonoDevelop.Dnx
 		{
 			string extension = Path.GetExtension (fileName);
 			return String.Equals (".cs", extension, StringComparison.OrdinalIgnoreCase);
+		}
+
+		public void AddAssemblyReference (string fileName)
+		{
+			var projectItem = new ProjectReference (ReferenceType.Assembly, fileName);
+			References.Add (projectItem);
+		}
+
+		public bool IsCurrentFramework (string framework, IEnumerable<string> frameworks)
+		{
+			if (CurrentFramework == null) {
+				CurrentFramework = frameworks.FirstOrDefault ();
+			}
+
+			return CurrentFramework == framework;
+		}
+
+		public string CurrentFramework { get; private set; }
+
+		public void UpdateReferences (IEnumerable<string> references)
+		{
+			var oldReferenceItems = Items.OfType<ProjectReference> ().ToList ();
+			Items.RemoveRange (oldReferenceItems);
+
+			foreach (string reference in references) {
+				AddAssemblyReference (reference);
+			}
+		}
+
+		public void Update (AspNet5Project project)
+		{
+			this.project = project;
 		}
 	}
 }

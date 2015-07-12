@@ -1,5 +1,5 @@
 ﻿//
-// SolutionExtensions.cs
+// AspNetProjectLocator.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -25,25 +25,51 @@
 // THE SOFTWARE.
 //
 
-using System.IO;
-using System.Linq;
-using MonoDevelop.Core;
+using Microsoft.CodeAnalysis;
+using MonoDevelop.Ide;
 using MonoDevelop.Projects;
+using OmniSharp.AspNet5;
 
 namespace MonoDevelop.Dnx
 {
-	public static class SolutionExtensions
+	public class AspNetProjectLocator
 	{
-		public static bool HasAspNetProjects (this Solution solution)
+		readonly AspNet5Context context;
+		Solution solution;
+		FrameworkProject frameworkProject;
+
+		public AspNetProjectLocator (AspNet5Context context)
 		{
-			return solution.GetAllSolutionItems<DnxProject> ().Any ();
+			this.context = context;
 		}
 
-		public static DnxProject FindProjectByProjectJsonFileName(this Solution solution, string fileName)
+		public DnxProject FindProject (ProjectId projectId)
 		{
-			var directory = new FilePath (Path.GetDirectoryName(fileName));
-			return solution.GetAllSolutionItems<DnxProject> ()
-				.FirstOrDefault (project => project.BaseDirectory == directory);
+			if (Init (projectId))
+				return solution.FindProjectByProjectJsonFileName (frameworkProject.Project.Path);
+			return null;
+		}
+
+		bool Init (ProjectId projectId)
+		{
+			solution = IdeApp.ProjectOperations.CurrentSelectedSolution;
+			if (solution == null) {
+				return false;
+			}
+
+			return context.WorkspaceMapping.TryGetValue (projectId, out frameworkProject);
+		}
+
+		public DnxProject FindProjectForCurrentFramework (ProjectId projectId)
+		{
+			if (!Init (projectId))
+				return null;
+
+			DnxProject project = solution.FindProjectByProjectJsonFileName (frameworkProject.Project.Path);
+			if (project.IsCurrentFramework (frameworkProject.Framework, frameworkProject.Project.ProjectsByFramework.Keys)) {
+				return project;
+			}
+			return null;
 		}
 	}
 }
