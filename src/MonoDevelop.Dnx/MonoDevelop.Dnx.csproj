@@ -14,18 +14,18 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\bin</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
+    <DefineConstants>DEBUG;DNX451</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\bin</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <DefineConstants>DNX451</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -42,6 +42,13 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Xml" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\lib\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Build" />
+    <Reference Include="Microsoft.Build.Engine" />
+    <Reference Include="Microsoft.Build.Framework" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -49,9 +56,104 @@
     <Compile Include="MonoDevelop.Dnx\DnxProject.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectBinding.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxMSBuildProjectHandler.cs" />
+    <Compile Include="Omnisharp\AspNet5\AspNet5Context.cs" />
+    <Compile Include="Omnisharp\AspNet5\AspNet5Paths.cs" />
+    <Compile Include="Omnisharp\AspNet5\AspNet5ProjectSystem.cs" />
+    <Compile Include="Omnisharp\AspNet5\AspNet5RuntimePathResult.cs" />
+    <Compile Include="Omnisharp\AspNet5\DesignTimeHostManager.cs" />
+    <Compile Include="Omnisharp\AspNet5\FrameworkProject.cs" />
+    <Compile Include="Omnisharp\AspNet5\Message.cs" />
+    <Compile Include="Omnisharp\AspNet5\Project.cs" />
+    <Compile Include="Omnisharp\AspNet5\IncomingMessages\InitializeMessage.cs" />
+    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\CompilationOptionsMessage.cs" />
+    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\CompilationSettings.cs" />
+    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\DependenciesMessage.cs" />
+    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\DependencyDescription.cs" />
+    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\DependencyItem.cs" />
+    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\DiagnosticsMessage.cs" />
+    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\ErrorMessage.cs" />
+    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\FrameworkData.cs" />
+    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\OutputsMessage.cs" />
+    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\ProjectMessage.cs" />
+    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\ProjectReference.cs" />
+    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\ReferencesMessage.cs" />
+    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\SourcesMessage.cs" />
+    <Compile Include="Omnisharp\Microsoft\AspNet\Hosting\IApplicationLifetime.cs" />
+    <Compile Include="Omnisharp\Microsoft\AspNet\Logging\FormattedLogValues.cs" />
+    <Compile Include="Omnisharp\Microsoft\AspNet\Logging\ILogger.cs" />
+    <Compile Include="Omnisharp\Microsoft\AspNet\Logging\ILoggerFactory.cs" />
+    <Compile Include="Omnisharp\Microsoft\AspNet\Logging\ILoggerProvider.cs" />
+    <Compile Include="Omnisharp\Microsoft\AspNet\Logging\ILogValues.cs" />
+    <Compile Include="Omnisharp\Microsoft\AspNet\Logging\LoggerExtensions.cs" />
+    <Compile Include="Omnisharp\Microsoft\AspNet\Logging\LoggerFactoryExtensions.cs" />
+    <Compile Include="Omnisharp\Microsoft\AspNet\Logging\LogLevel.cs" />
+    <Compile Include="Omnisharp\Microsoft\AspNet\Logging\LogValuesFormatter.cs" />
+    <Compile Include="Omnisharp\Microsoft\AspNet\Logging\TypeNameHelper.cs" />
+    <Compile Include="Omnisharp\Microsoft\AspNet\Options\IOptions.cs" />
+    <Compile Include="Omnisharp\Microsoft\Roslyn\Hash.cs" />
+    <Compile Include="Omnisharp\Microsoft\Roslyn\LanguageNames.cs" />
+    <Compile Include="Omnisharp\Microsoft\Roslyn\MetadataReference.cs" />
+    <Compile Include="Omnisharp\Microsoft\Roslyn\ProjectId.cs" />
+    <Compile Include="Omnisharp\Microsoft\Roslyn\ProjectInfo.cs" />
+    <Compile Include="Omnisharp\Microsoft\Roslyn\ProjectReference.cs" />
+    <Compile Include="Omnisharp\Microsoft\Roslyn\VersionStamp.cs" />
+    <Compile Include="Omnisharp\Models\AspNet5Project.cs" />
+    <Compile Include="Omnisharp\Models\ErrorMessage.cs" />
+    <Compile Include="Omnisharp\Models\EventTypes.cs" />
+    <Compile Include="Omnisharp\Models\MSBuildDiagnosticsMessage.cs" />
+    <Compile Include="Omnisharp\Models\MSBuildProject.cs" />
+    <Compile Include="Omnisharp\Models\MSBuildProjectDiagnostics.cs" />
+    <Compile Include="Omnisharp\Models\PackageDependency.cs" />
+    <Compile Include="Omnisharp\Models\ProjectFileInfo.cs" />
+    <Compile Include="Omnisharp\Models\ProjectInformationResponse.cs" />
+    <Compile Include="Omnisharp\Models\UnresolvedDependenciesMessage.cs" />
+    <Compile Include="Omnisharp\MSBuild\MSBuildLogForwarder.cs" />
+    <Compile Include="Omnisharp\Options\AspNet5Options.cs" />
+    <Compile Include="Omnisharp\Options\FormattingOptions.cs" />
+    <Compile Include="Omnisharp\Options\MSBuildOptions.cs" />
+    <Compile Include="Omnisharp\Options\OmniSharpOptions.cs" />
+    <Compile Include="Omnisharp\Roslyn\OmniSharpWorkspace.cs" />
+    <Compile Include="Omnisharp\Services\FileSystemWatcherWrapper.cs" />
+    <Compile Include="Omnisharp\Services\IEventEmitter.cs" />
+    <Compile Include="Omnisharp\Services\IFileSystemWatcher.cs" />
+    <Compile Include="Omnisharp\Services\IMetadataFileReferenceCache.cs" />
+    <Compile Include="Omnisharp\Services\IOmnisharpEnvironment.cs" />
+    <Compile Include="Omnisharp\Services\IProjectSystem.cs" />
+    <Compile Include="Omnisharp\Services\ManualFileSystemWatcher.cs" />
+    <Compile Include="Omnisharp\Services\MetadataFileReferenceCache.cs" />
+    <Compile Include="Omnisharp\Services\TransportType.cs" />
+    <Compile Include="Omnisharp\Utilities\PlatformHelper.cs" />
+    <Compile Include="Omnisharp\Utilities\ProcessingQueue.cs" />
+    <Compile Include="Omnisharp\MonoDevelop\EventEmitter.cs" />
+    <Compile Include="Omnisharp\MonoDevelop\Logger.cs" />
+    <Compile Include="Omnisharp\MonoDevelop\LoggerFactory.cs" />
+    <Compile Include="Omnisharp\MonoDevelop\MetadataFileReference.cs" />
+    <Compile Include="Omnisharp\MonoDevelop\MetadataFileReferenceCache.cs" />
+    <Compile Include="Omnisharp\MonoDevelop\OmnisharpEnvironment.cs" />
+    <Compile Include="Omnisharp\MonoDevelop\OmniSharpOptionsWrapper.cs" />
+    <Compile Include="Omnisharp\MonoDevelop\RoslynSolution.cs" />
+    <Compile Include="Omnisharp\MonoDevelop\Workspace.cs" />
+    <Compile Include="Omnisharp\MonoDevelop\MonoDevelopApplicationLifetime.cs" />
+    <Compile Include="MonoDevelop.Dnx\DnxServices.cs" />
+    <Compile Include="MonoDevelop.Dnx\DnxProjectService.cs" />
+    <Compile Include="MonoDevelop.Dnx\AspNet5ProjectSystemFactory.cs" />
+    <Compile Include="MonoDevelop.Dnx\SolutionExtensions.cs" />
+    <Compile Include="MonoDevelop.Dnx\DnxStartupHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <EmbeddedResource Include="MonoDevelop.Dnx.addin.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Licenses\Apache-2.0-LICENSE.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Licenses\Microsoft-AspNet-LICENSE.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Licenses\omnisharp-license.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Omnisharp\" />
   </ItemGroup>
 </Project>

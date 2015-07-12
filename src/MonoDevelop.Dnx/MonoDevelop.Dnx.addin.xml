@@ -1,6 +1,9 @@
 ﻿<ExtensionModel>
 	<Runtime>
 		<Import assembly="MonoDevelop.Dnx.dll" />
+
+		<Import file="Licenses/Apache-2.0-LICENSE.txt" />
+		<Import file="Licenses/Microsoft-AspNet-LICENSE.txt" />
 	</Runtime>
 
 	<Extension path="/MonoDevelop/ProjectModel/ProjectBindings">
@@ -13,5 +16,9 @@
 			type="MonoDevelop.Dnx.DnxProject"
 			extension="xproj"
 			handlerType="MonoDevelop.Dnx.DnxMSBuildProjectHandler" />
+	</Extension>
+
+	<Extension path="/MonoDevelop/Ide/StartupHandlers">
+		<Class class="MonoDevelop.Dnx.DnxStartupHandler" />
 	</Extension>
 </ExtensionModel>
