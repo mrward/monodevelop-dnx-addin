@@ -25,8 +25,11 @@
 // THE SOFTWARE.
 //
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
+using MonoDevelop.Core;
 using MonoDevelop.Projects;
 
 namespace MonoDevelop.Dnx
@@ -44,6 +47,48 @@ namespace MonoDevelop.Dnx
 		public override IEnumerable<string> GetProjectTypes ()
 		{
 			yield return "DnxProject";
+		}
+
+		protected override void OnEndLoad ()
+		{
+			foreach (string fileName in Directory.GetFiles (BaseDirectory, "*.*", SearchOption.AllDirectories)) {
+				if (IsSupportedProjectFileItem (fileName)) {
+					Items.Add (CreateFileProjectItem(fileName));
+				}
+			}
+			base.OnEndLoad ();
+		}
+
+		bool IsSupportedProjectFileItem (string fileName)
+		{
+			string extension = Path.GetExtension(fileName);
+			if (extension.EndsWith ("proj", StringComparison.OrdinalIgnoreCase)) {
+				return false;
+			} else if (extension.Equals (".sln", StringComparison.OrdinalIgnoreCase)) {
+				return false;
+			} else if (extension.Equals (".user", StringComparison.OrdinalIgnoreCase)) {
+				return false;
+			}
+			return true;
+		}
+
+		ProjectFile CreateFileProjectItem (string fileName)
+		{
+			return new ProjectFile (fileName, GetDefaultBuildAction (fileName));
+		}
+
+		public override string GetDefaultBuildAction (string fileName)
+		{
+			if (IsCSharpFile (fileName)) {
+				return BuildAction.Compile;
+			}
+			return base.GetDefaultBuildAction (fileName);
+		}
+
+		static bool IsCSharpFile (string fileName)
+		{
+			string extension = Path.GetExtension (fileName);
+			return String.Equals (".cs", extension, StringComparison.OrdinalIgnoreCase);
 		}
 	}
 }
