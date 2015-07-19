@@ -155,7 +155,5 @@
     </None>
     <None Include="Licenses\omnisharp-license.md" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Omnisharp\" />
-  </ItemGroup>
+  <Import Project="PostBuild.proj" />
 </Project>
