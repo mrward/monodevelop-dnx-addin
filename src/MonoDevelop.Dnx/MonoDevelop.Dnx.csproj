@@ -141,6 +141,8 @@
     <Compile Include="MonoDevelop.Dnx\DnxStartupHandler.cs" />
     <Compile Include="MonoDevelop.Dnx\AspNetProjectReferenceMaintainer.cs" />
     <Compile Include="MonoDevelop.Dnx\AspNetProjectLocator.cs" />
+    <Compile Include="MonoDevelop.Dnx\DnxProjectConfiguration.cs" />
+    <Compile Include="MonoDevelop.Dnx\DnxProjectExecutionCommand.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

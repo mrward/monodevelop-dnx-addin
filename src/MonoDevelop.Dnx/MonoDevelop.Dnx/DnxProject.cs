@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using MonoDevelop.Core.Execution;
 using MonoDevelop.Projects;
 using OmniSharp.Models;
 
@@ -60,6 +61,7 @@ namespace MonoDevelop.Dnx
 					Items.Add (CreateFileProjectItem(fileName));
 				}
 			}
+			AddConfigurations ();
 			base.OnEndLoad ();
 		}
 
@@ -125,6 +127,23 @@ namespace MonoDevelop.Dnx
 		public void Update (AspNet5Project project)
 		{
 			this.project = project;
+		}
+
+		void AddConfigurations ()
+		{
+			AddConfiguration ("Debug|Any CPU");
+			AddConfiguration ("Release|Any CPU");
+		}
+
+		void AddConfiguration (string name)
+		{
+			var configuration = new DnxProjectConfiguration (name);
+			Configurations.Add (configuration);
+		}
+
+		protected override ExecutionCommand CreateExecutionCommand (ConfigurationSelector configSel, DotNetProjectConfiguration configuration)
+		{
+			return new DnxProjectExecutionCommand ();
 		}
 	}
 }
