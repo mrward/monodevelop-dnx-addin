@@ -131,8 +131,8 @@ namespace MonoDevelop.Dnx
 
 		void AddConfigurations ()
 		{
-			AddConfiguration ("Debug|Any CPU");
-			AddConfiguration ("Release|Any CPU");
+			AddConfiguration ("Debug");
+			AddConfiguration ("Release");
 		}
 
 		void AddConfiguration (string name)
