@@ -30,21 +30,20 @@ using MonoDevelop.Core.Execution;
 
 namespace MonoDevelop.Dnx
 {
-	public class DnxProjectExecutionCommand : ExecutionCommand
+	public class DnxProjectExecutionCommand : DotNetExecutionCommand
 	{
-		public string Directory { get; set; }
-		public string DnxCommand { get; set; }
-		public string DnxRuntimePath { get; set; }
-
-		public string GetCommand ()
+		public DnxProjectExecutionCommand (string directory, string dnxCommand, string runtimePath)
 		{
-			return Path.Combine (DnxRuntimePath, "bin", "dnx.exe");
+			WorkingDirectory = directory;
+			DnxCommand = dnxCommand;
+			DnxRuntimePath = runtimePath;
+
+			Command = Path.Combine (DnxRuntimePath, "bin", "dnx.exe");
+			Arguments = string.Format (". {0}", DnxCommand);
 		}
 
-		public string GetArguments ()
-		{
-			return string.Format (". {0}", DnxCommand);
-		}
+		public string DnxCommand { get; private set; }
+		public string DnxRuntimePath { get; private set; }
 	}
 }
 

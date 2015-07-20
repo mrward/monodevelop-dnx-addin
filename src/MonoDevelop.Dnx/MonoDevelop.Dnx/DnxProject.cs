@@ -145,11 +145,11 @@ namespace MonoDevelop.Dnx
 
 		protected override ExecutionCommand CreateExecutionCommand (ConfigurationSelector configSel, DotNetProjectConfiguration configuration)
 		{
-			return new DnxProjectExecutionCommand {
-				Directory = BaseDirectory,
-				DnxCommand = GetCurrentCommand (),
-				DnxRuntimePath = DnxServices.ProjectService.CurrentDnxRuntimePath
-			};
+			return new DnxProjectExecutionCommand (
+				BaseDirectory,
+				GetCurrentCommand (),
+				DnxServices.ProjectService.CurrentDnxRuntimePath
+			);
 		}
 
 		protected override bool OnGetSupportsTarget (string target)
