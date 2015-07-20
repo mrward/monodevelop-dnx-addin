@@ -112,6 +112,15 @@ namespace MonoDevelop.Dnx
 				LoggingService.LogWarning (String.Format("Unable to find project by json file. '{0}'", project.Path));
 			}
 		}
+
+		public string CurrentDnxRuntimePath {
+			get {
+				if (context != null) {
+					return context.RuntimePath;
+				}
+				return null;
+			}
+		}
 	}
 }
 

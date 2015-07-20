@@ -22,4 +22,8 @@
 	<Extension path="/MonoDevelop/Ide/StartupHandlers">
 		<Class class="MonoDevelop.Dnx.DnxStartupHandler" />
 	</Extension>
+
+	<Extension path="/MonoDevelop/Core/ExecutionHandlers">
+		<ExecutionHandler id="Dnx" class ="MonoDevelop.Dnx.DnxExecutionHandler" />
+	</Extension>
 </ExtensionModel>

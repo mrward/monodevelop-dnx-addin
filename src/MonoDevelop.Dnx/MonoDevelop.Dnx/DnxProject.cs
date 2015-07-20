@@ -30,7 +30,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using MonoDevelop.Core;
 using MonoDevelop.Core.Execution;
+using MonoDevelop.Core.ProgressMonitoring;
 using MonoDevelop.Projects;
 using OmniSharp.Models;
 
@@ -143,7 +145,75 @@ namespace MonoDevelop.Dnx
 
 		protected override ExecutionCommand CreateExecutionCommand (ConfigurationSelector configSel, DotNetProjectConfiguration configuration)
 		{
-			return new DnxProjectExecutionCommand ();
+			return new DnxProjectExecutionCommand {
+				Directory = BaseDirectory,
+				DnxCommand = GetCurrentCommand (),
+				DnxRuntimePath = DnxServices.ProjectService.CurrentDnxRuntimePath
+			};
+		}
+
+		protected override bool OnGetSupportsTarget (string target)
+		{
+			return false;
+		}
+
+		string GetCurrentCommand()
+		{
+			if (project == null)
+				return null;
+			
+			return project.Commands.Keys.FirstOrDefault();
+		}
+
+		protected override bool OnGetCanExecute (ExecutionContext context, ConfigurationSelector configuration)
+		{
+			return true;
+		}
+
+		protected override bool OnGetNeedsBuilding (ConfigurationSelector configuration)
+		{
+			return false;
+		}
+
+		protected override BuildResult OnRunTarget (IProgressMonitor monitor, string target, ConfigurationSelector configuration)
+		{
+			return new BuildResult ();
+		}
+
+		protected override void DoExecute (IProgressMonitor monitor, ExecutionContext context, ConfigurationSelector configuration)
+		{
+			var config = GetConfiguration (configuration) as DnxProjectConfiguration;
+			monitor.Log.WriteLine (GettextCatalog.GetString ("Running {0} ...", Name));
+
+			IConsole console = CreateConsole (config, context);
+			var aggregatedOperationMonitor = new AggregatedOperationMonitor (monitor);
+
+			try {
+				try {
+					ExecutionCommand executionCommand = CreateExecutionCommand (configuration, config);
+					if (context.ExecutionTarget != null)
+						executionCommand.Target = context.ExecutionTarget;
+
+					IProcessAsyncOperation asyncOp = context.ExecutionHandler.Execute (executionCommand, console);
+					aggregatedOperationMonitor.AddOperation (asyncOp);
+					asyncOp.WaitForCompleted ();
+
+					monitor.Log.WriteLine (GettextCatalog.GetString ("The application exited with code: {0}", asyncOp.ExitCode));
+				} finally {
+					console.Dispose ();
+					aggregatedOperationMonitor.Dispose ();
+				}
+			} catch (Exception ex) {
+				LoggingService.LogError (string.Format ("Cannot execute \"{0}\"", Name), ex);
+				monitor.ReportError (GettextCatalog.GetString ("Cannot execute \"{0}\"", Name), ex);
+			}
+		}
+
+		IConsole CreateConsole (DnxProjectConfiguration config, ExecutionContext context)
+		{
+			if (config.ExternalConsole)
+				return context.ExternalConsoleFactory.CreateConsole (!config.PauseConsoleOutput);
+			return context.ConsoleFactory.CreateConsole (!config.PauseConsoleOutput);
 		}
 	}
 }

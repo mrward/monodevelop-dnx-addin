@@ -1,5 +1,5 @@
 ﻿//
-// DnxProjectExecutionCommand.cs
+// DnxExecutionHandler.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -25,25 +25,27 @@
 // THE SOFTWARE.
 //
 
-using System.IO;
 using MonoDevelop.Core.Execution;
+using MonoDevelop.Core;
 
 namespace MonoDevelop.Dnx
 {
-	public class DnxProjectExecutionCommand : ExecutionCommand
+	public class DnxExecutionHandler : IExecutionHandler
 	{
-		public string Directory { get; set; }
-		public string DnxCommand { get; set; }
-		public string DnxRuntimePath { get; set; }
-
-		public string GetCommand ()
+		public bool CanExecute (ExecutionCommand command)
 		{
-			return Path.Combine (DnxRuntimePath, "bin", "dnx.exe");
+			return command is DnxProjectExecutionCommand;
 		}
 
-		public string GetArguments ()
+		public IProcessAsyncOperation Execute (ExecutionCommand command, IConsole console)
 		{
-			return string.Format (". {0}", DnxCommand);
+			var dnxCommand = (DnxProjectExecutionCommand)command;
+			return Runtime.ProcessService.StartConsoleProcess (
+				dnxCommand.GetCommand (),
+				dnxCommand.GetArguments (),
+				dnxCommand.Directory,
+				console,
+				null);
 		}
 	}
 }
