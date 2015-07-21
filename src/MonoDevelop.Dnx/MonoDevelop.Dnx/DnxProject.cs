@@ -215,6 +215,11 @@ namespace MonoDevelop.Dnx
 				return context.ExternalConsoleFactory.CreateConsole (!config.PauseConsoleOutput);
 			return context.ConsoleFactory.CreateConsole (!config.PauseConsoleOutput);
 		}
+
+		public override FilePath GetOutputFileName (ConfigurationSelector configuration)
+		{
+			return null;
+		}
 	}
 }
 
