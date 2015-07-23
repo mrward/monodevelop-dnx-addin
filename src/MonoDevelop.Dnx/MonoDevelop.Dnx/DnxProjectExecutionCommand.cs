@@ -26,11 +26,12 @@
 //
 
 using System.IO;
+using MonoDevelop.Core;
 using MonoDevelop.Core.Execution;
 
 namespace MonoDevelop.Dnx
 {
-	public class DnxProjectExecutionCommand : DotNetExecutionCommand
+	public class DnxProjectExecutionCommand : ExecutionCommand
 	{
 		public DnxProjectExecutionCommand (string directory, string dnxCommand, string runtimePath)
 		{
@@ -38,12 +39,23 @@ namespace MonoDevelop.Dnx
 			DnxCommand = dnxCommand;
 			DnxRuntimePath = runtimePath;
 
-			Command = Path.Combine (DnxRuntimePath, "bin", "dnx.exe");
+			Command = Path.Combine (DnxRuntimePath, "bin", GetDnxFileName ());
 			Arguments = string.Format (". {0}", DnxCommand);
+		}
+
+		static string GetDnxFileName ()
+		{
+			if (Platform.IsWindows) {
+				return "dnx.exe";
+			}
+			return "dnx";
 		}
 
 		public string DnxCommand { get; private set; }
 		public string DnxRuntimePath { get; private set; }
+		public string WorkingDirectory { get; private set; }
+		public string Command { get; private set; }
+		public string Arguments { get; private set; }
 	}
 }
 

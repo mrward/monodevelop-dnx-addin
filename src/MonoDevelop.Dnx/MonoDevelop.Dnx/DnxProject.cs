@@ -194,7 +194,7 @@ namespace MonoDevelop.Dnx
 					if (context.ExecutionTarget != null)
 						executionCommand.Target = context.ExecutionTarget;
 
-					IProcessAsyncOperation asyncOp = context.ExecutionHandler.Execute (executionCommand, console);
+					IProcessAsyncOperation asyncOp = new DnxExecutionHandler ().Execute (executionCommand, console);
 					aggregatedOperationMonitor.AddOperation (asyncOp);
 					asyncOp.WaitForCompleted ();
 
