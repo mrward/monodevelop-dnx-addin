@@ -182,7 +182,7 @@ namespace MonoDevelop.Dnx
 
 		protected override void DoExecute (IProgressMonitor monitor, ExecutionContext context, ConfigurationSelector configuration)
 		{
-			var config = GetConfiguration (configuration) as DnxProjectConfiguration;
+			var config = GetConfiguration (configuration) as DotNetProjectConfiguration;
 			monitor.Log.WriteLine (GettextCatalog.GetString ("Running {0} ...", Name));
 
 			IConsole console = CreateConsole (config, context);
@@ -209,7 +209,7 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		IConsole CreateConsole (DnxProjectConfiguration config, ExecutionContext context)
+		IConsole CreateConsole (DotNetProjectConfiguration config, ExecutionContext context)
 		{
 			if (config.ExternalConsole)
 				return context.ExternalConsoleFactory.CreateConsole (!config.PauseConsoleOutput);
