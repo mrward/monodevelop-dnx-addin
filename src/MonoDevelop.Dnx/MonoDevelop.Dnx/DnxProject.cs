@@ -41,6 +41,7 @@ namespace MonoDevelop.Dnx
 	public class DnxProject : DotNetAssemblyProject
 	{
 		AspNet5Project project;
+		FilePath fileName;
 
 		public DnxProject ()
 			: base ("C#")
@@ -219,6 +220,26 @@ namespace MonoDevelop.Dnx
 		public override FilePath GetOutputFileName (ConfigurationSelector configuration)
 		{
 			return null;
+		}
+
+		/// <summary>
+		/// Have to override the SolutionEntityItem otherwise the FileFormat 
+		/// changes the file extension back to .csproj when GetValidFileName is called.
+		/// This is because the FileFormat finds the DotNetProjectNode for csproj files
+		/// when looking at the /MonoDevelop/ProjectModel/MSBuildItemTypes extension.
+		/// There does not seem to be a way to insert the DotNetProjectNode for DnxProjects
+		/// since these extensions do not have an id.
+		/// </summary>
+		public override FilePath FileName {
+			get {
+				return fileName;
+			}
+			set {
+				fileName = value;
+				if (ItemHandler.SyncFileName)
+					Name = fileName.FileNameWithoutExtension;
+				NotifyModified ("FileName");
+			}
 		}
 	}
 }

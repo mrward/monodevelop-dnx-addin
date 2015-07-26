@@ -25,12 +25,18 @@
 // THE SOFTWARE.
 //
 
+using MonoDevelop.Core;
 using MonoDevelop.Projects.Formats.MSBuild;
 
 namespace MonoDevelop.Dnx
 {
 	public class DnxMSBuildProjectHandler : MSBuildProjectHandler
 	{
+		protected override MSBuildProject SaveProject (IProgressMonitor monitor)
+		{
+			// Do not currently support saving of the .xproj file.
+			return null;
+		}
 	}
 }
 
