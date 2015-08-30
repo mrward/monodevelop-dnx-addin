@@ -47,6 +47,9 @@ namespace MonoDevelop.Dnx.NodeBuilders
 			var node = (DependencyNode)dataObject;
 			nodeInfo.Label = node.GetLabel ();
 			nodeInfo.Icon = Context.GetIcon (node.GetIconId ());
+			nodeInfo.StatusSeverity = node.GetStatusSeverity ();
+			nodeInfo.StatusMessage = node.GetStatusMessage ();
+			nodeInfo.DisabledStyle = node.IsDisabled ();
 		}
 
 		public override bool HasChildNodes (ITreeBuilder builder, object dataObject)

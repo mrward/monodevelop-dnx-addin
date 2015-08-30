@@ -31,6 +31,7 @@ using System.Linq;
 using Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages;
 using MonoDevelop.Core;
 using MonoDevelop.Ide.Gui;
+using MonoDevelop.Ide.Tasks;
 
 namespace MonoDevelop.Dnx.NodeBuilders
 {
@@ -68,7 +69,7 @@ namespace MonoDevelop.Dnx.NodeBuilders
 
 		public IconId GetIconId ()
 		{
-			if (Type == "Package")
+			if (Type == "Package" || Unresolved)
 				return new IconId ("md-dnx-nuget-package");
 
 			return Stock.Reference;
@@ -87,6 +88,31 @@ namespace MonoDevelop.Dnx.NodeBuilders
 					yield return new DependencyNode (message, matchedDependency);
 				}
 			}
+		}
+
+		public TaskSeverity? GetStatusSeverity ()
+		{
+			if (Unresolved)
+				return TaskSeverity.Warning;
+
+			return null;
+		}
+
+		public string GetStatusMessage ()
+		{
+			if (Unresolved)
+				return GettextCatalog.GetString ("Dependency has not been resolved");
+
+			return null;
+		}
+
+		public bool IsDisabled ()
+		{
+			return Unresolved;
+		}
+
+		public bool Unresolved {
+			get { return dependency.Type == "Unresolved"; }
 		}
 	}
 }
