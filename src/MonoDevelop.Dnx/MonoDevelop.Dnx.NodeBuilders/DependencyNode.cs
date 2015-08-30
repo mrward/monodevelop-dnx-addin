@@ -68,6 +68,9 @@ namespace MonoDevelop.Dnx.NodeBuilders
 
 		public IconId GetIconId ()
 		{
+			if (Type == "Package")
+				return new IconId ("md-dnx-nuget-package");
+
 			return Stock.Reference;
 		}
 

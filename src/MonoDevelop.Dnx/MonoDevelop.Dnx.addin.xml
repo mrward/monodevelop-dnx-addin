@@ -37,4 +37,8 @@
 	<Extension path="/MonoDevelop/DesignerSupport/PropertyProviders">
 		<Class class="MonoDevelop.Dnx.NodeBuilders.DependencyNodePropertyProvider" />
 	</Extension>
+
+	<Extension path="/MonoDevelop/Core/StockIcons">
+		<StockIcon stockid="md-dnx-nuget-package" resource="nuget-16.png" />
+	</Extension>
 </ExtensionModel>
