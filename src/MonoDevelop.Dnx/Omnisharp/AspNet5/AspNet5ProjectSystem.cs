@@ -299,6 +299,7 @@ namespace OmniSharp.AspNet5
                             });
 //                            _packagesRestoreTool.Run(project);
                         }
+                        _workspace.DependenciesUpdated(project, val);
                     }
                     else if (m.MessageType == "CompilerOptions")
                     {

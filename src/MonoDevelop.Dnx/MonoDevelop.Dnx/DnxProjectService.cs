@@ -27,6 +27,7 @@
 
 using System;
 using Microsoft.CodeAnalysis;
+using Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages;
 using MonoDevelop.Dnx.Omnisharp;
 using MonoDevelop.Core;
 using MonoDevelop.Ide;
@@ -119,6 +120,25 @@ namespace MonoDevelop.Dnx
 					return context.RuntimePath;
 				}
 				return null;
+			}
+		}
+
+		public void DependenciesUpdated (OmniSharp.AspNet5.Project project, DependenciesMessage message)
+		{
+			DispatchService.GuiDispatch (() => UpdateDependencies (project, message));
+		}
+
+		void UpdateDependencies (OmniSharp.AspNet5.Project project, DependenciesMessage message)
+		{
+			Solution solution = IdeApp.ProjectOperations.CurrentSelectedSolution;
+			if (solution == null)
+				return;
+
+			DnxProject matchedProject = solution.FindProjectByProjectJsonFileName (project.Path);
+			if (matchedProject != null) {
+				matchedProject.UpdateDependencies (message);
+			} else {
+				LoggingService.LogWarning (String.Format("Unable to find project by json file. '{0}'", project.Path));
 			}
 		}
 	}

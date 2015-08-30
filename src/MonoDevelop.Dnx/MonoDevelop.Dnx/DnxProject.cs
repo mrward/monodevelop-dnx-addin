@@ -36,12 +36,16 @@ using MonoDevelop.Core.ProgressMonitoring;
 using MonoDevelop.Projects;
 using OmniSharp.Models;
 
+using DependenciesMessage = Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages.DependenciesMessage;
+using FrameworkData = Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages.FrameworkData;
+
 namespace MonoDevelop.Dnx
 {
 	public class DnxProject : DotNetAssemblyProject
 	{
 		AspNet5Project project;
 		FilePath fileName;
+		Dictionary<FrameworkData, DependenciesMessage> dependencies = new Dictionary<FrameworkData, DependenciesMessage> ();
 
 		public DnxProject ()
 			: base ("C#")
@@ -239,6 +243,33 @@ namespace MonoDevelop.Dnx
 				if (ItemHandler.SyncFileName)
 					Name = fileName.FileNameWithoutExtension;
 				NotifyModified ("FileName");
+			}
+		}
+
+		public void UpdateDependencies (DependenciesMessage message)
+		{
+			dependencies[message.Framework] = message;
+			OnDependenciesChanged ();
+		}
+
+		public event EventHandler DependenciesChanged;
+
+		protected virtual void OnDependenciesChanged ()
+		{
+			var handler = DependenciesChanged;
+			if (handler != null)
+				handler (this, new EventArgs ());
+		}
+
+		public bool HasDependencies ()
+		{
+			return dependencies.Any ();
+		}
+
+		public IEnumerable<DependenciesMessage> GetDependencies ()
+		{
+			foreach (DependenciesMessage message in dependencies.Values) {
+				yield return message;
 			}
 		}
 	}

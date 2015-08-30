@@ -26,4 +26,11 @@
 	<Extension path="/MonoDevelop/Core/ExecutionHandlers">
 		<ExecutionHandler id="Dnx" class ="MonoDevelop.Dnx.DnxExecutionHandler" />
 	</Extension>
+
+	<Extension path="/MonoDevelop/Ide/Pads/ProjectPad">
+		<NodeBuilder class="MonoDevelop.Dnx.NodeBuilders.DependenciesNodeBuilderExtension" />
+		<NodeBuilder class="MonoDevelop.Dnx.NodeBuilders.DependenciesFolderNodeBuilder" />
+		<NodeBuilder class="MonoDevelop.Dnx.NodeBuilders.FrameworkNodeBuilder" />
+		<NodeBuilder class="MonoDevelop.Dnx.NodeBuilders.DependencyNodeBuilder" />
+	</Extension>
 </ExtensionModel>

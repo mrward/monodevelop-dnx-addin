@@ -21,9 +21,9 @@
     <CustomCommands>
       <CustomCommands>
         <Command type="Execute" command="../../../monodevelop/main/build/bin/MonoDevelop.exe" workingdir="../../../monodevelop/main/build/bin">
-            <EnvironmentVariables>
-              <Variable name="MONODEVELOP_DEV_ADDINS" value="${TargetDir}/merged" />
-            </EnvironmentVariables>
+          <EnvironmentVariables>
+            <Variable name="MONODEVELOP_DEV_ADDINS" value="${TargetDir}/merged" />
+          </EnvironmentVariables>
         </Command>
       </CustomCommands>
     </CustomCommands>
@@ -58,6 +58,10 @@
     <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.Build.Engine" />
     <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Xwt">
+      <HintPath>..\..\lib\Xwt.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -153,6 +157,13 @@
     <Compile Include="MonoDevelop.Dnx\DnxProjectConfiguration.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectExecutionCommand.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxExecutionHandler.cs" />
+    <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependenciesNodeBuilderExtension.cs" />
+    <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependenciesFolderNodeBuilder.cs" />
+    <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependenciesFolderNode.cs" />
+    <Compile Include="MonoDevelop.Dnx.NodeBuilders\FrameworkNodeBuilder.cs" />
+    <Compile Include="MonoDevelop.Dnx.NodeBuilders\FrameworkNode.cs" />
+    <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependencyNode.cs" />
+    <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependencyNodeBuilder.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
