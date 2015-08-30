@@ -170,6 +170,9 @@
     <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependencyNodeBuilder.cs" />
     <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependencyNodePropertyProvider.cs" />
     <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependencyNodeDescriptor.cs" />
+    <Compile Include="Omnisharp\AspNet5\PackagesRestoreTool.cs" />
+    <Compile Include="Omnisharp\Models\PackageRestoreMessage.cs" />
+    <Compile Include="Omnisharp\Utilities\ProcessExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

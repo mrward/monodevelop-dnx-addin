@@ -56,6 +56,11 @@ namespace MonoDevelop.Dnx.NodeBuilders
 
 		void ProjectDependenciesChanged (object sender, EventArgs e)
 		{
+			RefreshNode ();
+		}
+
+		void RefreshNode ()
+		{
 			ITreeBuilder builder = Context.GetTreeBuilder (currentFolderNode);
 			if (builder != null)
 				builder.UpdateChildren ();

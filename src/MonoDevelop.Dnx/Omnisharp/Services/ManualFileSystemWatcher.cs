@@ -20,5 +20,9 @@ namespace OmniSharp.Services
         {
             _callbacks[path] = callback;
         }
+
+        public void Dispose()
+        {
+        }
     }
 }

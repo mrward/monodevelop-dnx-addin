@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -25,7 +26,7 @@ using OmniSharp.Services;
 
 namespace OmniSharp.AspNet5
 {
-    public class AspNet5ProjectSystem : IProjectSystem
+    public class AspNet5ProjectSystem : IProjectSystem, IDisposable
     {
         private readonly OmnisharpWorkspace _workspace;
         private readonly IOmnisharpEnvironment _env;
@@ -33,7 +34,7 @@ namespace OmniSharp.AspNet5
         private readonly IMetadataFileReferenceCache _metadataFileReferenceCache;
         private readonly AspNet5Paths _aspNet5Paths;
         private readonly DesignTimeHostManager _designTimeHostManager;
-//        private readonly PackagesRestoreTool _packagesRestoreTool;
+        private readonly PackagesRestoreTool _packagesRestoreTool;
         private readonly AspNet5Context _context;
         private readonly IFileSystemWatcher _watcher;
         private readonly IEventEmitter _emitter;
@@ -56,7 +57,7 @@ namespace OmniSharp.AspNet5
             _options = optionsAccessor.Options;
             _aspNet5Paths = new AspNet5Paths(env, _options, loggerFactory);
             _designTimeHostManager = new DesignTimeHostManager(loggerFactory, _aspNet5Paths);
-//            _packagesRestoreTool = new PackagesRestoreTool(_options, loggerFactory, emitter, context, _aspNet5Paths);
+            _packagesRestoreTool = new PackagesRestoreTool(_options, loggerFactory, emitter, context, _aspNet5Paths);
             _context = context;
             _watcher = watcher;
             _emitter = emitter;
@@ -297,7 +298,7 @@ namespace OmniSharp.AspNet5
                                 FileName = project.Path,
                                 UnresolvedDependencies = unresolvedDependencies.Select(d => new PackageDependency() { Name = d.Name, Version = d.Version })
                             });
-//                            _packagesRestoreTool.Run(project);
+                            _packagesRestoreTool.Run(project);
                         }
                         _workspace.DependenciesUpdated(project, val);
                     }
@@ -406,7 +407,7 @@ namespace OmniSharp.AspNet5
             var project = _context.GetProject(path);
             if (project != null)
             {
-//                _packagesRestoreTool.Run(project);
+                _packagesRestoreTool.Run(project); 
             }
 
             var seen = new HashSet<string>();
@@ -445,7 +446,11 @@ namespace OmniSharp.AspNet5
                 message.HostId = _context.HostId;
                 message.ContextId = contextId;
                 message.MessageType = messageType;
-                _context.Connection.Post(message);
+                try {
+                    _context.Connection.Post(message);
+                } catch (IOException ex) {
+                    _logger.LogError("Post failed", ex);
+                }
             }
         }
         
@@ -600,6 +605,11 @@ namespace OmniSharp.AspNet5
         private static Task ConnectAsync(Socket socket, IPEndPoint endPoint)
         {
             return Task.Factory.FromAsync((cb, state) => socket.BeginConnect(endPoint, cb, state), ar => socket.EndConnect(ar), null);
+        }
+
+        public void Dispose()
+        {
+            _watcher.Dispose();
         }
     }
 }

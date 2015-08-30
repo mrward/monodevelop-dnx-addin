@@ -40,6 +40,7 @@ namespace MonoDevelop.Dnx
 	public class DnxProjectService
 	{
 		AspNet5Context context;
+		AspNet5ProjectSystem projectSystem;
 		MonoDevelopApplicationLifetime applicationLifetime;
 
 		public DnxProjectService ()
@@ -63,6 +64,8 @@ namespace MonoDevelop.Dnx
 				applicationLifetime.Stopping ();
 				applicationLifetime.Dispose ();
 				applicationLifetime = null;
+				projectSystem.Dispose ();
+				projectSystem = null;
 				context = null;
 			}
 		}
@@ -83,7 +86,7 @@ namespace MonoDevelop.Dnx
 			applicationLifetime = new MonoDevelopApplicationLifetime ();
 			context = new AspNet5Context ();
 			var factory = new AspNet5ProjectSystemFactory ();
-			var projectSystem = factory.CreateProjectSystem (solution, applicationLifetime, context);
+			projectSystem = factory.CreateProjectSystem (solution, applicationLifetime, context);
 			projectSystem.Initalize ();
 		}
 
@@ -102,15 +105,9 @@ namespace MonoDevelop.Dnx
 
 		void UpdateProject (AspNet5Project project)
 		{
-			Solution solution = IdeApp.ProjectOperations.CurrentSelectedSolution;
-			if (solution == null)
-				return;
-
-			DnxProject matchedProject = solution.FindProjectByProjectJsonFileName (project.Path);
+			DnxProject matchedProject = FindProjectByProjectJsonFileName (project.Path);
 			if (matchedProject != null) {
 				matchedProject.Update (project);
-			} else {
-				LoggingService.LogWarning (String.Format("Unable to find project by json file. '{0}'", project.Path));
 			}
 		}
 
@@ -128,17 +125,26 @@ namespace MonoDevelop.Dnx
 			DispatchService.GuiDispatch (() => UpdateDependencies (project, message));
 		}
 
-		void UpdateDependencies (OmniSharp.AspNet5.Project project, DependenciesMessage message)
+		static DnxProject FindProjectByProjectJsonFileName (string fileName)
 		{
 			Solution solution = IdeApp.ProjectOperations.CurrentSelectedSolution;
 			if (solution == null)
-				return;
+				return null;
 
-			DnxProject matchedProject = solution.FindProjectByProjectJsonFileName (project.Path);
+			DnxProject project = solution.FindProjectByProjectJsonFileName (fileName);
+			if (project != null) {
+				return project;
+			}
+
+			LoggingService.LogWarning (String.Format("Unable to find project by json file. '{0}'", fileName));
+			return null;
+		}
+
+		void UpdateDependencies (OmniSharp.AspNet5.Project project, DependenciesMessage message)
+		{
+			DnxProject matchedProject = FindProjectByProjectJsonFileName (project.Path);
 			if (matchedProject != null) {
 				matchedProject.UpdateDependencies (message);
-			} else {
-				LoggingService.LogWarning (String.Format("Unable to find project by json file. '{0}'", project.Path));
 			}
 		}
 	}

@@ -45,7 +45,7 @@ namespace MonoDevelop.Dnx
 	{
 		AspNet5Project project;
 		FilePath fileName;
-		Dictionary<FrameworkData, DependenciesMessage> dependencies = new Dictionary<FrameworkData, DependenciesMessage> ();
+		Dictionary<string, DependenciesMessage> dependencies = new Dictionary<string, DependenciesMessage> ();
 
 		public DnxProject ()
 			: base ("C#")
@@ -248,7 +248,7 @@ namespace MonoDevelop.Dnx
 
 		public void UpdateDependencies (DependenciesMessage message)
 		{
-			dependencies[message.Framework] = message;
+			dependencies[message.Framework.FrameworkName] = message;
 			OnDependenciesChanged ();
 		}
 

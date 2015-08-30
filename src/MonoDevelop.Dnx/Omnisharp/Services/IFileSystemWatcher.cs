@@ -3,7 +3,7 @@
 namespace OmniSharp.Services
 {
     // TODO: Flesh out this API more
-    public interface IFileSystemWatcher
+    public interface IFileSystemWatcher : IDisposable
     {
         void Watch(string path, Action<string> callback);
 
