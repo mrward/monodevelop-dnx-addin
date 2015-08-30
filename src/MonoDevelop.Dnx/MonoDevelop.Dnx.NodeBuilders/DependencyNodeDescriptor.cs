@@ -1,5 +1,5 @@
 ﻿//
-// DependencyNode.cs
+// DependencyNodeDescriptor.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -25,65 +25,42 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages;
 using MonoDevelop.Core;
-using MonoDevelop.Ide.Gui;
+using MonoDevelop.DesignerSupport;
 
 namespace MonoDevelop.Dnx.NodeBuilders
 {
-	public class DependencyNode
+	public class DependencyNodeDescriptor : CustomDescriptor
 	{
-		DependenciesMessage message;
-		DependencyDescription dependency;
+		DependencyNode node;
 
-		public DependencyNode (DependenciesMessage message, DependencyDescription dependency)
+		public DependencyNodeDescriptor (DependencyNode node)
 		{
-			this.message = message;
-			this.dependency = dependency;
+			this.node = node;
 		}
 
+		[LocalizedCategory ("Dependency")]
+		[LocalizedDisplayName ("Name")]
 		public string Name {
-			get { return dependency.Name; }
+			get { return node.Name; }
 		}
 
-		public string Version {
-			get { return dependency.Version; }
-		}
-
-		public string Type {
-			get { return dependency.Type; }
-		}
-
+		[LocalizedCategory ("Dependency")]
+		[LocalizedDisplayName ("Path")]
 		public string Path {
-			get { return dependency.Path; }
+			get { return node.Path; }
 		}
 
-		public string GetLabel ()
-		{
-			return String.Format ("{0} <span color='grey'>({1})</span>", dependency.Name, dependency.Version);
+		[LocalizedCategory ("Dependency")]
+		[LocalizedDisplayName ("Type")]
+		public string Type {
+			get { return node.Type; }
 		}
 
-		public IconId GetIconId ()
-		{
-			return Stock.Reference;
-		}
-
-		public bool HasDependencies ()
-		{
-			return dependency.Dependencies.Any ();
-		}
-
-		public IEnumerable<DependencyNode> GetDependencies ()
-		{
-			foreach (DependencyItem item in dependency.Dependencies) {
-				var matchedDependency = message.Dependencies[item.Name];
-				if (matchedDependency != null) {
-					yield return new DependencyNode (message, matchedDependency);
-				}
-			}
+		[LocalizedCategory ("Dependency")]
+		[LocalizedDisplayName ("Version")]
+		public string Version {
+			get { return node.Version; }
 		}
 	}
 }

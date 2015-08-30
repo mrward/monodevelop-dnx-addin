@@ -62,6 +62,10 @@
       <HintPath>..\..\lib\Xwt.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="MonoDevelop.DesignerSupport">
+      <HintPath>..\..\lib\MonoDevelop.DesignerSupport.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -164,6 +168,8 @@
     <Compile Include="MonoDevelop.Dnx.NodeBuilders\FrameworkNode.cs" />
     <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependencyNode.cs" />
     <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependencyNodeBuilder.cs" />
+    <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependencyNodePropertyProvider.cs" />
+    <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependencyNodeDescriptor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

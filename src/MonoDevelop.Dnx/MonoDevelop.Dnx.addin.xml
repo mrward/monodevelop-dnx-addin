@@ -33,4 +33,8 @@
 		<NodeBuilder class="MonoDevelop.Dnx.NodeBuilders.FrameworkNodeBuilder" />
 		<NodeBuilder class="MonoDevelop.Dnx.NodeBuilders.DependencyNodeBuilder" />
 	</Extension>
+
+	<Extension path="/MonoDevelop/DesignerSupport/PropertyProviders">
+		<Class class="MonoDevelop.Dnx.NodeBuilders.DependencyNodePropertyProvider" />
+	</Extension>
 </ExtensionModel>
