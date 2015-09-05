@@ -147,6 +147,32 @@ namespace MonoDevelop.Dnx
 				matchedProject.UpdateDependencies (message);
 			}
 		}
+
+		public void PackageRestoreStarted (string projectJsonFileName)
+		{
+			DispatchService.GuiDispatch (() => OnPackageRestoreStarted (projectJsonFileName));
+		}
+
+		void OnPackageRestoreStarted (string projectJsonFileName)
+		{
+			DnxProject matchedProject = FindProjectByProjectJsonFileName(projectJsonFileName);
+			if (matchedProject != null) {
+				matchedProject.OnPackageRestoreStarted ();
+			}
+		}
+
+		public void PackageRestoreFinished (string projectJsonFileName)
+		{
+			DispatchService.GuiDispatch (() => OnPackageRestoreFinished(projectJsonFileName));
+		}
+
+		void OnPackageRestoreFinished(string projectJsonFileName)
+		{
+			DnxProject matchedProject = FindProjectByProjectJsonFileName (projectJsonFileName);
+			if (matchedProject != null) {
+				matchedProject.OnPackageRestoreFinished ();
+			}
+		}
 	}
 }
 

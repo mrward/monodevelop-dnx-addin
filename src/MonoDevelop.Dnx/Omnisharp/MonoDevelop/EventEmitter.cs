@@ -60,6 +60,8 @@ namespace MonoDevelop.Dnx.Omnisharp
 			var restoreMessage = args as PackageRestoreMessage;
 			if (restoreMessage == null)
 				return;
+			
+			DnxServices.ProjectService.PackageRestoreStarted (restoreMessage.FileName);
 		}
 
 		void OnPackageRestoreFinished (object args)
@@ -67,6 +69,8 @@ namespace MonoDevelop.Dnx.Omnisharp
 			var restoreMessage = args as PackageRestoreMessage;
 			if (restoreMessage == null)
 				return;
+
+			DnxServices.ProjectService.PackageRestoreFinished (restoreMessage.FileName);
 		}
 	}
 }

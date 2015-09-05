@@ -50,16 +50,19 @@ namespace MonoDevelop.Dnx.NodeBuilders
 
 			var project = (DnxProject)dataObject;
 			project.DependenciesChanged += ProjectDependenciesChanged;
+			project.PackageRestoreStarted += PackageRestoreStarted;
+			project.PackageRestoreFinished += PackageRestoreFinished;
+
 			currentFolderNode = new DependenciesFolderNode (project);
 			treeBuilder.AddChild (currentFolderNode);
 		}
 
 		void ProjectDependenciesChanged (object sender, EventArgs e)
 		{
-			RefreshNode ();
+			RefreshChildNodes ();
 		}
 
-		void RefreshNode ()
+		void RefreshChildNodes ()
 		{
 			ITreeBuilder builder = Context.GetTreeBuilder (currentFolderNode);
 			if (builder != null)
@@ -70,7 +73,32 @@ namespace MonoDevelop.Dnx.NodeBuilders
 		{
 			if (currentFolderNode != null) {
 				currentFolderNode.Project.DependenciesChanged -= ProjectDependenciesChanged;
+				currentFolderNode.Project.PackageRestoreStarted -= PackageRestoreStarted;
+				currentFolderNode.Project.PackageRestoreFinished -= PackageRestoreFinished;
 			}
+		}
+
+		void PackageRestoreStarted (object sender, EventArgs e)
+		{
+			if (currentFolderNode != null) {
+				currentFolderNode.IsRestoringPackages = true;
+				UpdateFolderNodeText ();
+			}
+		}
+
+		void PackageRestoreFinished (object sender, EventArgs e)
+		{
+			if (currentFolderNode != null) {
+				currentFolderNode.IsRestoringPackages = false;
+				UpdateFolderNodeText ();
+			}
+		}
+
+		void UpdateFolderNodeText ()
+		{
+			ITreeBuilder builder = Context.GetTreeBuilder (currentFolderNode);
+			if (builder != null)
+				builder.Update ();
 		}
 	}
 }

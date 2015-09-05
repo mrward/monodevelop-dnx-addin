@@ -43,7 +43,16 @@ namespace MonoDevelop.Dnx.NodeBuilders
 
 		public string GetLabel ()
 		{
-			return GettextCatalog.GetString ("Dependencies");
+			return GettextCatalog.GetString ("Dependencies") + GetRestoringLabel ();
+		}
+
+		string GetRestoringLabel ()
+		{
+			if (IsRestoringPackages) {
+				string restoringMessage = GettextCatalog.GetString ("Restoring...");
+				return String.Format (" <span color='grey'>({0})</span>", restoringMessage);
+			}
+			return String.Empty;
 		}
 
 		public IconId Icon {
@@ -65,6 +74,8 @@ namespace MonoDevelop.Dnx.NodeBuilders
 				yield return new FrameworkNode (dependency);
 			}
 		}
+
+		public bool IsRestoringPackages { get; set; }
 	}
 }
 

@@ -272,6 +272,24 @@ namespace MonoDevelop.Dnx
 				yield return message;
 			}
 		}
+
+		public event EventHandler PackageRestoreStarted;
+
+		public void OnPackageRestoreStarted ()
+		{
+			var handler = PackageRestoreStarted;
+			if (handler != null)
+				handler (this, new EventArgs ());
+		}
+
+		public event EventHandler PackageRestoreFinished;
+
+		public void OnPackageRestoreFinished ()
+		{
+			var handler = PackageRestoreFinished;
+			if (handler != null)
+				handler (this, new EventArgs ());
+		}
 	}
 }
 
