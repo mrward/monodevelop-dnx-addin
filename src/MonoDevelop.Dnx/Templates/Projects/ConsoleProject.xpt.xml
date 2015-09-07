@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<Template
+	originator="Matt Ward"
+	created="06/09/2015"
+	lastModified="06/09/2015">
+	
+	<!-- Template Header -->
+	<TemplateConfiguration>
+		<_Name>Console App</_Name>
+		<Category>other/aspnet/aspnet5</Category>
+		<Icon>md-project-console</Icon>
+		<Image id="md-console-project" />
+		<LanguageName>C#</LanguageName>
+		<_Description>Creates a new ASP.NET 5 console project.</_Description>
+		<DefaultFilename>ConsoleProject</DefaultFilename>
+		<FileExtension>.xproj</FileExtension>
+	</TemplateConfiguration>
+	
+	
+	<!-- Actions -->
+	<Actions>
+		<!-- <Open filename="./src/${ProjectName}/Program.cs" />-->
+	</Actions>
+	
+	<!-- Template Content -->
+	<Combine name="${ProjectName}" directory=".">
+		<Options>
+			<StartupProject>${ProjectName}</StartupProject>
+		</Options>
+		
+		<SolutionFolder name="Solution Items">
+			<SolutionFileItems>
+				<SolutionFileItem name="global.json" />
+			</SolutionFileItems>
+		</SolutionFolder>
+
+		<Files>
+			<File name="global.json">{
+	"projects": [ "src", "test" ],
+	"sdk": {
+		"version": "1.0.0-beta4"
+	}
+}</File>
+		</Files>
+
+		<!--<SolutionFolder name="src">-->
+			<Project name="${ProjectName}" type="Dnx" directory=".">
+				<Options ExternalConsole="True"/>
+
+				<Files>
+					<File name="Program.cs" AddStandardHeader="True"><![CDATA[using System;
+	
+namespace ${StandardNamespace}
+{
+	public class Program
+	{
+		public void Main(string[] args)
+		{
+		}
+	}
+}]]></File>
+				<File name="project.json">{
+	"version": "1.0.0-*",
+	"description": "",
+	"authors": [ "" ],
+	"tags": [ "" ],
+	"projectUrl": "",
+	"licenseUrl": "",
+
+	"dependencies": {
+	},
+
+	"commands": {
+		"${ProjectName}" : "${ProjectName}"
+	},
+
+	"frameworks" : {
+		"dnx451": { },
+		"dnxcore50" : {
+			"dependencies": {
+				"System.Console": "4.0.0-beta-22816",
+				"System.Collections": "4.0.10-beta-22816",
+				"System.Linq": "4.0.0-beta-22816",
+				"System.Threading": "4.0.10-beta-22816"
+			}
+		}
+	}
+}</File>
+				</Files>
+			</Project>
+		<!--</SolutionFolder>-->
+	</Combine>
+</Template>

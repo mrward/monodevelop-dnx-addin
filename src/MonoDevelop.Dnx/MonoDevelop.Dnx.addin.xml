@@ -4,6 +4,8 @@
 
 		<Import file="Licenses/Apache-2.0-LICENSE.txt" />
 		<Import file="Licenses/Microsoft-AspNet-LICENSE.txt" />
+
+		<Import file="Templates/Projects/ConsoleProject.xpt.xml"/>
 	</Runtime>
 
 	<Extension path="/MonoDevelop/ProjectModel/ProjectBindings">
@@ -40,5 +42,15 @@
 
 	<Extension path="/MonoDevelop/Core/StockIcons">
 		<StockIcon stockid="md-dnx-nuget-package" resource="nuget-16.png" />
+	</Extension>
+
+	<Extension path="/MonoDevelop/Ide/ProjectTemplates">
+		<ProjectTemplate
+			id="DnxConsoleProject"
+			file="Templates/Projects/ConsoleProject.xpt.xml" />
+	</Extension>
+
+	<Extension path="/MonoDevelop/Ide/ProjectTemplateCategories/other/aspnet">
+		<Category id="aspnet5" name="ASP.NET 5" />
 	</Extension>
 </ExtensionModel>

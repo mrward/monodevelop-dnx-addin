@@ -48,7 +48,7 @@ namespace MonoDevelop.Dnx
 		}
 
 		public string Name {
-			get { return "DnxProject"; }
+			get { return "Dnx"; }
 		}
 	}
 }

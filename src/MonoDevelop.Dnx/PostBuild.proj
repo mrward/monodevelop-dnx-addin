@@ -7,11 +7,12 @@
     <ILRepackCommand Condition=" '$(OS)' != 'Windows_NT' ">mono --runtime=v4.0.30319 "$(ILRepackExePath)"</ILRepackCommand>
   </PropertyGroup>
   <ItemGroup>
-    <MyCopyItem Include="$(OutputPath)Licenses\Apache-2.0-LICENSE.txt" />
-    <MyCopyItem Include="$(OutputPath)Licenses\Microsoft-AspNet-LICENSE.txt" />
+    <LicenseItem Include="$(OutputPath)Licenses\*.txt" />
+    <ProjectTemplateItem Include="$(OutputPath)Templates\Projects\*.xpt.xml" />
   </ItemGroup>
   <Target Name="MyPostBuildTarget">
-    <Copy SourceFiles="@(MyCopyItem)" DestinationFolder="$(OutputPath)merged\Licenses" />
+    <Copy SourceFiles="@(LicenseItem)" DestinationFolder="$(OutputPath)merged\Licenses" />
+    <Copy SourceFiles="@(ProjectTemplateItem)" DestinationFolder="$(OutputPath)merged\Templates\Projects" />
     <Exec Command="$(ILRepackCommand) /targetPlatform:v4 /lib:&quot;$(SolutionDir)..\lib&quot; /out:&quot;merged\$(AssemblyName).dll&quot; $(AssemblyName).dll &quot;$(SolutionDir)..\lib\Newtonsoft.Json.dll&quot;" WorkingDirectory="$(OutputPath)" />
   </Target>
 </Project>

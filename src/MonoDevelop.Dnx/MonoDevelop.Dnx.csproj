@@ -193,6 +193,12 @@
     </None>
     <None Include="Licenses\omnisharp-license.md" />
     <None Include="Icons\readme.txt" />
+    <None Include="Templates\Projects\ConsoleProject.xpt.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="PostBuild.proj" />
+  <ItemGroup>
+    <Folder Include="Templates\" />
+  </ItemGroup>
 </Project>

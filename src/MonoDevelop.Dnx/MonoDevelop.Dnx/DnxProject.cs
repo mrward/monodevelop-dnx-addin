@@ -45,6 +45,7 @@ namespace MonoDevelop.Dnx
 	{
 		AspNet5Project project;
 		FilePath fileName;
+		string name;
 		Dictionary<string, DependenciesMessage> dependencies = new Dictionary<string, DependenciesMessage> ();
 
 		public DnxProject ()
@@ -54,11 +55,12 @@ namespace MonoDevelop.Dnx
 
 		public DnxProject (ProjectCreateInformation info, XmlElement projectOptions)
 		{
+			IsDirty = true;
 		}
 
 		public override IEnumerable<string> GetProjectTypes ()
 		{
-			yield return "DnxProject";
+			yield return "Dnx";
 		}
 
 		protected override void OnEndLoad ()
@@ -240,9 +242,31 @@ namespace MonoDevelop.Dnx
 			}
 			set {
 				fileName = value;
+				fileName = fileName.ChangeExtension (".xproj");
 				if (ItemHandler.SyncFileName)
 					Name = fileName.FileNameWithoutExtension;
 				NotifyModified ("FileName");
+			}
+		}
+
+		public override string Name {
+			get {
+				return name ?? string.Empty;
+			}
+			set {
+				if (name == value)
+					return;
+				string oldName = name;
+				name = value;
+				if (!Loading && ItemHandler.SyncFileName) {
+					if (string.IsNullOrEmpty (fileName))
+						FileName = value;
+					else {
+						string ext = fileName.Extension;
+						FileName = fileName.ParentDirectory.Combine (value) + ext;
+					}
+				}
+				OnNameChanged (new SolutionItemRenamedEventArgs(this, oldName, name));
 			}
 		}
 
@@ -289,6 +313,17 @@ namespace MonoDevelop.Dnx
 			var handler = PackageRestoreFinished;
 			if (handler != null)
 				handler (this, new EventArgs ());
+		}
+
+		internal bool IsDirty { get; set; }
+
+		protected override void OnSave (IProgressMonitor monitor)
+		{
+			if (IsDirty) {
+				defaultNamespace = GetDefaultNamespace (FileName);
+				base.OnSave (monitor);
+			}
+			IsDirty = false;
 		}
 	}
 }
