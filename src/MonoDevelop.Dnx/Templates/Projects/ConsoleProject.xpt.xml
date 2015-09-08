@@ -50,7 +50,7 @@
 				<Files>
 					<File name="Program.cs" AddStandardHeader="True"><![CDATA[using System;
 	
-namespace ${StandardNamespace}
+namespace ${Namespace}
 {
 	public class Program
 	{
