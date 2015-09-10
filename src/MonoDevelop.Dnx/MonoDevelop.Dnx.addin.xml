@@ -6,7 +6,18 @@
 		<Import file="Licenses/Microsoft-AspNet-LICENSE.txt" />
 
 		<Import file="Templates/Projects/ConsoleProject.xpt.xml"/>
+		<Import file="Templates/Projects/PlaceholderConsoleProject.xpt.xml"/>
 	</Runtime>
+
+	<ExtensionPoint path = "/MonoDevelop/Ide/DnxProjectTemplates" name = "File template types">
+		<Description>Project templates to be shown in the New Project dialog.</Description>
+		<ExtensionNode name="ProjectTemplate" type="MonoDevelop.Ide.Codons.ProjectTemplateCodon"/>
+	</ExtensionPoint>
+
+	<ExtensionPoint path = "/MonoDevelop/Ide/DnxFileTemplateTypes" name = "File template types">
+		<Description>Template types which can be used to create file templates.</Description>
+		<ExtensionNode name="FileTemplateType" type="MonoDevelop.Ide.Codons.FileTemplateTypeCodon"/>
+	</ExtensionPoint>
 
 	<Extension path="/MonoDevelop/ProjectModel/ProjectBindings">
 		<ProjectBinding id="DnxProject" class="MonoDevelop.Dnx.DnxProjectBinding" />
@@ -44,13 +55,27 @@
 		<StockIcon stockid="md-dnx-nuget-package" resource="nuget-16.png" />
 	</Extension>
 
-	<Extension path="/MonoDevelop/Ide/ProjectTemplates">
+	<Extension path="/MonoDevelop/Ide/ProjectTemplateCategories/other/aspnet">
+		<Category id="aspnet5" name="ASP.NET 5" />
+	</Extension>
+
+	<Extension path="/MonoDevelop/Ide/DnxProjectTemplates">
 		<ProjectTemplate
 			id="DnxConsoleProject"
 			file="Templates/Projects/ConsoleProject.xpt.xml" />
 	</Extension>
 
-	<Extension path="/MonoDevelop/Ide/ProjectTemplateCategories/other/aspnet">
-		<Category id="aspnet5" name="ASP.NET 5" />
+	<Extension path="/MonoDevelop/Ide/ProjectTemplates">
+		<ProjectTemplate
+			id="DnxPlaceholderProject"
+			file="Templates/Projects/PlaceholderConsoleProject.xpt.xml" />
+	</Extension>
+
+	<Extension path = "/MonoDevelop/Ide/DnxFileTemplateTypes">
+		<FileTemplateType name="File" class="MonoDevelop.Ide.Templates.CustomTextFileDescriptionTemplate"/>
+	</Extension>
+
+	<Extension path="/MonoDevelop/Ide/ProjectTemplatingProviders">
+		<Class id="Dnx.ProjectTemplatingProvider" class="MonoDevelop.Ide.Templates.ProjectTemplatingProvider" />
 	</Extension>
 </ExtensionModel>

@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <Template
 	originator="Matt Ward"
 	created="06/09/2015"
@@ -14,7 +14,7 @@
 		<_Description>Creates a new ASP.NET 5 console project.</_Description>
 		<DefaultFilename>ConsoleProject</DefaultFilename>
 		<FileExtension>.xproj</FileExtension>
-		<GroupId>md-aspnet5-console-project</GroupId>
+		<GroupId condition="Dummy=false">md-aspnet5-console-project</GroupId>
 	</TemplateConfiguration>
 
 	<!-- Actions -->

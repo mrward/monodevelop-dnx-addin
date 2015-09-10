@@ -66,6 +66,17 @@
       <HintPath>..\..\lib\MonoDevelop.DesignerSupport.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="ICSharpCode.NRefactory">
+      <HintPath>..\..\lib\ICSharpCode.NRefactory.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.TextEditor">
+      <HintPath>..\..\lib\Mono.TextEditor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -173,6 +184,22 @@
     <Compile Include="Omnisharp\AspNet5\PackagesRestoreTool.cs" />
     <Compile Include="Omnisharp\Models\PackageRestoreMessage.cs" />
     <Compile Include="Omnisharp\Utilities\ProcessExtensions.cs" />
+    <Compile Include="MonoDevelop.Ide.Templates\DefaultProcessedTemplateResult.cs" />
+    <Compile Include="MonoDevelop.Ide.Templates\DefaultSolutionTemplate.cs" />
+    <Compile Include="MonoDevelop.Ide.Templates\ProjectTemplate.cs" />
+    <Compile Include="MonoDevelop.Ide.Templates\ProjectTemplatingProvider.cs" />
+    <Compile Include="MonoDevelop.Ide.Codons\ProjectTemplateCodon.cs" />
+    <Compile Include="MonoDevelop.Ide.Templates\ISolutionItemDescriptor.cs" />
+    <Compile Include="MonoDevelop.Ide.Templates\SolutionItemDescriptor.cs" />
+    <Compile Include="MonoDevelop.Ide.Templates\SolutionDescriptor.cs" />
+    <Compile Include="MonoDevelop.Ide.Templates\WorkspaceItemCreatedInformation.cs" />
+    <Compile Include="MonoDevelop.Ide.Templates\ProjectDescriptor.cs" />
+    <Compile Include="MonoDevelop.Ide.Templates\ICustomProjectCIEntry.cs" />
+    <Compile Include="MonoDevelop.Ide.Templates\ProjectTemplateCreateInformation.cs" />
+    <Compile Include="MonoDevelop.Ide.Templates\FileDescriptionTemplate.cs" />
+    <Compile Include="MonoDevelop.Ide.Templates\SingleFileDescriptionTemplate.cs" />
+    <Compile Include="MonoDevelop.Ide.Codons\FileTemplateTypeCodon.cs" />
+    <Compile Include="MonoDevelop.Ide.Templates\TextFileDescriptionTemplate.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -196,9 +223,14 @@
     <None Include="Templates\Projects\ConsoleProject.xpt.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Templates\Projects\PlaceholderConsoleProject.xpt.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="PostBuild.proj" />
   <ItemGroup>
     <Folder Include="Templates\" />
+    <Folder Include="MonoDevelop.Ide.Templates\" />
+    <Folder Include="MonoDevelop.Ide.Codons\" />
   </ItemGroup>
 </Project>
