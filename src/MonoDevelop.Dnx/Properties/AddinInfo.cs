@@ -8,6 +8,6 @@
 [assembly:AddinName ("DNX")]
 [assembly:AddinDescription ("Adds DNX and ASP.NET 5 support.")]
 
-[assembly:AddinDependency ("Core", "5.3")]
-[assembly:AddinDependency ("Ide", "5.3")]
-[assembly:AddinDependency ("DesignerSupport", "5.3")]
+[assembly:AddinDependency ("Core", "5.9")]
+[assembly:AddinDependency ("Ide", "5.9")]
+[assembly:AddinDependency ("DesignerSupport", "5.9")]
