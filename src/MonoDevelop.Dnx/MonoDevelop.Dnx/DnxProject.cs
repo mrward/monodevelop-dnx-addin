@@ -56,6 +56,7 @@ namespace MonoDevelop.Dnx
 		public DnxProject (ProjectCreateInformation info, XmlElement projectOptions)
 		{
 			IsDirty = true;
+			AddConfigurations ();
 		}
 
 		public override IEnumerable<string> GetProjectTypes ()
@@ -324,6 +325,11 @@ namespace MonoDevelop.Dnx
 				base.OnSave (monitor);
 			}
 			IsDirty = false;
+		}
+
+		public override bool SupportsConfigurations ()
+		{
+			return true;
 		}
 	}
 }
