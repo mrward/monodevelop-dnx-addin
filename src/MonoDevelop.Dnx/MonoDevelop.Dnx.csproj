@@ -200,6 +200,7 @@
     <Compile Include="MonoDevelop.Ide.Templates\SingleFileDescriptionTemplate.cs" />
     <Compile Include="MonoDevelop.Ide.Codons\FileTemplateTypeCodon.cs" />
     <Compile Include="MonoDevelop.Ide.Templates\TextFileDescriptionTemplate.cs" />
+    <Compile Include="MonoDevelop.Ide.Templates\SolutionFolderDescriptor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
