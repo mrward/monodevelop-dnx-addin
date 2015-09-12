@@ -1,5 +1,5 @@
 ﻿//
-// SolutionFolderDescriptor.cs
+// SolutionFolderFileDescriptor.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -26,33 +26,25 @@
 //
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Xml;
-
-using MonoDevelop.Core;
 using MonoDevelop.Projects;
+using MonoDevelop.Core;
 
 namespace MonoDevelop.Ide.Templates
 {
-	class SolutionFolderDescriptor
+	class SolutionFolderFileDescriptor
 	{
-		List<SolutionFolderFileDescriptor> files = new List<SolutionFolderFileDescriptor> ();
-
-		SolutionFolderDescriptor ()
+		SolutionFolderFileDescriptor ()
 		{
 		}
 
 		public string Name { get; set; }
 
-		public static SolutionFolderDescriptor CreateDescriptor (XmlElement xmlElement)
+		public static SolutionFolderFileDescriptor CreateDescriptor (XmlElement xmlElement)
 		{
-			var folder = new SolutionFolderDescriptor ();
-			folder.Name = GetName (xmlElement);
-
-			folder.files = GetFiles (xmlElement["SolutionFolderFileItems"]).ToList ();
-
-			return folder;
+			return new SolutionFolderFileDescriptor {
+				Name = GetName (xmlElement)
+			};
 		}
 
 		static string GetName (XmlElement xmlElement)
@@ -64,17 +56,10 @@ namespace MonoDevelop.Ide.Templates
 				throw new InvalidOperationException ("Attribute 'name' not found");
 		}
 
-		public SolutionFolder CreateFolder (ProjectCreateInformation projectCreateInformation)
+		public void AddFileToFolder (SolutionFolder folder, ProjectCreateInformation projectCreateInformation)
 		{
-			var folder = new SolutionFolder {
-				Name = GetName (projectCreateInformation)
-			};
-
-			foreach (SolutionFolderFileDescriptor descriptor in files) {
-				descriptor.AddFileToFolder (folder, projectCreateInformation);
-			}
-
-			return folder;
+			string name = GetName (projectCreateInformation);
+			folder.Files.Add (name);
 		}
 
 		string GetName (ProjectCreateInformation projectCreateInformation)
@@ -82,15 +67,6 @@ namespace MonoDevelop.Ide.Templates
 			return StringParserService.Parse (Name, new string[,] {
 				{"ProjectName", projectCreateInformation.ProjectName}
 			});
-		}
-
-		static IEnumerable<SolutionFolderFileDescriptor> GetFiles (XmlElement solutionFileItems)
-		{
-			if (solutionFileItems != null) {
-				foreach (XmlElement fileItem in solutionFileItems.OfType<XmlElement> ()) {
-					yield return SolutionFolderFileDescriptor.CreateDescriptor (fileItem);
-				}
-			}
 		}
 	}
 }

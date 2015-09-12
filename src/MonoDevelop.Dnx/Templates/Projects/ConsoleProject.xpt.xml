@@ -29,9 +29,9 @@
 		</Options>
 		
 		<SolutionFolder name="Solution Items">
-			<SolutionFileItems>
-				<SolutionFileItem name="global.json" />
-			</SolutionFileItems>
+			<SolutionFolderFileItems>
+				<SolutionFolderFile name="global.json" />
+			</SolutionFolderFileItems>
 		</SolutionFolder>
 
 		<Files>
