@@ -52,6 +52,7 @@ namespace MonoDevelop.Ide.Templates
         string name;
         string type;
 		RuntimeAddin addin;
+		List<CustomFileDescriptionTemplate> files = new List<CustomFileDescriptionTemplate> ();
 
         private List<ISolutionItemDescriptor> entryDescriptors = new List<ISolutionItemDescriptor> ();
         public ISolutionItemDescriptor[] EntryDescriptors
@@ -79,6 +80,7 @@ namespace MonoDevelop.Ide.Templates
             if (xmlElement["Options"] != null && xmlElement["Options"]["StartupProject"] != null)
                 solutionDescriptor.startupProject = xmlElement["Options"]["StartupProject"].InnerText;
 
+			AddFiles (xmlElement["Files"], baseDirectory, solutionDescriptor);
 
             foreach (XmlNode xmlNode in xmlElement.ChildNodes) {
                 if (xmlNode is XmlElement) {
@@ -185,6 +187,8 @@ namespace MonoDevelop.Ide.Templates
                 }
             }
 
+			CreateFiles (workspaceItem, projectCreateInformation, defaultLanguage);
+
 			if (!workspaceItem.FileFormat.CanWrite (workspaceItem)) {
 				// The default format can't write solutions of this type. Find a compatible format.
 				FileFormat f = IdeApp.Services.ProjectService.FileFormats.GetFileFormatsForObject (workspaceItem).First ();
@@ -197,6 +201,42 @@ namespace MonoDevelop.Ide.Templates
 		public bool HasPackages ()
 		{
 			return entryDescriptors.OfType<ProjectDescriptor> ().Any (descriptor => descriptor.HasPackages ());
+		}
+
+		static void AddFiles (XmlElement files, FilePath baseDirectory, SolutionDescriptor solutionDescriptor)
+		{
+			if (files == null)
+				return;
+
+			foreach (XmlElement file in files.ChildNodes.OfType<XmlElement> ()) {
+				solutionDescriptor.files.Add (CustomFileDescriptionTemplate.CreateTemplate (file, baseDirectory));
+			}
+		}
+
+		void CreateFiles (WorkspaceItem workspaceItem, ProjectCreateInformation projectCreateInformation, string defaultLanguage)
+		{
+			SolutionItem policyParent = null;
+			var solution = workspaceItem as Solution;
+			if (solution != null)
+				policyParent = solution.RootFolder;
+
+			var project = new GenericProject ();
+			project.BaseDirectory = solution.BaseDirectory;
+
+			foreach (CustomFileDescriptionTemplate fileTemplate in files) {
+				try {
+					if (!projectCreateInformation.ShouldCreate (fileTemplate.CreateCondition))
+						continue;
+					fileTemplate.SetProjectTagModel (projectCreateInformation.Parameters);
+					fileTemplate.AddToProject (policyParent, project, defaultLanguage, project.BaseDirectory, null);
+				} catch (Exception ex) {
+					if (!IdeApp.IsInitialized)
+						throw;
+					MessageService.ShowError (GettextCatalog.GetString ("File {0} could not be written.", fileTemplate.Name), ex);
+				} finally {
+					fileTemplate.SetProjectTagModel (null);
+				}
+			}
 		}
 	}
 }
