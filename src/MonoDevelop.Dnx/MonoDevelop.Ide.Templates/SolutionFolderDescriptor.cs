@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
 
@@ -38,6 +39,7 @@ namespace MonoDevelop.Ide.Templates
 	class SolutionFolderDescriptor
 	{
 		List<SolutionFolderFileDescriptor> files = new List<SolutionFolderFileDescriptor> ();
+		List<ProjectDescriptor> projects = new List<ProjectDescriptor> ();
 
 		SolutionFolderDescriptor ()
 		{
@@ -45,12 +47,12 @@ namespace MonoDevelop.Ide.Templates
 
 		public string Name { get; set; }
 
-		public static SolutionFolderDescriptor CreateDescriptor (XmlElement xmlElement)
+		public static SolutionFolderDescriptor CreateDescriptor (XmlElement xmlElement, FilePath baseDirectory)
 		{
 			var folder = new SolutionFolderDescriptor ();
 			folder.Name = GetName (xmlElement);
-
-			folder.files = GetFiles (xmlElement["SolutionFolderFileItems"]).ToList ();
+			folder.files = GetFiles (xmlElement).ToList ();
+			folder.projects = GetProjects (xmlElement, baseDirectory).ToList ();
 
 			return folder;
 		}
@@ -66,15 +68,20 @@ namespace MonoDevelop.Ide.Templates
 
 		public SolutionFolder CreateFolder (ProjectCreateInformation projectCreateInformation)
 		{
-			var folder = new SolutionFolder {
+			return new SolutionFolder {
 				Name = GetName (projectCreateInformation)
 			};
+		}
 
-			foreach (SolutionFolderFileDescriptor descriptor in files) {
-				descriptor.AddFileToFolder (folder, projectCreateInformation);
+		public void Initialize (SolutionFolder folder, ProjectCreateInformation projectCreateInformation, string defaultLanguage)
+		{
+			foreach (SolutionFolderFileDescriptor fileDescriptor in files) {
+				fileDescriptor.AddFileToFolder (folder, projectCreateInformation);
 			}
 
-			return folder;
+			foreach (ProjectDescriptor projectDescriptor in projects) {
+				CreateProject (folder, projectDescriptor, projectCreateInformation, defaultLanguage);
+			}
 		}
 
 		string GetName (ProjectCreateInformation projectCreateInformation)
@@ -84,12 +91,68 @@ namespace MonoDevelop.Ide.Templates
 			});
 		}
 
-		static IEnumerable<SolutionFolderFileDescriptor> GetFiles (XmlElement solutionFileItems)
+		static IEnumerable<SolutionFolderFileDescriptor> GetFiles (XmlElement xmlElement)
 		{
+			XmlElement solutionFileItems = xmlElement["SolutionFolderFileItems"];
 			if (solutionFileItems != null) {
 				foreach (XmlElement fileItem in solutionFileItems.OfType<XmlElement> ()) {
 					yield return SolutionFolderFileDescriptor.CreateDescriptor (fileItem);
 				}
+			}
+		}
+
+		static IEnumerable<ProjectDescriptor> GetProjects (XmlElement xmlElement, FilePath baseDirectory)
+		{
+			foreach (XmlElement projectElement in xmlElement.ChildNodes.OfType<XmlElement> ()
+				.Where (e => e.Name == "Project")) {
+				yield return ProjectDescriptor.CreateProjectDescriptor (projectElement, baseDirectory);
+			}
+		}
+
+		void CreateProject (
+			SolutionFolder folder,
+			ProjectDescriptor projectDescriptor,
+			ProjectCreateInformation originalProjectCreateInformation,
+			string defaultLanguage)
+		{
+			ProjectCreateInformation projectCreateInformation =
+				CreateProjectCreateInformation (projectDescriptor, originalProjectCreateInformation);
+
+			SolutionEntityItem project = projectDescriptor.CreateItem (projectCreateInformation, defaultLanguage);
+			if (project == null)
+				return;
+
+			projectDescriptor.InitializeItem (folder.ParentSolution.RootFolder, projectCreateInformation, defaultLanguage, project);
+
+			AddProjectConfigurationToSolution (project, folder.ParentSolution);
+
+			folder.Items.Add (project);
+		}
+
+		ProjectCreateInformation CreateProjectCreateInformation (ProjectDescriptor projectDescriptor, ProjectCreateInformation originalProjectCreateInformation)
+		{
+			var entry = projectDescriptor as ICustomProjectCIEntry;
+			if (entry == null)
+				return originalProjectCreateInformation;
+
+			var projectCreateInformation = entry.CreateProjectCI (originalProjectCreateInformation);
+			return new ProjectTemplateCreateInformation (projectCreateInformation, originalProjectCreateInformation.ProjectName);
+		}
+
+		void AddProjectConfigurationToSolution (SolutionEntityItem info, Solution solution)
+		{
+			var configurationTarget = info as IConfigurationTarget;
+			if (configurationTarget == null)
+				return;
+
+			foreach (ItemConfiguration configuration in configurationTarget.Configurations) {
+				bool flag = false;
+				foreach (SolutionConfiguration solutionCollection in solution.Configurations) {
+					if (solutionCollection.Id == configuration.Id)
+						flag = true;
+				}
+				if (!flag)
+					solution.AddConfiguration (configuration.Id, true);
 			}
 		}
 	}

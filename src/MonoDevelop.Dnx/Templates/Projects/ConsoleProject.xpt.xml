@@ -43,13 +43,13 @@
 }</File>
 		</Files>
 
-		<!--<SolutionFolder name="src">-->
-			<Project name="${ProjectName}" type="Dnx" directory=".">
+		<SolutionFolder name="src">
+			<Project name="${ProjectName}" type="Dnx" directory="./src/${ProjectName}">
 				<Options ExternalConsole="True"/>
 
 				<Files>
 					<File name="Program.cs" AddStandardHeader="True"><![CDATA[using System;
-	
+
 namespace ${Namespace}
 {
 	public class Program
@@ -88,6 +88,6 @@ namespace ${Namespace}
 }</File>
 				</Files>
 			</Project>
-		<!--</SolutionFolder>-->
+		</SolutionFolder>
 	</Combine>
 </Template>

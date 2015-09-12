@@ -97,7 +97,8 @@ namespace MonoDevelop.Ide.Templates
 							SolutionItemDescriptor.CreateDescriptor (addin, xmlNodeElement));
                         break;
 					case "SolutionFolder":
-						solutionDescriptor.solutionFolders.Add (SolutionFolderDescriptor.CreateDescriptor (xmlNodeElement));
+						solutionDescriptor.solutionFolders.Add (
+								SolutionFolderDescriptor.CreateDescriptor (xmlNodeElement, baseDirectory));
 						break;
                     }
                 }
@@ -153,7 +154,8 @@ namespace MonoDevelop.Ide.Templates
             Solution solution = workspaceItem as Solution;
             if (solution != null) {
 
-				CreateSolutionFolders (solution, projectCreateInformation);
+				CreateSolutionFolders (solution, projectCreateInformation, defaultLanguage);
+
                 for ( int i = 0; i < entryDescriptors.Count; i++ ) {
                     ProjectCreateInformation entryProjectCI;
                     var entry = entryDescriptors[i] as ICustomProjectCIEntry;
@@ -245,11 +247,15 @@ namespace MonoDevelop.Ide.Templates
 			}
 		}
 
-		void CreateSolutionFolders (Solution solution, ProjectCreateInformation projectCreateInformation)
+		void CreateSolutionFolders (
+			Solution solution,
+			ProjectCreateInformation projectCreateInformation,
+			string defaultLanguage)
 		{
 			foreach (SolutionFolderDescriptor descriptor in solutionFolders) {
 				SolutionFolder folder = descriptor.CreateFolder (projectCreateInformation);
 				solution.RootFolder.AddItem (folder);
+				descriptor.Initialize (folder, projectCreateInformation, defaultLanguage);
 			}
 		}
 	}
