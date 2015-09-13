@@ -1,0 +1,17 @@
+﻿<?xml version="1.0"?>
+<Template
+	originator="Matt Ward"
+	created="2015/09/13"
+	lastModified="2015/09/13">
+
+	<TemplateConfiguration>
+		<_Name>global.json</_Name>
+	</TemplateConfiguration>
+
+	<TemplateFiles>
+		<File
+			name="global.json"
+			DefaultName="global.json"
+			src="global.json" />
+	</TemplateFiles>
+</Template>

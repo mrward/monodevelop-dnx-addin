@@ -8,7 +8,7 @@
   </PropertyGroup>
   <ItemGroup>
     <LicenseItem Include="$(OutputPath)Licenses\*.txt" />
-    <ProjectTemplateItem Include="$(OutputPath)Templates\Projects\*.xpt.xml" />
+    <ProjectTemplateItem Include="$(OutputPath)Templates\Projects\*.*" />
   </ItemGroup>
   <Target Name="MyPostBuildTarget">
     <Copy SourceFiles="@(LicenseItem)" DestinationFolder="$(OutputPath)merged\Licenses" />

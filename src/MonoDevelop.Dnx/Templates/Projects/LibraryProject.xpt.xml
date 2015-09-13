@@ -1,0 +1,24 @@
+﻿<?xml version="1.0"?>
+<Template
+	originator="Matt Ward"
+	created="12/09/2015"
+	lastModified="12/09/2015">
+
+	<TemplateConfiguration>
+		<_Name>Library</_Name>
+		<Category>other/aspnet/aspnet5</Category>
+		<Icon>md-project-library</Icon>
+		<Image id="md-library-project" />
+		<LanguageName>C#</LanguageName>
+		<_Description>Creates a new ASP.NET 5 class library project.</_Description>
+		<DefaultFilename>ClassLibrary</DefaultFilename>
+		<FileExtension>.xproj</FileExtension>
+		<Wizard>MonoDevelop.Dnx.ProjectTemplateWizard</Wizard>
+		<DefaultParameters>Template=Library</DefaultParameters>
+	</TemplateConfiguration>
+
+	<Combine name="${ProjectName}" directory=".">
+		<Project name="${ProjectName}" type="Dnx" directory="./src" if="CreateDnxProject">
+		</Project>
+	</Combine>
+</Template>

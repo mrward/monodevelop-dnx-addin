@@ -81,7 +81,7 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		void LoadAspNetProjectSystem (Solution solution)
+		internal void LoadAspNetProjectSystem (Solution solution)
 		{
 			applicationLifetime = new MonoDevelopApplicationLifetime ();
 			context = new AspNet5Context ();

@@ -6,6 +6,7 @@
 		<Import file="Licenses/Microsoft-AspNet-LICENSE.txt" />
 
 		<Import file="Templates/Projects/ConsoleProject.xpt.xml"/>
+		<Import file="Templates/Projects/LibraryProject.xpt.xml"/>
 		<Import file="Templates/Projects/PlaceholderConsoleProject.xpt.xml"/>
 	</Runtime>
 
@@ -69,6 +70,9 @@
 		<ProjectTemplate
 			id="DnxPlaceholderProject"
 			file="Templates/Projects/PlaceholderConsoleProject.xpt.xml" />
+		<ProjectTemplate
+			id="DnxLibraryProject"
+			file="Templates/Projects/LibraryProject.xpt.xml" />
 	</Extension>
 
 	<Extension path = "/MonoDevelop/Ide/DnxFileTemplateTypes">
@@ -78,4 +82,9 @@
 	<Extension path="/MonoDevelop/Ide/ProjectTemplatingProviders">
 		<Class id="Dnx.ProjectTemplatingProvider" class="MonoDevelop.Ide.Templates.ProjectTemplatingProvider" />
 	</Extension>
+
+	<Extension path="/MonoDevelop/Ide/ProjectTemplateWizards">
+		<Class id="MonoDevelop.Dnx.ProjectTemplateWizard" class="MonoDevelop.Dnx.DnxProjectTemplateWizard" />
+	</Extension>
+
 </ExtensionModel>

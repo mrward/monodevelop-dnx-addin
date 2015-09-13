@@ -66,13 +66,18 @@ namespace MonoDevelop.Dnx
 
 		protected override void OnEndLoad ()
 		{
+			LoadFiles ();
+			base.OnEndLoad ();
+		}
+
+		void LoadFiles ()
+		{
 			foreach (string fileName in Directory.GetFiles (BaseDirectory, "*.*", SearchOption.AllDirectories)) {
 				if (IsSupportedProjectFileItem (fileName)) {
 					Items.Add (CreateFileProjectItem(fileName));
 				}
 			}
 			AddConfigurations ();
-			base.OnEndLoad ();
 		}
 
 		bool IsSupportedProjectFileItem (string fileName)
@@ -139,7 +144,7 @@ namespace MonoDevelop.Dnx
 			this.project = project;
 		}
 
-		void AddConfigurations ()
+		internal void AddConfigurations ()
 		{
 			AddConfiguration ("Debug");
 			AddConfiguration ("Release");
