@@ -88,7 +88,7 @@ namespace MonoDevelop.Dnx
 			var project = new DnxProject ();
 			project.IsDirty = true;
 			string projectName = Parameters["UserDefinedProjectName"];
-			project.FileName = solution.BaseDirectory.Combine ("src", projectName).ChangeExtension (".xproj");
+			project.FileName = solution.BaseDirectory.Combine ("src", projectName, projectName).ChangeExtension (".xproj");
 
 			if (!Directory.Exists (project.BaseDirectory)) {
 				Directory.CreateDirectory (project.BaseDirectory);
