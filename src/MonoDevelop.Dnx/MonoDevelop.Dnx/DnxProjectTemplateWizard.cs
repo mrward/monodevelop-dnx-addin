@@ -97,16 +97,23 @@ namespace MonoDevelop.Dnx
 			project.AddConfigurations ();
 			srcFolder.AddItem (project, true);
 
+			string projectTemplateName = Parameters["Template"];
+
 			CreateFileFromTemplate (solution, "global.json");
-			CreateFileFromTemplate (project, "LibraryProject.MyClass.cs");
-			CreateFileFromTemplate (project, "LibraryProject.project.json");
+			CreateFileFromTemplate (project, projectTemplateName, "project.json");
+
+			foreach (string templateFileName in Parameters["Files"].Split('|')) {
+				CreateFileFromTemplate (project, projectTemplateName, templateFileName);
+			}
 
 			project.Save (new NullProgressMonitor ());
 			solution.Save (new NullProgressMonitor ());
 
-			string fileToOpen = project.BaseDirectory.Combine ("MyClass.cs");
-
-			IdeApp.Workbench.OpenDocument (fileToOpen, project, false);
+			string fileToOpen = Parameters["OpenFile"];
+			if (!String.IsNullOrEmpty (fileToOpen)) {
+				fileToOpen = project.BaseDirectory.Combine (fileToOpen);
+				IdeApp.Workbench.OpenDocument (fileToOpen, project, false);
+			}
 
 			var pad = IdeApp.Workbench.Pads.SolutionPad;
 			if (pad != null) {
@@ -119,15 +126,23 @@ namespace MonoDevelop.Dnx
 			DnxServices.ProjectService.LoadAspNetProjectSystem (solution);
 		}
 
-		void CreateFileFromTemplate (Project project, string templateName)
+		void CreateFileFromTemplate (Project project, string projectTemplateName, string fileTemplateName)
 		{
-			CreateFileFromTemplate (project, project.ParentSolution.RootFolder, templateName);
+			if (!String.IsNullOrEmpty (projectTemplateName))
+				fileTemplateName = projectTemplateName + "." + fileTemplateName;
+
+			CreateFileFromTemplate (project, fileTemplateName);
 		}
 
-		void CreateFileFromTemplate (Project project, SolutionItem policyItem, string templateName)
+		void CreateFileFromTemplate (Project project, string fileTemplateName)
+		{
+			CreateFileFromTemplate (project, project.ParentSolution.RootFolder, fileTemplateName);
+		}
+
+		void CreateFileFromTemplate (Project project, SolutionItem policyItem, string fileTemplateName)
 		{
 			FilePath templateSourceDirectory = GetTemplateSourceDirectory ();
-			string templateFileName = templateSourceDirectory.Combine (templateName + ".xft.xml");
+			string templateFileName = templateSourceDirectory.Combine (fileTemplateName + ".xft.xml");
 			using (Stream stream = File.OpenRead (templateFileName)) {
 				var document = new XmlDocument ();
 				document.Load (stream);

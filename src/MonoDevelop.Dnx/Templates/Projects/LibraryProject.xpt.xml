@@ -14,7 +14,7 @@
 		<DefaultFilename>ClassLibrary</DefaultFilename>
 		<FileExtension>.xproj</FileExtension>
 		<Wizard>MonoDevelop.Dnx.ProjectTemplateWizard</Wizard>
-		<DefaultParameters>Template=Library</DefaultParameters>
+		<DefaultParameters>Template=LibraryProject;OpenFile=MyClass.cs;Files=MyClass.cs</DefaultParameters>
 	</TemplateConfiguration>
 
 	<Combine name="${ProjectName}" directory=".">
