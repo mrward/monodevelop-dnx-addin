@@ -203,6 +203,7 @@
     <Compile Include="MonoDevelop.Ide.Templates\SolutionFolderDescriptor.cs" />
     <Compile Include="MonoDevelop.Ide.Templates\SolutionFolderFileDescriptor.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectTemplateWizard.cs" />
+    <Compile Include="MonoDevelop.Dnx\DnxMSBuildProjectItemType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

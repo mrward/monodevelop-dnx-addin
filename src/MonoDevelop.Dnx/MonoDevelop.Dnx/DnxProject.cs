@@ -51,9 +51,11 @@ namespace MonoDevelop.Dnx
 		public DnxProject ()
 			: base ("C#")
 		{
+			DnxMSBuildProjectHandler.InstallHandler (this);
 		}
 
 		public DnxProject (ProjectCreateInformation info, XmlElement projectOptions)
+			: this ()
 		{
 			IsDirty = true;
 			AddConfigurations ();

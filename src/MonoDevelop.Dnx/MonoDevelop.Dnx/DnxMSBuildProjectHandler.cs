@@ -37,6 +37,12 @@ namespace MonoDevelop.Dnx
 		DnxProject dnxProject;
 		MSBuildProject msbuildProject;
 
+		public static void InstallHandler (DnxProject project)
+		{
+			var itemType = new DnxMSBuildProjectItemType ();
+			itemType.InitializeHandler (project);
+		}
+
 		protected override MSBuildProject SaveProject (IProgressMonitor monitor)
 		{
 			dnxProject = EntityItem as DnxProject;
