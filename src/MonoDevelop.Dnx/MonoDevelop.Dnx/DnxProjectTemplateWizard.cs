@@ -29,14 +29,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using MonoDevelop.Core.ProgressMonitoring;
 using MonoDevelop.Ide;
+using MonoDevelop.Ide.Projects;
 using MonoDevelop.Ide.Templates;
 using MonoDevelop.Projects;
 using MonoDevelop.Ide.Gui.Pads;
 using MonoDevelop.Ide.Gui.Components;
 using MonoDevelop.Core;
-using System.Xml;
 
 namespace MonoDevelop.Dnx
 {
@@ -94,6 +95,8 @@ namespace MonoDevelop.Dnx
 				Directory.CreateDirectory (project.BaseDirectory);
 			}
 
+			RemoveProjectDirectoryCreatedByNewProjectDialog (solution.BaseDirectory, projectName);
+
 			project.AddConfigurations ();
 			srcFolder.AddItem (project, true);
 
@@ -124,6 +127,22 @@ namespace MonoDevelop.Dnx
 			}
 
 			DnxServices.ProjectService.LoadAspNetProjectSystem (solution);
+		}
+
+		void RemoveProjectDirectoryCreatedByNewProjectDialog (FilePath parentDirectory, string projectName)
+		{
+			FilePath projectDirectory = parentDirectory.Combine (projectName);
+			if (!Directory.Exists (projectDirectory))
+				return;
+
+			if (Directory.EnumerateFiles (projectDirectory).Any ())
+				return;
+
+			try {
+				Directory.Delete (projectDirectory);
+			} catch (Exception ex) {
+				LoggingService.LogError ("Unable to delete project directory.", ex);
+			}
 		}
 
 		void CreateFileFromTemplate (Project project, string projectTemplateName, string fileTemplateName)
