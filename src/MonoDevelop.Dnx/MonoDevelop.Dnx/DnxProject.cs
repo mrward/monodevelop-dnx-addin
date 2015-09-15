@@ -338,6 +338,20 @@ namespace MonoDevelop.Dnx
 		{
 			return true;
 		}
+
+		public void GenerateNewProjectFileName (Solution solution, string projectName)
+		{
+			FileName = solution.BaseDirectory
+				.Combine ("src", projectName, projectName)
+				.ChangeExtension (".xproj");
+		}
+
+		public void CreateProjectDirectory ()
+		{
+			if (!Directory.Exists (BaseDirectory)) {
+				Directory.CreateDirectory (BaseDirectory);
+			}
+		}
 	}
 }
 

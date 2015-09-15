@@ -1,10 +1,10 @@
 ﻿//
-// SolutionExtensions.cs
+// EmptyDirectoryRemover.cs
 //
 // Author:
-//       Matt Ward <ward.matt@gmail.com>
+//       Matt Ward <matt.ward@xamarin.com>
 //
-// Copyright (c) 2015 Matthew Ward
+// Copyright (c) 2015 Xamarin Inc. (http://xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,39 +25,28 @@
 // THE SOFTWARE.
 //
 
+using System;
 using System.IO;
 using System.Linq;
 using MonoDevelop.Core;
-using MonoDevelop.Projects;
 
 namespace MonoDevelop.Dnx
 {
-	public static class SolutionExtensions
+	public static class EmptyDirectoryRemover
 	{
-		public static bool HasAspNetProjects (this Solution solution)
+		public static void Remove (FilePath directory)
 		{
-			return solution.GetAllSolutionItems<DnxProject> ().Any ();
-		}
+			if (!Directory.Exists (directory))
+				return;
 
-		public static DnxProject FindProjectByProjectJsonFileName(this Solution solution, string fileName)
-		{
-			var directory = new FilePath (Path.GetDirectoryName(fileName));
-			return solution.GetAllSolutionItems<DnxProject> ()
-				.FirstOrDefault (project => project.BaseDirectory == directory);
-		}
+			if (Directory.EnumerateFiles (directory).Any ())
+				return;
 
-		public static SolutionFolder AddSolutionFolder (this Solution solution, string name, params FilePath[] files)
-		{
-			var solutionFolder = new SolutionFolder {
-				Name = name
-			};
-
-			foreach (FilePath file in files) {
-				solutionFolder.Files.Add (file);
+			try {
+				Directory.Delete (directory);
+			} catch (Exception ex) {
+				LoggingService.LogError ("Unable to delete directory.", ex);
 			}
-
-			solution.RootFolder.AddItem (solutionFolder);
-			return solutionFolder;
 		}
 	}
 }

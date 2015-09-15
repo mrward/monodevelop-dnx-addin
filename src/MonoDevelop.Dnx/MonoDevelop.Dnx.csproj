@@ -204,6 +204,9 @@
     <Compile Include="MonoDevelop.Ide.Templates\SolutionFolderFileDescriptor.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectTemplateWizard.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxMSBuildProjectItemType.cs" />
+    <Compile Include="MonoDevelop.Dnx\WorkbenchExtensions.cs" />
+    <Compile Include="MonoDevelop.Dnx\FileTemplateProcessor.cs" />
+    <Compile Include="MonoDevelop.Dnx\EmptyDirectoryRemover.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

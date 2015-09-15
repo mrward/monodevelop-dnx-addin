@@ -25,18 +25,12 @@
 // THE SOFTWARE.
 //
 
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Xml;
 using MonoDevelop.Core.ProgressMonitoring;
 using MonoDevelop.Ide;
-using MonoDevelop.Ide.Projects;
 using MonoDevelop.Ide.Templates;
 using MonoDevelop.Projects;
-using MonoDevelop.Ide.Gui.Pads;
-using MonoDevelop.Ide.Gui.Components;
 using MonoDevelop.Core;
 
 namespace MonoDevelop.Dnx
@@ -65,7 +59,7 @@ namespace MonoDevelop.Dnx
 			AddSolutionFoldersToSolution (solution);
 		}
 
-		Solution GetSolution (IEnumerable<IWorkspaceFileObject> items)
+		static Solution GetSolution (IEnumerable<IWorkspaceFileObject> items)
 		{
 			if (items.Count () == 1) {
 				return items.OfType<Solution> ().FirstOrDefault ();
@@ -73,130 +67,62 @@ namespace MonoDevelop.Dnx
 			return null;
 		}
 
-		void AddSolutionFoldersToSolution (Solution solution)
+		DnxProject CreateProject (Solution solution, string projectName)
 		{
-			var solutionItemsFolder = new SolutionFolder {
-				Name = "Solution Items"
-			};
-			solutionItemsFolder.Files.Add (solution.BaseDirectory.Combine ("global.json"));
-			solution.RootFolder.AddItem (solutionItemsFolder);
-
-			var srcFolder = new SolutionFolder {
-				Name = "src"
-			};
-			solution.RootFolder.AddItem (srcFolder);
-
 			var project = new DnxProject ();
 			project.IsDirty = true;
-			string projectName = Parameters["UserDefinedProjectName"];
-			project.FileName = solution.BaseDirectory.Combine ("src", projectName, projectName).ChangeExtension (".xproj");
+			project.GenerateNewProjectFileName (solution, projectName);
+			project.AddConfigurations ();
 
-			if (!Directory.Exists (project.BaseDirectory)) {
-				Directory.CreateDirectory (project.BaseDirectory);
-			}
+			return project;
+		}
+
+		void CreateFilesFromTemplate (Solution solution, DnxProject project)
+		{
+			string projectTemplateName = Parameters ["Template"];
+
+			string[] files = Parameters["Files"].Split ('|');
+			FileTemplateProcessor.CreateFilesFromTemplate (solution, project, projectTemplateName, files);
+		}
+
+		void AddSolutionFoldersToSolution (Solution solution)
+		{
+			AddSolutionItemsFolder (solution);
+
+			SolutionFolder srcFolder = solution.AddSolutionFolder ("src");
+
+			string projectName = Parameters["UserDefinedProjectName"];
+			DnxProject project = CreateProject (solution, projectName);
+			srcFolder.AddItem (project, true);
+
+			project.CreateProjectDirectory ();
 
 			RemoveProjectDirectoryCreatedByNewProjectDialog (solution.BaseDirectory, projectName);
 
-			project.AddConfigurations ();
-			srcFolder.AddItem (project, true);
+			CreateFilesFromTemplate (solution, project);
 
-			string projectTemplateName = Parameters["Template"];
-
-			CreateFileFromTemplate (solution, "global.json");
-			CreateFileFromTemplate (project, projectTemplateName, "project.json");
-
-			foreach (string templateFileName in Parameters["Files"].Split('|')) {
-				CreateFileFromTemplate (project, projectTemplateName, templateFileName);
-			}
-
-			project.Save (new NullProgressMonitor ());
 			solution.Save (new NullProgressMonitor ());
 
-			string fileToOpen = Parameters["OpenFile"];
-			if (!String.IsNullOrEmpty (fileToOpen)) {
-				fileToOpen = project.BaseDirectory.Combine (fileToOpen);
-				IdeApp.Workbench.OpenDocument (fileToOpen, project, false);
-			}
-
-			var pad = IdeApp.Workbench.Pads.SolutionPad;
-			if (pad != null) {
-				var solutionPad = pad.Content as SolutionPad;
-				if (solutionPad != null) {
-					SelectFile (solutionPad.TreeView, project, fileToOpen);
-				}
-			}
+			OpenProjectFile (project);
 
 			DnxServices.ProjectService.LoadAspNetProjectSystem (solution);
+		}
+
+		void AddSolutionItemsFolder (Solution solution)
+		{
+			string globalJsonFile = solution.BaseDirectory.Combine ("global.json");
+			solution.AddSolutionFolder ("Solution Items", globalJsonFile);
 		}
 
 		void RemoveProjectDirectoryCreatedByNewProjectDialog (FilePath parentDirectory, string projectName)
 		{
 			FilePath projectDirectory = parentDirectory.Combine (projectName);
-			if (!Directory.Exists (projectDirectory))
-				return;
-
-			if (Directory.EnumerateFiles (projectDirectory).Any ())
-				return;
-
-			try {
-				Directory.Delete (projectDirectory);
-			} catch (Exception ex) {
-				LoggingService.LogError ("Unable to delete project directory.", ex);
-			}
+			EmptyDirectoryRemover.Remove (projectDirectory);
 		}
 
-		void CreateFileFromTemplate (Project project, string projectTemplateName, string fileTemplateName)
+		void OpenProjectFile (DnxProject project)
 		{
-			if (!String.IsNullOrEmpty (projectTemplateName))
-				fileTemplateName = projectTemplateName + "." + fileTemplateName;
-
-			CreateFileFromTemplate (project, fileTemplateName);
-		}
-
-		void CreateFileFromTemplate (Project project, string fileTemplateName)
-		{
-			CreateFileFromTemplate (project, project.ParentSolution.RootFolder, fileTemplateName);
-		}
-
-		void CreateFileFromTemplate (Project project, SolutionItem policyItem, string fileTemplateName)
-		{
-			FilePath templateSourceDirectory = GetTemplateSourceDirectory ();
-			string templateFileName = templateSourceDirectory.Combine (fileTemplateName + ".xft.xml");
-			using (Stream stream = File.OpenRead (templateFileName)) {
-				var document = new XmlDocument ();
-				document.Load (stream);
-
-				foreach (XmlElement templateElement in document.DocumentElement["TemplateFiles"].ChildNodes.OfType<XmlElement> ()) {
-					var template = FileDescriptionTemplate.CreateTemplate (templateElement, templateSourceDirectory);
-					template.AddToProject (policyItem, project, "C#", project.BaseDirectory, null);
-				}
-			}
-		}
-
-		void CreateFileFromTemplate (Solution solution, string templateName)
-		{
-			var project = new GenericProject ();
-			project.BaseDirectory = solution.BaseDirectory;
-			CreateFileFromTemplate (project, solution.RootFolder, templateName);
-		}
-
-		FilePath GetTemplateSourceDirectory ()
-		{
-			var assemblyPath = new FilePath (typeof(DnxProjectTemplateWizard).Assembly.Location);
-			return assemblyPath.ParentDirectory.Combine ("Templates", "Projects");
-		}
-
-		void SelectFile (ExtensibleTreeView treeView, Project project, string file)
-		{
-			var projectFile = project.Files.GetFile (file);
-			if (projectFile == null)
-				return;
-
-			ITreeNavigator navigator = treeView.GetNodeAtObject (projectFile, true);
-			if (navigator != null) {
-				navigator.ExpandToNode ();
-				navigator.Selected = true;
-			}
+			IdeApp.Workbench.OpenProjectFile (project, Parameters["OpenFile"]);
 		}
 	}
 }
