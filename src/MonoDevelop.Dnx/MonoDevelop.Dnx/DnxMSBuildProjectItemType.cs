@@ -35,6 +35,11 @@ namespace MonoDevelop.Dnx
 {
 	public class DnxMSBuildProjectItemType : ItemTypeNode
 	{
+		public DnxMSBuildProjectItemType ()
+			: base (DnxProject.ProjectTypeGuid, ".xproj", null)
+		{
+		}
+
 		public override bool CanHandleItem (SolutionEntityItem item)
 		{
 			throw new NotImplementedException ();
@@ -47,7 +52,7 @@ namespace MonoDevelop.Dnx
 
 		protected override MSBuildHandler OnCreateHandler (string fileName, string itemGuid)
 		{
-			return new DnxMSBuildProjectHandler ();
+			return new DnxMSBuildProjectHandler (Guid, Import, itemGuid);
 		}
 	}
 }

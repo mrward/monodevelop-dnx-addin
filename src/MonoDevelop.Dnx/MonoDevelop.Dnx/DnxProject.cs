@@ -48,6 +48,8 @@ namespace MonoDevelop.Dnx
 		string name;
 		Dictionary<string, DependenciesMessage> dependencies = new Dictionary<string, DependenciesMessage> ();
 
+		public static readonly string ProjectTypeGuid = "{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}";
+
 		public DnxProject ()
 			: base ("C#")
 		{

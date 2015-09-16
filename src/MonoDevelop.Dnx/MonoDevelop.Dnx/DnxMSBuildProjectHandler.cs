@@ -37,6 +37,15 @@ namespace MonoDevelop.Dnx
 		DnxProject dnxProject;
 		MSBuildProject msbuildProject;
 
+		public DnxMSBuildProjectHandler ()
+		{
+		}
+
+		public DnxMSBuildProjectHandler (string typeGuid, string import, string itemId)
+			: base (typeGuid, import, itemId)
+		{
+		}
+
 		public static void InstallHandler (DnxProject project)
 		{
 			var itemType = new DnxMSBuildProjectItemType ();
