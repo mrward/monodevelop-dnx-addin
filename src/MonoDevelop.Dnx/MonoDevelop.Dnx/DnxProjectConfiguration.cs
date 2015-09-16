@@ -35,6 +35,10 @@ namespace MonoDevelop.Dnx
 			: base (name)
 		{
 		}
+
+		public DnxProjectConfiguration ()
+		{
+		}
 	}
 }
 
