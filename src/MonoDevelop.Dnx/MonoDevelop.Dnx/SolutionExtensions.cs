@@ -59,6 +59,16 @@ namespace MonoDevelop.Dnx
 			solution.RootFolder.AddItem (solutionFolder);
 			return solutionFolder;
 		}
+
+		public static void GenerateDefaultDnxProjectConfigurations (this Solution solution, DnxProject project)
+		{
+			project.AddConfigurations ();
+
+			foreach (SolutionItemConfiguration configuration in project.Configurations) {
+				SolutionConfiguration newConfiguration = solution.AddConfiguration (configuration.Name, false);
+				newConfiguration.AddItem (project);
+			}
+		}
 	}
 }
 

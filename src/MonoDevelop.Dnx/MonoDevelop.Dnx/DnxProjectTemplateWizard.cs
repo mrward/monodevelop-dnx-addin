@@ -72,7 +72,6 @@ namespace MonoDevelop.Dnx
 			var project = new DnxProject ();
 			project.IsDirty = true;
 			project.GenerateNewProjectFileName (solution, projectName);
-			project.AddConfigurations ();
 
 			return project;
 		}
@@ -93,7 +92,9 @@ namespace MonoDevelop.Dnx
 
 			string projectName = Parameters["UserDefinedProjectName"];
 			DnxProject project = CreateProject (solution, projectName);
-			srcFolder.AddItem (project, true);
+			srcFolder.AddItem (project);
+
+			solution.GenerateDefaultDnxProjectConfigurations (project);
 
 			project.CreateProjectDirectory ();
 
