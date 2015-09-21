@@ -5,9 +5,17 @@
 		<Import file="Licenses/Apache-2.0-LICENSE.txt" />
 		<Import file="Licenses/Microsoft-AspNet-LICENSE.txt" />
 
-		<Import file="Templates/Projects/ConsoleProject.xpt.xml"/>
-		<Import file="Templates/Projects/LibraryProject.xpt.xml"/>
-		<Import file="Templates/Projects/PlaceholderConsoleProject.xpt.xml"/>
+		<Import file="Templates/Projects/Common/global.json" />
+		<Import file="Templates/Projects/Common/global.json.xft.xml" />
+
+		<Import file="Templates/Projects/ConsoleProject.xpt.xml" />
+		<Import file="Templates/Projects/PlaceholderConsoleProject.xpt.xml" />
+
+		<Import file="Templates/Projects/Library/LibraryProject.MyClass.cs" />
+		<Import file="Templates/Projects/Library/LibraryProject.MyClass.cs.xft.xml" />
+		<Import file="Templates/Projects/Library/LibraryProject.project.json" />
+		<Import file="Templates/Projects/Library/LibraryProject.project.json.xft.xml" />
+		<Import file="Templates/Projects/Library/LibraryProject.xpt.xml" />
 	</Runtime>
 
 	<ExtensionPoint path = "/MonoDevelop/Ide/DnxProjectTemplates" name = "File template types">
@@ -72,7 +80,7 @@
 			file="Templates/Projects/PlaceholderConsoleProject.xpt.xml" />
 		<ProjectTemplate
 			id="DnxLibraryProject"
-			file="Templates/Projects/LibraryProject.xpt.xml" />
+			file="Templates/Projects/Library/LibraryProject.xpt.xml" />
 	</Extension>
 
 	<Extension path = "/MonoDevelop/Ide/DnxFileTemplateTypes">

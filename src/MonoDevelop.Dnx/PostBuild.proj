@@ -7,12 +7,12 @@
     <ILRepackCommand Condition=" '$(OS)' != 'Windows_NT' ">mono --runtime=v4.0.30319 "$(ILRepackExePath)"</ILRepackCommand>
   </PropertyGroup>
   <ItemGroup>
-    <LicenseItem Include="$(OutputPath)Licenses\*.txt" />
-    <ProjectTemplateItem Include="$(OutputPath)Templates\Projects\*.*" />
+    <LicenseItem Include="Licenses\*.txt" />
+    <TemplateItem Include="Templates\**\*.*" />
   </ItemGroup>
   <Target Name="MyPostBuildTarget">
     <Copy SourceFiles="@(LicenseItem)" DestinationFolder="$(OutputPath)merged\Licenses" />
-    <Copy SourceFiles="@(ProjectTemplateItem)" DestinationFolder="$(OutputPath)merged\Templates\Projects" />
+    <Copy SourceFiles="@(TemplateItem)" DestinationFolder="$(OutputPath)merged\Templates\%(RecursiveDir)" />
     <Exec Command="$(ILRepackCommand) /targetPlatform:v4 /lib:&quot;$(SolutionDir)..\lib&quot; /out:&quot;merged\$(AssemblyName).dll&quot; $(AssemblyName).dll &quot;$(SolutionDir)..\lib\Newtonsoft.Json.dll&quot;" WorkingDirectory="$(OutputPath)" />
   </Target>
 </Project>

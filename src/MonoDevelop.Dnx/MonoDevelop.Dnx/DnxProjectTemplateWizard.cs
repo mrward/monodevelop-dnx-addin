@@ -78,7 +78,7 @@ namespace MonoDevelop.Dnx
 
 		void CreateFilesFromTemplate (Solution solution, DnxProject project)
 		{
-			string projectTemplateName = Parameters ["Template"];
+			string projectTemplateName = Parameters["Template"];
 
 			string[] files = Parameters["Files"].Split ('|');
 			FileTemplateProcessor.CreateFilesFromTemplate (solution, project, projectTemplateName, files);

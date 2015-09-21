@@ -37,16 +37,16 @@ namespace MonoDevelop.Dnx
 {
 	public static class FileTemplateProcessor
 	{
-		static readonly FilePath templateSourceDirectory;
+		static readonly FilePath templateSourceRootDirectory;
 
 		static FileTemplateProcessor ()
 		{
-			templateSourceDirectory = GetTemplateSourceDirectory ();
+			templateSourceRootDirectory = GetTemplateSourceRootDirectory ();
 		}
 
 		public static void CreateFilesFromTemplate (Solution solution, DnxProject project, string projectTemplateName, params string[] files)
 		{
-			CreateFileFromTemplate (solution, "global.json");
+			CreateFileFromCommonTemplate (solution, "global.json");
 			CreateFileFromTemplate (project, projectTemplateName, "project.json");
 
 			foreach (string templateFileName in files) {
@@ -54,20 +54,30 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
+		public static void CreateFileFromCommonTemplate (Solution solution, string fileTemplateName)
+		{
+			FilePath templateSourceDirectory = templateSourceRootDirectory.Combine ("Common");
+			CreateFileFromTemplate (solution, templateSourceDirectory, "global.json");
+		}
+
 		public static void CreateFileFromTemplate (Project project, string projectTemplateName, string fileTemplateName)
 		{
-			if (!String.IsNullOrEmpty (projectTemplateName))
+			FilePath templateSourceDirectory = templateSourceRootDirectory;
+
+			if (!String.IsNullOrEmpty (projectTemplateName)) {
 				fileTemplateName = projectTemplateName + "." + fileTemplateName;
+				templateSourceDirectory = templateSourceRootDirectory.Combine (projectTemplateName.Replace ("Project", ""));
+			}
 
-			CreateFileFromTemplate (project, fileTemplateName);
+			CreateFileFromTemplate (project, templateSourceDirectory, fileTemplateName);
 		}
 
-		public static void CreateFileFromTemplate (Project project, string fileTemplateName)
+		public static void CreateFileFromTemplate (Project project, FilePath templateSourceDirectory, string fileTemplateName)
 		{
-			CreateFileFromTemplate (project, project.ParentSolution.RootFolder, fileTemplateName);
+			CreateFileFromTemplate (project, project.ParentSolution.RootFolder, templateSourceDirectory, fileTemplateName);
 		}
 
-		public static void CreateFileFromTemplate (Project project, SolutionItem policyItem, string fileTemplateName)
+		static void CreateFileFromTemplate (Project project, SolutionItem policyItem, FilePath templateSourceDirectory, string fileTemplateName)
 		{
 			string templateFileName = templateSourceDirectory.Combine (fileTemplateName + ".xft.xml");
 			using (Stream stream = File.OpenRead (templateFileName)) {
@@ -81,14 +91,14 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		public static void CreateFileFromTemplate (Solution solution, string templateName)
+		public static void CreateFileFromTemplate (Solution solution, FilePath templateSourceDirectory, string templateName)
 		{
 			var project = new GenericProject ();
 			project.BaseDirectory = solution.BaseDirectory;
-			CreateFileFromTemplate (project, solution.RootFolder, templateName);
+			CreateFileFromTemplate (project, solution.RootFolder, templateSourceDirectory, templateName);
 		}
 
-		static FilePath GetTemplateSourceDirectory ()
+		public static FilePath GetTemplateSourceRootDirectory ()
 		{
 			var assemblyPath = new FilePath (typeof(FileTemplateProcessor).Assembly.Location);
 			return assemblyPath.ParentDirectory.Combine ("Templates", "Projects");

@@ -233,32 +233,27 @@
     <None Include="Templates\Projects\PlaceholderConsoleProject.xpt.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Templates\Projects\LibraryProject.xpt.xml">
+    <None Include="Templates\Projects\Common\global.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Templates\Projects\LibraryProject.project.json">
+    <None Include="Templates\Projects\Common\global.json.xft.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Templates\Projects\LibraryProject.MyClass.cs">
+    <None Include="Templates\Projects\Library\LibraryProject.MyClass.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Templates\Projects\LibraryProject.project.json.xft.xml">
+    <None Include="Templates\Projects\Library\LibraryProject.MyClass.cs.xft.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Templates\Projects\LibraryProject.MyClass.cs.xft.xml">
+    <None Include="Templates\Projects\Library\LibraryProject.project.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Templates\Projects\global.json.xft.xml">
+    <None Include="Templates\Projects\Library\LibraryProject.project.json.xft.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Templates\Projects\global.json">
+    <None Include="Templates\Projects\Library\LibraryProject.xpt.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <Import Project="PostBuild.proj" />
-  <ItemGroup>
-    <Folder Include="Templates\" />
-    <Folder Include="MonoDevelop.Ide.Templates\" />
-    <Folder Include="MonoDevelop.Ide.Codons\" />
-  </ItemGroup>
 </Project>
