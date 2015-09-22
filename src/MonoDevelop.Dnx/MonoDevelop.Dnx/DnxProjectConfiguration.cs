@@ -34,10 +34,12 @@ namespace MonoDevelop.Dnx
 		public DnxProjectConfiguration (string name)
 			: base (name)
 		{
+			ExternalConsole = true;
 		}
 
 		public DnxProjectConfiguration ()
 		{
+			ExternalConsole = true;
 		}
 	}
 }
