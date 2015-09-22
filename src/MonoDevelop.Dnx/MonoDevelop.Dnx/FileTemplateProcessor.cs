@@ -44,9 +44,8 @@ namespace MonoDevelop.Dnx
 			templateSourceRootDirectory = GetTemplateSourceRootDirectory ();
 		}
 
-		public static void CreateFilesFromTemplate (Solution solution, DnxProject project, string projectTemplateName, params string[] files)
+		public static void CreateFilesFromTemplate (DnxProject project, string projectTemplateName, params string[] files)
 		{
-			CreateFileFromCommonTemplate (solution, "global.json");
 			CreateFileFromTemplate (project, projectTemplateName, "project.json");
 
 			foreach (string templateFileName in files) {

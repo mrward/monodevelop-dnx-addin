@@ -37,6 +37,8 @@ namespace MonoDevelop.Dnx
 {
 	public class DnxProjectTemplateWizard : TemplateWizard
 	{
+		bool createDnxProject;
+
 		public override WizardPage GetPage (int pageNumber)
 		{
 			return null;
@@ -50,21 +52,40 @@ namespace MonoDevelop.Dnx
 			get { return "MonoDevelop.Dnx.ProjectTemplateWizard"; }
 		}
 
-		public override void ItemsCreated (IEnumerable<IWorkspaceFileObject> items)
+		public override void ConfigureWizard ()
 		{
-			Solution solution = GetSolution (items);
-			if (solution == null)
-				return;
-
-			AddSolutionFoldersToSolution (solution);
+			createDnxProject = !Parameters.GetBoolean ("CreateSolution");
+			Parameters["CreateDnxProject"] = createDnxProject.ToString ();
 		}
 
-		static Solution GetSolution (IEnumerable<IWorkspaceFileObject> items)
+		public override void ItemsCreated (IEnumerable<IWorkspaceFileObject> items)
+		{
+			Solution solution = GetCreatedSolution (items);
+			if (solution != null) {
+				SolutionFolder srcFolder = AddSolutionFoldersToSolution (solution);
+				CreateProject (solution, srcFolder);
+				return;
+			}
+
+			DnxProject project = GetCreatedProject (items);
+			solution = project.ParentSolution;
+			SolutionFolder existingSrcFolder = project.GetSrcSolutionFolder ();
+			RemoveProjectFromSolution (project);
+
+			CreateProject (solution, existingSrcFolder, false);
+		}
+
+		static Solution GetCreatedSolution (IEnumerable<IWorkspaceFileObject> items)
 		{
 			if (items.Count () == 1) {
 				return items.OfType<Solution> ().FirstOrDefault ();
 			}
 			return null;
+		}
+
+		static DnxProject GetCreatedProject (IEnumerable<IWorkspaceFileObject> items)
+		{
+			return items.OfType<DnxProject> ().FirstOrDefault ();
 		}
 
 		DnxProject CreateProject (Solution solution, string projectName)
@@ -76,31 +97,47 @@ namespace MonoDevelop.Dnx
 			return project;
 		}
 
-		void CreateFilesFromTemplate (Solution solution, DnxProject project)
+		void CreateFilesFromTemplate (DnxProject project)
 		{
 			string projectTemplateName = Parameters["Template"];
 
 			string[] files = Parameters["Files"].Split ('|');
-			FileTemplateProcessor.CreateFilesFromTemplate (solution, project, projectTemplateName, files);
+			FileTemplateProcessor.CreateFilesFromTemplate (project, projectTemplateName, files);
 		}
 
-		void AddSolutionFoldersToSolution (Solution solution)
+		void RemoveProjectFromSolution (DnxProject project)
+		{
+			project.ParentFolder.Items.Remove (project);
+			project.Dispose ();
+		}
+
+		SolutionFolder AddSolutionFoldersToSolution (Solution solution)
 		{
 			AddSolutionItemsFolder (solution);
+			FileTemplateProcessor.CreateFileFromCommonTemplate (solution, "global.json");
 
-			SolutionFolder srcFolder = solution.AddSolutionFolder ("src");
+			return solution.AddSolutionFolder ("src");
+		}
 
+		void CreateProject (Solution solution, SolutionFolder srcFolder, bool createSolutionConfigurations = true)
+		{
 			string projectName = Parameters["UserDefinedProjectName"];
 			DnxProject project = CreateProject (solution, projectName);
 			srcFolder.AddItem (project);
 
-			solution.GenerateDefaultDnxProjectConfigurations (project);
+			project.AddConfigurations ();
+
+			if (createSolutionConfigurations) {
+				solution.GenerateDefaultDnxProjectConfigurations (project);
+			} else {
+				solution.EnsureConfigurationHasBuildEnabled (project);
+			}
 
 			project.CreateProjectDirectory ();
 
 			RemoveProjectDirectoryCreatedByNewProjectDialog (solution.BaseDirectory, projectName);
 
-			CreateFilesFromTemplate (solution, project);
+			CreateFilesFromTemplate (project);
 
 			solution.Save (new NullProgressMonitor ());
 

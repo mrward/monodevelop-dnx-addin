@@ -62,11 +62,32 @@ namespace MonoDevelop.Dnx
 
 		public static void GenerateDefaultDnxProjectConfigurations (this Solution solution, DnxProject project)
 		{
-			project.AddConfigurations ();
-
 			foreach (SolutionItemConfiguration configuration in project.Configurations) {
-				SolutionConfiguration newConfiguration = solution.AddConfiguration (configuration.Name, false);
-				newConfiguration.AddItem (project);
+				SolutionConfiguration existingConfiguration = solution.GetConfiguration (configuration);
+				if (existingConfiguration == null) {
+					SolutionConfiguration newConfiguration = solution.AddConfiguration (configuration.Name, false);
+					newConfiguration.AddItem (project);
+				}
+			}
+		}
+
+		static SolutionConfiguration GetConfiguration (this Solution solution, SolutionItemConfiguration configuration)
+		{
+			foreach (SolutionConfiguration existingConfiguration in solution.Configurations) {
+				if (existingConfiguration.Id == configuration.Id)
+					return existingConfiguration;
+			}
+			return null;
+		}
+
+		public static void EnsureConfigurationHasBuildEnabled (this Solution solution, DnxProject project)
+		{
+			foreach (SolutionConfiguration solutionConfiguration in solution.Configurations) {
+				foreach (SolutionConfigurationEntry projectConfiguration in solutionConfiguration.Configurations) {
+					if (projectConfiguration.Item == project && !projectConfiguration.Build) {
+						projectConfiguration.Build = true;
+					}
+				}
 			}
 		}
 	}

@@ -59,7 +59,6 @@ namespace MonoDevelop.Dnx
 		public DnxProject (ProjectCreateInformation info, XmlElement projectOptions)
 			: this ()
 		{
-			IsDirty = true;
 			AddConfigurations ();
 		}
 
@@ -353,6 +352,12 @@ namespace MonoDevelop.Dnx
 			if (!Directory.Exists (BaseDirectory)) {
 				Directory.CreateDirectory (BaseDirectory);
 			}
+		}
+
+		public SolutionFolder GetSrcSolutionFolder ()
+		{
+			return ParentSolution.RootFolder.Items.OfType<SolutionFolder> ()
+				.FirstOrDefault (item => item.Name == "src");
 		}
 	}
 }
