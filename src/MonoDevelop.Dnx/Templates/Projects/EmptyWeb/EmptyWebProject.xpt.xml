@@ -1,0 +1,23 @@
+﻿<?xml version="1.0"?>
+<Template
+	originator="Matt Ward"
+	created="22/09/2015"
+	lastModified="22/09/2015">
+
+	<TemplateConfiguration>
+		<_Name>Web App</_Name>
+		<Category>other/aspnet/aspnet5</Category>
+		<Icon>md-project-web</Icon>
+		<LanguageName>C#</LanguageName>
+		<_Description>Creates a new ASP.NET 5 web project.</_Description>
+		<DefaultFilename>WebApp</DefaultFilename>
+		<FileExtension>.xproj</FileExtension>
+		<Wizard>MonoDevelop.Dnx.ProjectTemplateWizard</Wizard>
+		<DefaultParameters>Template=EmptyWebProject;CreateWebRoot=true;OpenFile=Startup.cs;Files=Startup.cs</DefaultParameters>
+	</TemplateConfiguration>
+
+	<Combine name="${ProjectName}" directory=".">
+		<Project name="${ProjectName}" type="Dnx" directory="./src" if="CreateDnxProject">
+		</Project>
+	</Combine>
+</Template>

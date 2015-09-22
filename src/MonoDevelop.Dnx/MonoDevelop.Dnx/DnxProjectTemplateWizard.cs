@@ -135,6 +135,10 @@ namespace MonoDevelop.Dnx
 
 			project.CreateProjectDirectory ();
 
+			if (Parameters.GetBoolean ("CreateWebRoot")) {
+				project.CreateWebRootDirectory ();
+			}
+
 			RemoveProjectDirectoryCreatedByNewProjectDialog (solution.BaseDirectory, projectName);
 
 			CreateFilesFromTemplate (project);

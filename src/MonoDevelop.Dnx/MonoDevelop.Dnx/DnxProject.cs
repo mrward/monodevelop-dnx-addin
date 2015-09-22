@@ -349,8 +349,13 @@ namespace MonoDevelop.Dnx
 
 		public void CreateProjectDirectory ()
 		{
-			if (!Directory.Exists (BaseDirectory)) {
-				Directory.CreateDirectory (BaseDirectory);
+			CreateDirectory (BaseDirectory);
+		}
+
+		static void CreateDirectory (FilePath directory)
+		{
+			if (!Directory.Exists (directory)) {
+				Directory.CreateDirectory (directory);
 			}
 		}
 
@@ -358,6 +363,12 @@ namespace MonoDevelop.Dnx
 		{
 			return ParentSolution.RootFolder.Items.OfType<SolutionFolder> ()
 				.FirstOrDefault (item => item.Name == "src");
+		}
+
+		public void CreateWebRootDirectory ()
+		{
+			FilePath webRootDirectory = BaseDirectory.Combine ("wwwroot");
+			CreateDirectory (webRootDirectory);
 		}
 	}
 }

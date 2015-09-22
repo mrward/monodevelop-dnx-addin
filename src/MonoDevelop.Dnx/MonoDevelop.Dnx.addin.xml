@@ -11,6 +11,12 @@
 		<Import file="Templates/Projects/ConsoleProject.xpt.xml" />
 		<Import file="Templates/Projects/PlaceholderConsoleProject.xpt.xml" />
 
+		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.Startup.cs" />
+		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.Startup.cs.xft.xml" />
+		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.project.json" />
+		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.project.json.xft.xml" />
+		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.xpt.xml" />
+
 		<Import file="Templates/Projects/Library/LibraryProject.MyClass.cs" />
 		<Import file="Templates/Projects/Library/LibraryProject.MyClass.cs.xft.xml" />
 		<Import file="Templates/Projects/Library/LibraryProject.project.json" />
@@ -81,6 +87,9 @@
 		<ProjectTemplate
 			id="DnxLibraryProject"
 			file="Templates/Projects/Library/LibraryProject.xpt.xml" />
+		<ProjectTemplate
+			id="DnxEmptyWebProject"
+			file="Templates/Projects/EmptyWeb/EmptyWebProject.xpt.xml" />
 	</Extension>
 
 	<Extension path = "/MonoDevelop/Ide/DnxFileTemplateTypes">

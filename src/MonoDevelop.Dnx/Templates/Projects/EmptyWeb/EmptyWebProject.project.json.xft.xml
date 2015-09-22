@@ -1,0 +1,17 @@
+﻿<?xml version="1.0"?>
+<Template
+	originator="Matt Ward"
+	created="2015/09/22"
+	lastModified="2015/09/22">
+
+	<TemplateConfiguration>
+		<_Name>Empty web project.json</_Name>
+	</TemplateConfiguration>
+
+	<TemplateFiles>
+		<File
+			name="project.json"
+			DefaultName="project.json"
+			src="EmptyWebProject.project.json" />
+	</TemplateFiles>
+</Template>
