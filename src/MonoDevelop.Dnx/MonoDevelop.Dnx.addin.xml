@@ -27,16 +27,6 @@
 		<Import file="Templates/Projects/Library/LibraryProject.xpt.xml" />
 	</Runtime>
 
-	<ExtensionPoint path = "/MonoDevelop/Ide/DnxProjectTemplates" name = "File template types">
-		<Description>Project templates to be shown in the New Project dialog.</Description>
-		<ExtensionNode name="ProjectTemplate" type="MonoDevelop.Ide.Codons.ProjectTemplateCodon"/>
-	</ExtensionPoint>
-
-	<ExtensionPoint path = "/MonoDevelop/Ide/DnxFileTemplateTypes" name = "File template types">
-		<Description>Template types which can be used to create file templates.</Description>
-		<ExtensionNode name="FileTemplateType" type="MonoDevelop.Ide.Codons.FileTemplateTypeCodon"/>
-	</ExtensionPoint>
-
 	<Extension path="/MonoDevelop/ProjectModel/ProjectBindings">
 		<ProjectBinding id="DnxProject" class="MonoDevelop.Dnx.DnxProjectBinding" />
 	</Extension>
@@ -77,15 +67,9 @@
 		<Category id="aspnet5" name="ASP.NET 5" />
 	</Extension>
 
-	<Extension path="/MonoDevelop/Ide/DnxProjectTemplates">
-		<!---<ProjectTemplate
-			id="DnxConsoleProject"
-			file="Templates/Projects/ConsoleProject.xpt.xml" />-->
-	</Extension>
-
 	<Extension path="/MonoDevelop/Ide/ProjectTemplates">
 		<ProjectTemplate
-			id="DnxPlaceholderProject"
+			id="DnxConsoleProject"
 			file="Templates/Projects/Console/ConsoleProject.xpt.xml" />
 		<ProjectTemplate
 			id="DnxLibraryProject"
@@ -93,14 +77,6 @@
 		<ProjectTemplate
 			id="DnxEmptyWebProject"
 			file="Templates/Projects/EmptyWeb/EmptyWebProject.xpt.xml" />
-	</Extension>
-
-	<Extension path = "/MonoDevelop/Ide/DnxFileTemplateTypes">
-		<FileTemplateType name="File" class="MonoDevelop.Ide.Templates.CustomTextFileDescriptionTemplate"/>
-	</Extension>
-
-	<Extension path="/MonoDevelop/Ide/ProjectTemplatingProviders">
-		<Class id="Dnx.ProjectTemplatingProvider" class="MonoDevelop.Ide.Templates.ProjectTemplatingProvider" />
 	</Extension>
 
 	<Extension path="/MonoDevelop/Ide/ProjectTemplateWizards">
