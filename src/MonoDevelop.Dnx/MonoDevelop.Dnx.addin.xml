@@ -8,8 +8,11 @@
 		<Import file="Templates/Projects/Common/global.json" />
 		<Import file="Templates/Projects/Common/global.json.xft.xml" />
 
-		<Import file="Templates/Projects/ConsoleProject.xpt.xml" />
-		<Import file="Templates/Projects/PlaceholderConsoleProject.xpt.xml" />
+		<Import file="Templates/Projects/Console/ConsoleProject.Program.cs" />
+		<Import file="Templates/Projects/Console/ConsoleProject.Program.cs.xft.xml" />
+		<Import file="Templates/Projects/Console/ConsoleProject.project.json" />
+		<Import file="Templates/Projects/Console/ConsoleProject.project.json.xft.xml" />
+		<Import file="Templates/Projects/Console/ConsoleProject.xpt.xml" />
 
 		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.Startup.cs" />
 		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.Startup.cs.xft.xml" />
@@ -75,15 +78,15 @@
 	</Extension>
 
 	<Extension path="/MonoDevelop/Ide/DnxProjectTemplates">
-		<ProjectTemplate
+		<!---<ProjectTemplate
 			id="DnxConsoleProject"
-			file="Templates/Projects/ConsoleProject.xpt.xml" />
+			file="Templates/Projects/ConsoleProject.xpt.xml" />-->
 	</Extension>
 
 	<Extension path="/MonoDevelop/Ide/ProjectTemplates">
 		<ProjectTemplate
 			id="DnxPlaceholderProject"
-			file="Templates/Projects/PlaceholderConsoleProject.xpt.xml" />
+			file="Templates/Projects/Console/ConsoleProject.xpt.xml" />
 		<ProjectTemplate
 			id="DnxLibraryProject"
 			file="Templates/Projects/Library/LibraryProject.xpt.xml" />

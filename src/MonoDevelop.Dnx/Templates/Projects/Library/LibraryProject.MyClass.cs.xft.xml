@@ -13,6 +13,6 @@
 			name="MyClass.cs"
 			DefaultName="MyClass.cs"
 			src="LibraryProject.MyClass.cs"
-			 AddStandardHeader="True" />
+			AddStandardHeader="True" />
 	</TemplateFiles>
 </Template>

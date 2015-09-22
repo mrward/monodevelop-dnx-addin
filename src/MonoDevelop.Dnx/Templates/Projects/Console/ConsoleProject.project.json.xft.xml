@@ -5,14 +5,13 @@
 	lastModified="2015/09/22">
 
 	<TemplateConfiguration>
-		<_Name>Empty web Startup.cs</_Name>
+		<_Name>Console project.json</_Name>
 	</TemplateConfiguration>
 
 	<TemplateFiles>
 		<File
-			name="Startup.cs"
-			DefaultName="Startup.cs"
-			src="EmptyWebProject.Startup.cs"
-			AddStandardHeader="True" />
+			name="project.json"
+			DefaultName="project.json"
+			src="ConsoleProject.project.json" />
 	</TemplateFiles>
 </Template>
