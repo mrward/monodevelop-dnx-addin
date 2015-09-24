@@ -83,6 +83,8 @@ namespace MonoDevelop.Dnx
 
 		internal void LoadAspNetProjectSystem (Solution solution)
 		{
+			UnloadProjectSystem ();
+
 			applicationLifetime = new MonoDevelopApplicationLifetime ();
 			context = new AspNet5Context ();
 			var factory = new AspNet5ProjectSystemFactory ();
