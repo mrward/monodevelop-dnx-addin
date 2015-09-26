@@ -29,17 +29,17 @@ using Microsoft.AspNet.Hosting;
 using MonoDevelop.Dnx.Omnisharp;
 using MonoDevelop.Projects;
 using OmniSharp;
-using OmniSharp.AspNet5;
+using OmniSharp.Dnx;
 using OmniSharp.Services;
 
 namespace MonoDevelop.Dnx
 {
 	public class AspNet5ProjectSystemFactory
 	{
-		public AspNet5ProjectSystem CreateProjectSystem (
+		public DnxProjectSystem CreateProjectSystem (
 			Solution solution,
 			IApplicationLifetime appLifetime,
-			AspNet5Context context)
+			DnxContext context)
 		{
 			var workspace = new OmnisharpWorkspace ();
 			var env = new OmnisharpEnvironment (solution.BaseDirectory);
@@ -49,7 +49,7 @@ namespace MonoDevelop.Dnx
 			var emitter = new EventEmitter ();
 			var watcher = new FileSystemWatcherWrapper (env);
 
-			return new AspNet5ProjectSystem (
+			return new DnxProjectSystem (
 				workspace,
 				env,
 				options,

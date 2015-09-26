@@ -43,7 +43,7 @@ namespace MonoDevelop.Dnx
 {
 	public class DnxProject : DotNetAssemblyProject
 	{
-		AspNet5Project project;
+		OmniSharp.Models.DnxProject project;
 		FilePath fileName;
 		string name;
 		Dictionary<string, DependenciesMessage> dependencies = new Dictionary<string, DependenciesMessage> ();
@@ -142,7 +142,7 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		public void Update (AspNet5Project project)
+		public void Update (OmniSharp.Models.DnxProject project)
 		{
 			this.project = project;
 		}

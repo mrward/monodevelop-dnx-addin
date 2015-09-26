@@ -27,7 +27,7 @@
 
 using MonoDevelop.Dnx;
 using MonoDevelop.Dnx.Omnisharp;
-using OmniSharp.AspNet5;
+using OmniSharp.Dnx;
 
 namespace Microsoft.CodeAnalysis
 {

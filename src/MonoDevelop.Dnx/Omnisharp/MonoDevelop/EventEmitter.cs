@@ -52,7 +52,7 @@ namespace MonoDevelop.Dnx.Omnisharp
 			if (response == null)
 				return;
 
-			DnxServices.ProjectService.OnProjectChanged (response.AspNet5Project);
+			DnxServices.ProjectService.OnProjectChanged (response.DnxProject);
 		}
 
 		void OnPackageRestoreStarted (object args)

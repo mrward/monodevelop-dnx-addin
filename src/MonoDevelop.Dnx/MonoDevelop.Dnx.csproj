@@ -84,28 +84,28 @@
     <Compile Include="MonoDevelop.Dnx\DnxProject.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectBinding.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxMSBuildProjectHandler.cs" />
-    <Compile Include="Omnisharp\AspNet5\AspNet5Context.cs" />
-    <Compile Include="Omnisharp\AspNet5\AspNet5Paths.cs" />
-    <Compile Include="Omnisharp\AspNet5\AspNet5ProjectSystem.cs" />
-    <Compile Include="Omnisharp\AspNet5\AspNet5RuntimePathResult.cs" />
-    <Compile Include="Omnisharp\AspNet5\DesignTimeHostManager.cs" />
-    <Compile Include="Omnisharp\AspNet5\FrameworkProject.cs" />
-    <Compile Include="Omnisharp\AspNet5\Message.cs" />
-    <Compile Include="Omnisharp\AspNet5\Project.cs" />
-    <Compile Include="Omnisharp\AspNet5\IncomingMessages\InitializeMessage.cs" />
-    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\CompilationOptionsMessage.cs" />
-    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\CompilationSettings.cs" />
-    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\DependenciesMessage.cs" />
-    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\DependencyDescription.cs" />
-    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\DependencyItem.cs" />
-    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\DiagnosticsMessage.cs" />
-    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\ErrorMessage.cs" />
-    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\FrameworkData.cs" />
-    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\OutputsMessage.cs" />
-    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\ProjectMessage.cs" />
-    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\ProjectReference.cs" />
-    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\ReferencesMessage.cs" />
-    <Compile Include="Omnisharp\AspNet5\OutgoingMessages\SourcesMessage.cs" />
+    <Compile Include="Omnisharp\Dnx\DnxContext.cs" />
+    <Compile Include="Omnisharp\Dnx\DnxPaths.cs" />
+    <Compile Include="Omnisharp\Dnx\DnxProjectSystem.cs" />
+    <Compile Include="Omnisharp\Dnx\DnxRuntimePathResult.cs" />
+    <Compile Include="Omnisharp\Dnx\DesignTimeHostManager.cs" />
+    <Compile Include="Omnisharp\Dnx\FrameworkProject.cs" />
+    <Compile Include="Omnisharp\Dnx\Message.cs" />
+    <Compile Include="Omnisharp\Dnx\Project.cs" />
+    <Compile Include="Omnisharp\Dnx\IncomingMessages\InitializeMessage.cs" />
+    <Compile Include="Omnisharp\Dnx\OutgoingMessages\CompilationOptionsMessage.cs" />
+    <Compile Include="Omnisharp\Dnx\OutgoingMessages\CompilationSettings.cs" />
+    <Compile Include="Omnisharp\Dnx\OutgoingMessages\DependenciesMessage.cs" />
+    <Compile Include="Omnisharp\Dnx\OutgoingMessages\DependencyDescription.cs" />
+    <Compile Include="Omnisharp\Dnx\OutgoingMessages\DependencyItem.cs" />
+    <Compile Include="Omnisharp\Dnx\OutgoingMessages\DiagnosticsMessage.cs" />
+    <Compile Include="Omnisharp\Dnx\OutgoingMessages\ErrorMessage.cs" />
+    <Compile Include="Omnisharp\Dnx\OutgoingMessages\FrameworkData.cs" />
+    <Compile Include="Omnisharp\Dnx\OutgoingMessages\OutputsMessage.cs" />
+    <Compile Include="Omnisharp\Dnx\OutgoingMessages\ProjectMessage.cs" />
+    <Compile Include="Omnisharp\Dnx\OutgoingMessages\ProjectReference.cs" />
+    <Compile Include="Omnisharp\Dnx\OutgoingMessages\ReferencesMessage.cs" />
+    <Compile Include="Omnisharp\Dnx\OutgoingMessages\SourcesMessage.cs" />
     <Compile Include="Omnisharp\Microsoft\AspNet\Hosting\IApplicationLifetime.cs" />
     <Compile Include="Omnisharp\Microsoft\AspNet\Logging\FormattedLogValues.cs" />
     <Compile Include="Omnisharp\Microsoft\AspNet\Logging\ILogger.cs" />
@@ -125,14 +125,14 @@
     <Compile Include="Omnisharp\Microsoft\Roslyn\ProjectInfo.cs" />
     <Compile Include="Omnisharp\Microsoft\Roslyn\ProjectReference.cs" />
     <Compile Include="Omnisharp\Microsoft\Roslyn\VersionStamp.cs" />
-    <Compile Include="Omnisharp\Models\AspNet5Project.cs" />
+    <Compile Include="Omnisharp\Models\DnxFramework.cs" />
+    <Compile Include="Omnisharp\Models\DnxProject.cs" />
     <Compile Include="Omnisharp\Models\ErrorMessage.cs" />
     <Compile Include="Omnisharp\Models\EventTypes.cs" />
     <Compile Include="Omnisharp\Models\MSBuildDiagnosticsMessage.cs" />
     <Compile Include="Omnisharp\Models\MSBuildProject.cs" />
     <Compile Include="Omnisharp\Models\MSBuildProjectDiagnostics.cs" />
     <Compile Include="Omnisharp\Models\PackageDependency.cs" />
-    <Compile Include="Omnisharp\Models\ProjectFileInfo.cs" />
     <Compile Include="Omnisharp\Models\ProjectInformationResponse.cs" />
     <Compile Include="Omnisharp\Models\UnresolvedDependenciesMessage.cs" />
     <Compile Include="Omnisharp\MSBuild\MSBuildLogForwarder.cs" />
@@ -148,7 +148,6 @@
     <Compile Include="Omnisharp\Services\IOmnisharpEnvironment.cs" />
     <Compile Include="Omnisharp\Services\IProjectSystem.cs" />
     <Compile Include="Omnisharp\Services\ManualFileSystemWatcher.cs" />
-    <Compile Include="Omnisharp\Services\MetadataFileReferenceCache.cs" />
     <Compile Include="Omnisharp\Services\TransportType.cs" />
     <Compile Include="Omnisharp\Utilities\PlatformHelper.cs" />
     <Compile Include="Omnisharp\Utilities\ProcessingQueue.cs" />
@@ -181,7 +180,7 @@
     <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependencyNodeBuilder.cs" />
     <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependencyNodePropertyProvider.cs" />
     <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependencyNodeDescriptor.cs" />
-    <Compile Include="Omnisharp\AspNet5\PackagesRestoreTool.cs" />
+    <Compile Include="Omnisharp\Dnx\PackagesRestoreTool.cs" />
     <Compile Include="Omnisharp\Models\PackageRestoreMessage.cs" />
     <Compile Include="Omnisharp\Utilities\ProcessExtensions.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectTemplateWizard.cs" />
@@ -189,6 +188,8 @@
     <Compile Include="MonoDevelop.Dnx\WorkbenchExtensions.cs" />
     <Compile Include="MonoDevelop.Dnx\FileTemplateProcessor.cs" />
     <Compile Include="MonoDevelop.Dnx\EmptyDirectoryRemover.cs" />
+    <Compile Include="Omnisharp\Utilities\DirectoryEnumerator.cs" />
+    <Compile Include="Omnisharp\MSBuild\ProjectFile\ProjectFileInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -262,4 +263,7 @@
     </None>
   </ItemGroup>
   <Import Project="PostBuild.proj" />
+  <ItemGroup>
+    <Folder Include="Omnisharp\MSBuild\ProjectFile\" />
+  </ItemGroup>
 </Project>

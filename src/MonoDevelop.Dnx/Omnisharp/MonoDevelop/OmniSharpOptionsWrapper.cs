@@ -38,8 +38,8 @@ namespace MonoDevelop.Dnx.Omnisharp
 		public OmniSharpOptionsWrapper ()
 		{
 			options = new OmniSharpOptions ();
-			options.AspNet5.Projects = "**/project.json";
-			options.AspNet5.EnablePackageRestore = true;
+			options.Dnx.Projects = "**/project.json";
+			options.Dnx.EnablePackageRestore = true;
 		}
 
 		public OmniSharpOptions GetNamedOptions (string name)

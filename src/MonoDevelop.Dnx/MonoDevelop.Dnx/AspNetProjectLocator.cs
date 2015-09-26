@@ -28,17 +28,17 @@
 using Microsoft.CodeAnalysis;
 using MonoDevelop.Ide;
 using MonoDevelop.Projects;
-using OmniSharp.AspNet5;
+using OmniSharp.Dnx;
 
 namespace MonoDevelop.Dnx
 {
 	public class AspNetProjectLocator
 	{
-		readonly AspNet5Context context;
+		readonly DnxContext context;
 		Solution solution;
 		FrameworkProject frameworkProject;
 
-		public AspNetProjectLocator (AspNet5Context context)
+		public AspNetProjectLocator (DnxContext context)
 		{
 			this.context = context;
 		}

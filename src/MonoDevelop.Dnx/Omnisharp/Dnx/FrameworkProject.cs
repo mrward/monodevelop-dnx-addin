@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
+using Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages;
 
-namespace OmniSharp.AspNet5
+namespace OmniSharp.Dnx
 {
     public class FrameworkProject
     {
@@ -10,11 +11,15 @@ namespace OmniSharp.AspNet5
 
         public string Framework { get; private set; }
 
+        public string FriendlyName { get; private set; }
+
+        public string ShortName { get; private set; }
+
 //        public Dictionary<string, DocumentId> Documents { get; set; }
 
         public Dictionary<string, MetadataReference> FileReferences { get; set; }
 
-//        public Dictionary<string, MetadataReference> RawReferences { get; set; }
+        public Dictionary<string, MetadataReference> RawReferences { get; set; }
 
         public Dictionary<string, ProjectId> ProjectReferences { get; set; }
 
@@ -26,14 +31,16 @@ namespace OmniSharp.AspNet5
 
         public bool Loaded { get; set; }
 
-        public FrameworkProject(Project project, string framework)
+        public FrameworkProject(Project project, FrameworkData frameworkData)
         {
             Project = project;
-            Framework = framework;
+            Framework = frameworkData.FrameworkName;
+            FriendlyName = frameworkData.FriendlyName;
+            ShortName = frameworkData.ShortName;
             ProjectId = ProjectId.CreateNewId();
 //            Documents = new Dictionary<string, DocumentId>();
             FileReferences = new Dictionary<string, MetadataReference>();
-//            RawReferences = new Dictionary<string, MetadataReference>();
+            RawReferences = new Dictionary<string, MetadataReference>();
             ProjectReferences = new Dictionary<string, ProjectId>(StringComparer.OrdinalIgnoreCase);
             ProjectDependeees = new Dictionary<string, ProjectId>(StringComparer.OrdinalIgnoreCase);
             PendingProjectReferences = new List<ProjectId>();

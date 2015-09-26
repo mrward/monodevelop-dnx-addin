@@ -6,17 +6,17 @@ using System.Net.Sockets;
 using System.Threading;
 using Microsoft.Framework.Logging;
 
-namespace OmniSharp.AspNet5
+namespace OmniSharp.Dnx
 {
     public class DesignTimeHostManager
     {
         private readonly ILogger _logger;
-        private readonly AspNet5Paths _paths;
+        private readonly DnxPaths _paths;
         private readonly object _processLock = new object();
         private Process _designTimeHostProcess;
         private bool _stopped;
 
-        public DesignTimeHostManager(ILoggerFactory loggerFactory, AspNet5Paths paths)
+        public DesignTimeHostManager(ILoggerFactory loggerFactory, DnxPaths paths)
         {
             _logger = loggerFactory.CreateLogger<DesignTimeHostManager>();
             _paths = paths;
@@ -34,6 +34,12 @@ namespace OmniSharp.AspNet5
                 }
 
                 int port = GetFreePort();
+
+                var dthPath = Path.Combine(_paths.RuntimePath.Value, "bin", "lib", "Microsoft.Dnx.DesignTimeHost", "Microsoft.Dnx.DesignTimeHost.dll");
+                // TODO: This is for backcompat. Once the dust settles, and MS.Framework.DTH goes away, remove this.
+                if (!File.Exists(dthPath))
+                  dthPath = Path.Combine(_paths.RuntimePath.Value, "bin", "lib", "Microsoft.Framework.DesignTimeHost", "Microsoft.Framework.DesignTimeHost.dll");
+
                 var psi = new ProcessStartInfo
                 {
                     FileName = _paths.Dnx ?? _paths.Klr,
@@ -41,7 +47,7 @@ namespace OmniSharp.AspNet5
                     UseShellExecute = false,
                     RedirectStandardError = true,
                     Arguments = string.Format(@"""{0}"" {1} {2} {3}",
-                                              Path.Combine(_paths.RuntimePath.Value, "bin", "lib", "Microsoft.Framework.DesignTimeHost", "Microsoft.Framework.DesignTimeHost.dll"),
+                                              dthPath,
                                               port,
                                               Process.GetCurrentProcess().Id,
                                               hostId),
@@ -63,7 +69,7 @@ namespace OmniSharp.AspNet5
                 using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
                 {
                     var t1 = DateTime.UtcNow;
-                    var dthTimeout = TimeSpan.FromSeconds(4);
+                    var dthTimeout = TimeSpan.FromSeconds(10);
                     while (!socket.Connected && DateTime.UtcNow - t1 < dthTimeout)
                     {
                         Thread.Sleep(500);
@@ -75,6 +81,13 @@ namespace OmniSharp.AspNet5
                         {
                             // this happens when the DTH isn't listening yet
                         }
+                    }
+
+                    if (!socket.Connected)
+                    {
+                        // reached timeout
+                        _logger.LogError("Failed to launch DesignTimeHost in a timely fashion.");
+                        return;
                     }
                 }
 
@@ -88,17 +101,17 @@ namespace OmniSharp.AspNet5
                 _logger.LogInformation(string.Format("Running DesignTimeHost on port {0}, with PID {1}", port, _designTimeHostProcess.Id));
 
                 _designTimeHostProcess.EnableRaisingEvents = true;
-                _designTimeHostProcess.Exited += (sender, e) =>
+                _designTimeHostProcess.OnExit(() =>
                 {
                     _logger.LogWarning("Design time host process ended");
 
                     Start(hostId, onConnected);
-                };
+                });
 
                 onConnected(port);
             }
         }
-        
+
         public void Stop()
         {
             lock (_processLock)
@@ -114,7 +127,7 @@ namespace OmniSharp.AspNet5
                 {
                     _logger.LogInformation("Shutting down DesignTimeHost");
 
-                    _designTimeHostProcess.Kill();
+                    _designTimeHostProcess.KillAll();
                     _designTimeHostProcess = null;
                 }
             }

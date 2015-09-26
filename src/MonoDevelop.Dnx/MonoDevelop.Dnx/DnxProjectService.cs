@@ -32,15 +32,15 @@ using MonoDevelop.Dnx.Omnisharp;
 using MonoDevelop.Core;
 using MonoDevelop.Ide;
 using MonoDevelop.Projects;
-using OmniSharp.AspNet5;
+using OmniSharp.Dnx;
 using OmniSharp.Models;
 
 namespace MonoDevelop.Dnx
 {
 	public class DnxProjectService
 	{
-		AspNet5Context context;
-		AspNet5ProjectSystem projectSystem;
+		DnxContext context;
+		DnxProjectSystem projectSystem;
 		MonoDevelopApplicationLifetime applicationLifetime;
 
 		public DnxProjectService ()
@@ -86,7 +86,7 @@ namespace MonoDevelop.Dnx
 			UnloadProjectSystem ();
 
 			applicationLifetime = new MonoDevelopApplicationLifetime ();
-			context = new AspNet5Context ();
+			context = new DnxContext ();
 			var factory = new AspNet5ProjectSystemFactory ();
 			projectSystem = factory.CreateProjectSystem (solution, applicationLifetime, context);
 			projectSystem.Initalize ();
@@ -100,12 +100,12 @@ namespace MonoDevelop.Dnx
 			});
 		}
 
-		public void OnProjectChanged (AspNet5Project project)
+		public void OnProjectChanged (OmniSharp.Models.DnxProject project)
 		{
 			DispatchService.GuiDispatch (() => UpdateProject (project));
 		}
 
-		void UpdateProject (AspNet5Project project)
+		void UpdateProject (OmniSharp.Models.DnxProject project)
 		{
 			DnxProject matchedProject = FindProjectByProjectJsonFileName (project.Path);
 			if (matchedProject != null) {
@@ -122,7 +122,7 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		public void DependenciesUpdated (OmniSharp.AspNet5.Project project, DependenciesMessage message)
+		public void DependenciesUpdated (OmniSharp.Dnx.Project project, DependenciesMessage message)
 		{
 			DispatchService.GuiDispatch (() => UpdateDependencies (project, message));
 		}
@@ -142,7 +142,7 @@ namespace MonoDevelop.Dnx
 			return null;
 		}
 
-		void UpdateDependencies (OmniSharp.AspNet5.Project project, DependenciesMessage message)
+		void UpdateDependencies (OmniSharp.Dnx.Project project, DependenciesMessage message)
 		{
 			DnxProject matchedProject = FindProjectByProjectJsonFileName (project.Path);
 			if (matchedProject != null) {

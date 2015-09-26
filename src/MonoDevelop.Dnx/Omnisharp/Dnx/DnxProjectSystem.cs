@@ -23,24 +23,26 @@ using Newtonsoft.Json.Linq;
 using OmniSharp.Models;
 using OmniSharp.Options;
 using OmniSharp.Services;
+using OmniSharp.Utilities;
 
-namespace OmniSharp.AspNet5
+namespace OmniSharp.Dnx
 {
-    public class AspNet5ProjectSystem : IProjectSystem, IDisposable
+    public class DnxProjectSystem : IProjectSystem, IDisposable
     {
         private readonly OmnisharpWorkspace _workspace;
         private readonly IOmnisharpEnvironment _env;
         private readonly ILogger _logger;
         private readonly IMetadataFileReferenceCache _metadataFileReferenceCache;
-        private readonly AspNet5Paths _aspNet5Paths;
+        private readonly DnxPaths _dnxPaths;
         private readonly DesignTimeHostManager _designTimeHostManager;
         private readonly PackagesRestoreTool _packagesRestoreTool;
-        private readonly AspNet5Context _context;
+        private readonly DnxContext _context;
         private readonly IFileSystemWatcher _watcher;
         private readonly IEventEmitter _emitter;
         private readonly OmniSharpOptions _options;
+        private readonly DirectoryEnumerator _directoryEnumerator;
 
-        public AspNet5ProjectSystem(OmnisharpWorkspace workspace,
+        public DnxProjectSystem(OmnisharpWorkspace workspace,
                                     IOmnisharpEnvironment env,
                                     IOptions<OmniSharpOptions> optionsAccessor,
                                     ILoggerFactory loggerFactory,
@@ -48,38 +50,39 @@ namespace OmniSharp.AspNet5
                                     IApplicationLifetime lifetime,
                                     IFileSystemWatcher watcher,
                                     IEventEmitter emitter,
-                                    AspNet5Context context)
+                                    DnxContext context)
         {
             _workspace = workspace;
             _env = env;
-            _logger = loggerFactory.CreateLogger<AspNet5ProjectSystem>();
+            _logger = loggerFactory.CreateLogger<DnxProjectSystem>();
             _metadataFileReferenceCache = metadataFileReferenceCache;
             _options = optionsAccessor.Options;
-            _aspNet5Paths = new AspNet5Paths(env, _options, loggerFactory);
-            _designTimeHostManager = new DesignTimeHostManager(loggerFactory, _aspNet5Paths);
-            _packagesRestoreTool = new PackagesRestoreTool(_options, loggerFactory, emitter, context, _aspNet5Paths);
+            _dnxPaths = new DnxPaths(env, _options, loggerFactory);
+            _designTimeHostManager = new DesignTimeHostManager(loggerFactory, _dnxPaths);
+            _packagesRestoreTool = new PackagesRestoreTool(_options, loggerFactory, emitter, context, _dnxPaths);
             _context = context;
             _watcher = watcher;
             _emitter = emitter;
+            _directoryEnumerator = new DirectoryEnumerator(loggerFactory);
 
             lifetime.ApplicationStopping.Register(OnShutdown);
         }
 
         public void Initalize()
         {
-            var runtimePath = _aspNet5Paths.RuntimePath;
+            var runtimePath = _dnxPaths.RuntimePath;
             _context.RuntimePath = runtimePath.Value;
 
             if (!ScanForProjects())
             {
-                // No ASP.NET 5 projects found so do nothing
+                // No DNX projects found so do nothing
                 _logger.LogInformation("No project.json based projects found");
                 return;
             }
 
             if (_context.RuntimePath == null)
             {
-                // There is no default k found so do nothing
+                // There is no default dnx found so do nothing
                 _logger.LogInformation("No default runtime found");
                 _emitter.Emit(EventTypes.Error, runtimePath.Error);
                 return;
@@ -116,7 +119,7 @@ namespace OmniSharp.AspNet5
 
                         this._emitter.Emit(EventTypes.ProjectChanged, new ProjectInformationResponse()
                         {
-                            AspNet5Project = new AspNet5Project(project)
+                            DnxProject = new DnxProject(project)
                         });
 
                         var unprocessed = project.ProjectsByFramework.Keys.ToList();
@@ -127,7 +130,7 @@ namespace OmniSharp.AspNet5
 
                             var frameworkProject = project.ProjectsByFramework.GetOrAdd(frameworkData.FrameworkName, framework =>
                             {
-                                return new FrameworkProject(project, framework);
+                                return new FrameworkProject(project, frameworkData);
                             });
 
                             var id = frameworkProject.ProjectId;
@@ -207,7 +210,7 @@ namespace OmniSharp.AspNet5
 //                            {
 //                                continue;
 //                            }
-//
+
 //                            var metadataReference = MetadataReference.CreateFromImage(rawReference.Value);
 //                            frameworkProject.RawReferences[rawReference.Key] = metadataReference;
 //                            metadataReferences.Add(metadataReference);
@@ -231,7 +234,7 @@ namespace OmniSharp.AspNet5
                             var referencedFrameworkProject = referencedProject.ProjectsByFramework.GetOrAdd(projectReference.Framework.FrameworkName,
                                 framework =>
                                 {
-                                    return new FrameworkProject(referencedProject, framework);
+                                    return new FrameworkProject(referencedProject, projectReference.Framework);
                                 });
 
                             var projectReferenceId = referencedFrameworkProject.ProjectId;
@@ -389,7 +392,7 @@ namespace OmniSharp.AspNet5
                 // Start the message channel
                 _context.Connection.Start();
 
-                // Initialize the ASP.NET 5 projects
+                // Initialize the DNX projects
                 Initialize();
             });
 
@@ -407,7 +410,7 @@ namespace OmniSharp.AspNet5
             var project = _context.GetProject(path);
             if (project != null)
             {
-                _packagesRestoreTool.Run(project); 
+                _packagesRestoreTool.Run(project);
             }
 
             var seen = new HashSet<string>();
@@ -453,7 +456,7 @@ namespace OmniSharp.AspNet5
                 }
             }
         }
-        
+
         private void WatchProject(string projectFile)
         {
             // Whenever the project file changes, trigger FilesChanged to the design time host
@@ -530,7 +533,7 @@ namespace OmniSharp.AspNet5
 
         private bool ScanForProjects()
         {
-            _logger.LogInformation(string.Format("Scanning '{0}' for ASP.NET 5 projects", _env.Path));
+            _logger.LogInformation(string.Format("Scanning '{0}' for DNX projects", _env.Path));
 
             var anyProjects = false;
 
@@ -542,7 +545,7 @@ namespace OmniSharp.AspNet5
                 if (_context.TryAddProject(projectInThisFolder))
                 {
                     _logger.LogInformation(string.Format("Found project '{0}'.", projectInThisFolder));
-                    
+
                     anyProjects = true;
                 }
             }
@@ -550,26 +553,26 @@ namespace OmniSharp.AspNet5
             {
                 IEnumerable<string> paths;
 #if DNX451
-                if (_options.AspNet5.Projects != "**/project.json")
+                if (_options.Dnx.Projects != "**/project.json")
                 {
-                    throw new System.NotImplementedException();
+                    throw new NotImplementedException();
 //                    var matcher = new Matcher();
-//                    matcher.AddIncludePatterns(_options.AspNet5.Projects.Split(';'));
+//                    matcher.AddIncludePatterns(_options.Dnx.Projects.Split(';'));
 //                    paths = matcher.GetResultsInFullPath(_env.Path);
                 }
                 else
                 {
-                    paths = Directory.EnumerateFiles(_env.Path, "project.json", SearchOption.AllDirectories);
+                    paths = _directoryEnumerator.SafeEnumerateFiles(_env.Path, "project.json");
                 }
 #else
                 // The matcher works on CoreCLR but Omnisharp still targets aspnetcore50 instead of
                 // dnxcore50
-                paths = Directory.EnumerateFiles(_env.Path, "project.json", SearchOption.AllDirectories);
-#endif 
+                paths = _directoryEnumerator.SafeEnumerateFiles(_env.Path, "project.json");
+#endif
                 foreach (var path in paths)
                 {
                     string projectFile = null;
-                    
+
                     if (Path.GetFileName(path) == "project.json")
                     {
                         projectFile = path;
@@ -606,7 +609,7 @@ namespace OmniSharp.AspNet5
         {
             return Task.Factory.FromAsync((cb, state) => socket.BeginConnect(endPoint, cb, state), ar => socket.EndConnect(ar), null);
         }
-
+        
         public void Dispose()
         {
             _watcher.Dispose();

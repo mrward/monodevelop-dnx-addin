@@ -33,10 +33,7 @@ namespace OmniSharp.MSBuild.ProjectFile
 
         public string ProjectDirectory
         {
-            get
-            {
-                return Path.GetDirectoryName(ProjectFilePath);
-            }
+            get { return Path.GetDirectoryName(ProjectFilePath); }
         }
 
         public string AssemblyName { get; private set; }
@@ -50,6 +47,10 @@ namespace OmniSharp.MSBuild.ProjectFile
         public IList<string> ProjectReferences { get; private set; }
 
         public IList<string> Analyzers { get; private set; }
+
+        public IList<string> DefineConstants { get; private set; }
+
+//        public OutputKind OutputKind { get; private set; }
 
         public static ProjectFileInfo Create(MSBuildOptions options, ILogger logger, string solutionDirectory, string projectFilePath, ICollection<MSBuildDiagnosticsMessage> diagnostics)
         {
@@ -94,6 +95,17 @@ namespace OmniSharp.MSBuild.ProjectFile
 //                projectFileInfo.SpecifiedLanguageVersion = ToLanguageVersion(projectInstance.GetPropertyValue("LangVersion"));
                 projectFileInfo.ProjectId = new Guid(projectInstance.GetPropertyValue("ProjectGuid").TrimStart('{').TrimEnd('}'));
                 projectFileInfo.TargetPath = projectInstance.GetPropertyValue("TargetPath");
+                var outputType = projectInstance.GetPropertyValue("OutputType");
+//                switch(outputType)
+//                {
+//                    case "Library": projectFileInfo.OutputKind = OutputKind.DynamicallyLinkedLibrary;
+//                        break;
+//                    case "WinExe": projectFileInfo.OutputKind = OutputKind.WindowsApplication;
+//                        break;
+//                    default:
+//                    case "Exe": projectFileInfo.OutputKind = OutputKind.ConsoleApplication;
+//                        break;
+//                }
 
                 projectFileInfo.SourceFiles =
                     projectInstance.GetItems("Compile")
@@ -115,15 +127,21 @@ namespace OmniSharp.MSBuild.ProjectFile
                     projectInstance.GetItems("Analyzer")
                                    .Select(p => p.GetMetadataValue("FullPath"))
                                    .ToList();
+
+                var defineConstants = projectInstance.GetPropertyValue("DefineConstants");
+                if (!string.IsNullOrWhiteSpace(defineConstants))
+                {
+                    projectFileInfo.DefineConstants = defineConstants.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
+                }
             }
             else
             {
                 // On mono we need to use this API since the ProjectCollection
                 // isn't fully implemented
-#pragma warning disable 618
+#pragma warning disable 0618
                 var engine = Engine.GlobalEngine;
                 engine.DefaultToolsVersion = "4.0";
-#pragma warning restore 618
+#pragma warning restore 0618
                 // engine.RegisterLogger(new ConsoleLogger());
                 engine.RegisterLogger(new MSBuildLogForwarder(logger, diagnostics));
 
@@ -181,6 +199,12 @@ namespace OmniSharp.MSBuild.ProjectFile
                 projectFileInfo.Analyzers = itemsLookup["Analyzer"]
                     .Select(p => Path.GetFullPath(Path.Combine(projectFileInfo.ProjectDirectory, p.FinalItemSpec)))
                     .ToList();
+
+                var defineConstants = properties["DefineConstants"].FinalValue;
+                if (!string.IsNullOrWhiteSpace(defineConstants))
+                {
+                    projectFileInfo.DefineConstants = defineConstants.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
+                }
             }
 #else
             // TODO: Shell out to msbuild/xbuild here?
