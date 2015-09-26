@@ -1,5 +1,5 @@
 ﻿//
-// DnxProjectExecutionCommand.cs
+// DnxRuntime.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -25,41 +25,49 @@
 // THE SOFTWARE.
 //
 
-using System.IO;
+using System;
+using System.Linq;
 using MonoDevelop.Core;
-using MonoDevelop.Core.Execution;
 
 namespace MonoDevelop.Dnx
 {
-	public class DnxProjectExecutionCommand : ExecutionCommand
+	public class DnxRuntime
 	{
-		public DnxProjectExecutionCommand (string directory, string dnxCommand, DnxRuntime runtime)
-		{
-			WorkingDirectory = directory;
-			DnxCommand = dnxCommand;
-			DnxRuntime = runtime;
+		bool? usesCurrentDirectoryByDefault;
 
-			Command = Path.Combine (DnxRuntime.Path, "bin", GetDnxFileName ());
-			if (DnxRuntime.UsesCurrentDirectoryByDefault) {
-				Arguments = DnxCommand;
-			} else {
-				Arguments = string.Format (". {0}", DnxCommand);
+		public DnxRuntime (string path)
+		{
+			Path = new FilePath (path);
+		}
+
+		public FilePath Path { get; private set; }
+
+		/// <summary>
+		/// Returns true if the dnx runtime uses the current directory by default.
+		/// </summary>
+		public bool UsesCurrentDirectoryByDefault {
+			get {
+				if (!usesCurrentDirectoryByDefault.HasValue) {
+					usesCurrentDirectoryByDefault = IsBeta7OrHigher (Path);
+				}
+				return usesCurrentDirectoryByDefault.Value;
 			}
 		}
 
-		static string GetDnxFileName ()
-		{
-			if (Platform.IsWindows) {
-				return "dnx.exe";
-			}
-			return "dnx";
-		}
+		static string[] preBeta7Versions = new string[] {
+			"beta4",
+			"beta5",
+			"beta6"
+		};
 
-		public string DnxCommand { get; private set; }
-		public DnxRuntime DnxRuntime { get; private set; }
-		public string WorkingDirectory { get; private set; }
-		public string Command { get; private set; }
-		public string Arguments { get; private set; }
+		static bool IsBeta7OrHigher (FilePath path)
+		{
+			string runtimeName = path.FullPath.FileName;
+			if (String.IsNullOrEmpty (runtimeName))
+				return false;
+
+			return !preBeta7Versions.Any (version => runtimeName.Contains (version));
+		}
 	}
 }
 

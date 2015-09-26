@@ -113,10 +113,10 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		public string CurrentDnxRuntimePath {
+		public DnxRuntime CurrentDnxRuntime {
 			get {
 				if (context != null) {
-					return context.RuntimePath;
+					return new DnxRuntime (context.RuntimePath);
 				}
 				return null;
 			}

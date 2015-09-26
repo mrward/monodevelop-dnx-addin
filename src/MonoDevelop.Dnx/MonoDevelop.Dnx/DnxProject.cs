@@ -164,7 +164,7 @@ namespace MonoDevelop.Dnx
 			return new DnxProjectExecutionCommand (
 				BaseDirectory,
 				GetCurrentCommand (),
-				DnxServices.ProjectService.CurrentDnxRuntimePath
+				DnxServices.ProjectService.CurrentDnxRuntime
 			);
 		}
 

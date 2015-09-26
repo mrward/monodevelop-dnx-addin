@@ -190,6 +190,7 @@
     <Compile Include="MonoDevelop.Dnx\EmptyDirectoryRemover.cs" />
     <Compile Include="Omnisharp\Utilities\DirectoryEnumerator.cs" />
     <Compile Include="Omnisharp\MSBuild\ProjectFile\ProjectFileInfo.cs" />
+    <Compile Include="MonoDevelop.Dnx\DnxRuntime.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -263,7 +264,4 @@
     </None>
   </ItemGroup>
   <Import Project="PostBuild.proj" />
-  <ItemGroup>
-    <Folder Include="Omnisharp\MSBuild\ProjectFile\" />
-  </ItemGroup>
 </Project>
