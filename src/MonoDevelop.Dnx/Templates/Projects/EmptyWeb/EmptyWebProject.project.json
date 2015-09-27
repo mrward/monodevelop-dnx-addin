@@ -3,12 +3,12 @@
 	"version": "1.0.0-*",
 
 	"dependencies": {
-		"Microsoft.AspNet.Server.IIS": "1.0.0-beta4",
-		"Microsoft.AspNet.Server.WebListener": "1.0.0-beta4"
+		"Microsoft.AspNet.Server.IIS": "1.0.0-beta7",
+		"Microsoft.AspNet.Server.WebListener": "1.0.0-beta7"
 	},
 
 	"commands": {
-		"web": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.WebListener --server.urls http://localhost:5000"
+		"web": "Microsoft.AspNet.Hosting --config hosting.ini"
 	},
 
 	"frameworks": {

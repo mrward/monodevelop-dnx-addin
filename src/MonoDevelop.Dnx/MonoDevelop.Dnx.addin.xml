@@ -14,6 +14,8 @@
 		<Import file="Templates/Projects/Console/ConsoleProject.project.json.xft.xml" />
 		<Import file="Templates/Projects/Console/ConsoleProject.xpt.xml" />
 
+		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.hosting.ini" />
+		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.hosting.ini.xft.xml" />
 		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.Startup.cs" />
 		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.Startup.cs.xft.xml" />
 		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.project.json" />

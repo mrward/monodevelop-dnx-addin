@@ -13,10 +13,11 @@
 		"dnx451": { },
 		"dnxcore50" : {
 			"dependencies": {
-				"System.Collections": "4.0.10-beta-22816",
-				"System.Linq": "4.0.0-beta-22816",
-				"System.Threading": "4.0.10-beta-22816",
-				"Microsoft.CSharp": "4.0.0-beta-22816"
+				"Microsoft.CSharp": "4.0.1-beta-23225",
+				"System.Collections": "4.0.11-beta-23225",
+				"System.Linq": "4.0.1-beta-23225",
+				"System.Runtime": "4.0.21-beta-23225",
+				"System.Threading": "4.0.11-beta-23225"
 			}
 		}
 	}

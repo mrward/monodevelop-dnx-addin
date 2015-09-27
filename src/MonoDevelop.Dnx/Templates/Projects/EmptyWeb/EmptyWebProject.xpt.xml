@@ -13,7 +13,7 @@
 		<DefaultFilename>WebApp</DefaultFilename>
 		<FileExtension>.xproj</FileExtension>
 		<Wizard>MonoDevelop.Dnx.ProjectTemplateWizard</Wizard>
-		<DefaultParameters>Template=EmptyWebProject;CreateWebRoot=true;OpenFile=Startup.cs;Files=Startup.cs</DefaultParameters>
+		<DefaultParameters>Template=EmptyWebProject;CreateWebRoot=true;OpenFile=Startup.cs;Files=Startup.cs|hosting.ini</DefaultParameters>
 	</TemplateConfiguration>
 
 	<Combine name="${ProjectName}" directory=".">
