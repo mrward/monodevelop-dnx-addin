@@ -174,6 +174,11 @@ namespace OmniSharp.Dnx
                             project.ProjectsByFramework.TryRemove(frameworkName, out frameworkProject);
                             _workspace.RemoveProject(frameworkProject.ProjectId);
                         }
+ 
+                        this._emitter.Emit(EventTypes.ProjectChanged, new ProjectInformationResponse()
+                        {
+                            DnxProject = new DnxProject(project)
+                        });
                     }
                     // This is where we can handle messages and update the
                     // language service
