@@ -145,6 +145,7 @@ namespace MonoDevelop.Dnx
 		public void Update (OmniSharp.Models.DnxProject project)
 		{
 			this.project = project;
+			base.OnExecutionTargetsChanged ();
 		}
 
 		internal void AddConfigurations ()
@@ -369,6 +370,32 @@ namespace MonoDevelop.Dnx
 		{
 			FilePath webRootDirectory = BaseDirectory.Combine ("wwwroot");
 			CreateDirectory (webRootDirectory);
+		}
+
+		protected override IEnumerable<ExecutionTarget> OnGetExecutionTargets (ConfigurationSelector configuration)
+		{
+			if (project == null)
+				return Enumerable.Empty<ExecutionTarget> ();
+
+			return GetDnxExecutionTargets ();
+		}
+
+		IEnumerable<ExecutionTarget> GetDnxExecutionTargets ()
+		{
+			foreach (string command in project.Commands.Keys) {
+				foreach (DnxExecutionTarget target in GetDnxExecutionTargets (command, project.Frameworks)) {
+					yield return target;
+				}
+			}
+		}
+
+		static IEnumerable<DnxExecutionTarget> GetDnxExecutionTargets (string command, IEnumerable<DnxFramework> frameworks)
+		{
+			yield return DnxExecutionTarget.CreateDefaultTarget (command);
+
+			foreach (DnxFramework framework in frameworks) {
+				yield return new DnxExecutionTarget (command, framework);
+			}
 		}
 	}
 }

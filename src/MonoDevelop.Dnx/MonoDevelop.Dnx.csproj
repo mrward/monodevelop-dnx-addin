@@ -191,6 +191,7 @@
     <Compile Include="Omnisharp\Utilities\DirectoryEnumerator.cs" />
     <Compile Include="Omnisharp\MSBuild\ProjectFile\ProjectFileInfo.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxRuntime.cs" />
+    <Compile Include="MonoDevelop.Dnx\DnxExecutionTarget.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
