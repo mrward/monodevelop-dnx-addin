@@ -54,7 +54,9 @@ namespace MonoDevelop.Dnx
 
 		public static DnxExecutionTarget CreateDefaultTarget (string command)
 		{
-			return new DnxExecutionTarget (GenerateId (command, DefaultTargetId), command);
+			return new DnxExecutionTarget (GenerateId (command, DefaultTargetId), command) {
+				Command = command
+			};
 		}
 
 		public override string Id {
@@ -84,6 +86,11 @@ namespace MonoDevelop.Dnx
 		static string GenerateId (string command, string framework)
 		{
 			return String.Format ("{0}|{1}", command, framework);
+		}
+
+		public override string ToString ()
+		{
+			return Name;
 		}
 	}
 }

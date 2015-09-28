@@ -41,8 +41,8 @@ namespace MonoDevelop.Dnx
 		{
 			var dnxCommand = (DnxProjectExecutionCommand)command;
 			return Runtime.ProcessService.StartConsoleProcess (
-				dnxCommand.Command,
-				dnxCommand.Arguments,
+				dnxCommand.GetCommand (),
+				dnxCommand.GetArguments (),
 				dnxCommand.WorkingDirectory,
 				console,
 				null);

@@ -33,18 +33,10 @@ namespace MonoDevelop.Dnx
 {
 	public class DnxProjectExecutionCommand : ExecutionCommand
 	{
-		public DnxProjectExecutionCommand (string directory, string dnxCommand, DnxRuntime runtime)
+		public DnxProjectExecutionCommand (string directory, DnxRuntime runtime)
 		{
 			WorkingDirectory = directory;
-			DnxCommand = dnxCommand;
 			DnxRuntime = runtime;
-
-			Command = Path.Combine (DnxRuntime.Path, "bin", GetDnxFileName ());
-			if (DnxRuntime.UsesCurrentDirectoryByDefault) {
-				Arguments = DnxCommand;
-			} else {
-				Arguments = string.Format (". {0}", DnxCommand);
-			}
 		}
 
 		static string GetDnxFileName ()
@@ -55,11 +47,34 @@ namespace MonoDevelop.Dnx
 			return "dnx";
 		}
 
-		public string DnxCommand { get; private set; }
 		public DnxRuntime DnxRuntime { get; private set; }
 		public string WorkingDirectory { get; private set; }
-		public string Command { get; private set; }
-		public string Arguments { get; private set; }
+
+		public DnxExecutionTarget DnxExecutionTarget {
+			get { return base.Target as DnxExecutionTarget; }
+		}
+
+		public string GetCommand ()
+		{
+			return Path.Combine (DnxRuntime.Path, "bin", GetDnxFileName ());
+		}
+
+		public string GetArguments ()
+		{
+			if (DnxRuntime.UsesCurrentDirectoryByDefault) {
+				return GetDnxCommand ();
+			} else {
+				return string.Format (". {0}", GetDnxCommand ());
+			}
+		}
+
+		string GetDnxCommand ()
+		{
+			if (DnxExecutionTarget == null)
+				return null;
+
+			return DnxExecutionTarget.Command;
+		}
 	}
 }
 

@@ -164,7 +164,6 @@ namespace MonoDevelop.Dnx
 		{
 			return new DnxProjectExecutionCommand (
 				BaseDirectory,
-				GetCurrentCommand (),
 				DnxServices.ProjectService.CurrentDnxRuntime
 			);
 		}
@@ -172,14 +171,6 @@ namespace MonoDevelop.Dnx
 		protected override bool OnGetSupportsTarget (string target)
 		{
 			return false;
-		}
-
-		string GetCurrentCommand()
-		{
-			if (project == null)
-				return null;
-			
-			return project.Commands.Keys.FirstOrDefault();
 		}
 
 		protected override bool OnGetCanExecute (ExecutionContext context, ConfigurationSelector configuration)
