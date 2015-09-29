@@ -56,7 +56,7 @@ namespace MonoDevelop.Dnx
 
 		public string GetCommand ()
 		{
-			return Path.Combine (DnxRuntime.Path, "bin", GetDnxFileName ());
+			return Path.Combine (GetDnxRuntimePath (), "bin", GetDnxFileName ());
 		}
 
 		public string GetArguments ()
@@ -66,6 +66,14 @@ namespace MonoDevelop.Dnx
 			} else {
 				return string.Format (". {0}", GetDnxCommand ());
 			}
+		}
+
+		string GetDnxRuntimePath ()
+		{
+			if (DnxExecutionTarget == null || DnxExecutionTarget.Framework == null)
+				return DnxRuntime.Path;
+
+			return DnxRuntime.GetRuntimePath (DnxExecutionTarget.Framework);
 		}
 
 		string GetDnxCommand ()

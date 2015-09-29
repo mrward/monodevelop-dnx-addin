@@ -1,5 +1,5 @@
 ﻿//
-// DnxRuntime.cs
+// DnxFrameworkExtensions.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -26,55 +26,18 @@
 //
 
 using System;
-using System.Linq;
-using MonoDevelop.Core;
 using OmniSharp.Models;
 
 namespace MonoDevelop.Dnx
 {
-	public class DnxRuntime
+	public static class DnxFrameworkExtensions
 	{
-		bool? usesCurrentDirectoryByDefault;
-
-		public DnxRuntime (string path)
+		public static string GetDnxRuntime (this DnxFramework framework)
 		{
-			Path = new FilePath (path);
-		}
-
-		public FilePath Path { get; private set; }
-
-		/// <summary>
-		/// Returns true if the dnx runtime uses the current directory by default.
-		/// </summary>
-		public bool UsesCurrentDirectoryByDefault {
-			get {
-				if (!usesCurrentDirectoryByDefault.HasValue) {
-					usesCurrentDirectoryByDefault = IsBeta7OrHigher (Path);
-				}
-				return usesCurrentDirectoryByDefault.Value;
+			if (framework.Name.StartsWith ("dnxcore", StringComparison.OrdinalIgnoreCase)) {
+				return "coreclr";
 			}
-		}
-
-		static string[] preBeta7Versions = new string[] {
-			"beta4",
-			"beta5",
-			"beta6"
-		};
-
-		static bool IsBeta7OrHigher (FilePath path)
-		{
-			string runtimeName = path.FullPath.FileName;
-			if (String.IsNullOrEmpty (runtimeName))
-				return false;
-
-			return !preBeta7Versions.Any (version => runtimeName.Contains (version));
-		}
-
-		public FilePath GetRuntimePath (DnxFramework framework)
-		{
-			string runtime = framework.GetDnxRuntime ();
-			string modifiedFileName = Path.FileName.Replace ("-clr-", "-" + runtime + "-");
-			return Path.ParentDirectory.Combine (modifiedFileName);
+			return "clr";
 		}
 	}
 }
