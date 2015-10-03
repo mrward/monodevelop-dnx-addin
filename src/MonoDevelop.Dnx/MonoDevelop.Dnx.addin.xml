@@ -85,4 +85,16 @@
 		<Class id="MonoDevelop.Dnx.ProjectTemplateWizard" class="MonoDevelop.Dnx.DnxProjectTemplateWizard" />
 	</Extension>
 
+	<Extension path="/MonoDevelop/ProjectModel/Gui/ItemOptionPanels/Build">
+		<Condition id="ItemType" value="MonoDevelop.Dnx.DnxProject">
+			<Section
+				id="DNXRuntime"
+				_label="DNX Runtime">
+					<Panel
+						id="DnxRuntimeOptionsPanel"
+						_label="DNX Runtime"
+						class="MonoDevelop.Dnx.OptionsPanels.DnxRuntimeOptionsPanel" />
+			</Section>
+		</Condition>
+	</Extension>
 </ExtensionModel>

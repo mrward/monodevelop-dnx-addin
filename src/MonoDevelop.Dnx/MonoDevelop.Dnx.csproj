@@ -193,6 +193,8 @@
     <Compile Include="MonoDevelop.Dnx\DnxRuntime.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxExecutionTarget.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxFrameworkExtensions.cs" />
+    <Compile Include="MonoDevelop.Dnx.OptionsPanels\DnxRuntimeOptionsPanel.cs" />
+    <Compile Include="MonoDevelop.Dnx\GlobalJsonFile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -266,4 +268,7 @@
     </None>
   </ItemGroup>
   <Import Project="PostBuild.proj" />
+  <ItemGroup>
+    <Folder Include="MonoDevelop.Dnx.OptionsPanels\" />
+  </ItemGroup>
 </Project>
