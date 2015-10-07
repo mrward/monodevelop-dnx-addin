@@ -4,7 +4,9 @@
     <PrepareForRunDependsOn>$(PrepareForRunDependsOn);MyPostBuildTarget</PrepareForRunDependsOn>
     <ILRepackExePath Condition=" '$(ILRepackPath)' == '' ">$(SolutionDir)packages\ILRepack.2.0.2\tools\ILRepack.exe</ILRepackExePath>
     <ILRepackCommand Condition=" '$(OS)' == 'Windows_NT'">"$(ILRepackExePath)"</ILRepackCommand>
-    <ILRepackCommand Condition=" '$(OS)' != 'Windows_NT' ">mono --runtime=v4.0.30319 "$(ILRepackExePath)"</ILRepackCommand>
+    <MonoPath Condition=" '$(MonoPath)' == '' And Exists('/Library/Frameworks/Mono.framework/Commands/mono') ">/Library/Frameworks/Mono.framework/Commands/mono</MonoPath>
+    <MonoPath Condition=" '$(MonoPath)' == '' ">mono</MonoPath>
+    <ILRepackCommand Condition=" '$(OS)' != 'Windows_NT' ">$(MonoPath) --runtime=v4.0.30319 "$(ILRepackExePath)"</ILRepackCommand>
   </PropertyGroup>
   <ItemGroup>
     <LicenseItem Include="Licenses\*.txt" />
