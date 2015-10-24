@@ -119,7 +119,7 @@ namespace MonoDevelop.Dnx
 			return solution.AddSolutionFolder ("src");
 		}
 
-		void CreateProject (Solution solution, SolutionFolder srcFolder, bool createSolutionConfigurations = true)
+		void CreateProject (Solution solution, SolutionFolder srcFolder, bool newSolution = true)
 		{
 			string projectName = Parameters["UserDefinedProjectName"];
 			DnxProject project = CreateProject (solution, projectName);
@@ -127,8 +127,9 @@ namespace MonoDevelop.Dnx
 
 			project.AddConfigurations ();
 
-			if (createSolutionConfigurations) {
+			if (newSolution) {
 				solution.GenerateDefaultDnxProjectConfigurations (project);
+				solution.StartupItem = project;
 			} else {
 				solution.EnsureConfigurationHasBuildEnabled (project);
 			}
