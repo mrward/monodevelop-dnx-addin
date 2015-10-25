@@ -1,0 +1,17 @@
+﻿<?xml version="1.0"?>
+<Template
+	originator="Matt Ward"
+	created="2015/09/27"
+	lastModified="2015/09/27">
+
+	<TemplateConfiguration>
+		<_Name>Empty web hosting.ini</_Name>
+	</TemplateConfiguration>
+
+	<TemplateFiles>
+		<File
+			name="hosting.ini"
+			DefaultName="hosting.ini"
+			src="EmptyKestrelWebProject.hosting.ini" />
+	</TemplateFiles>
+</Template>

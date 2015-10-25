@@ -266,9 +266,37 @@
     <None Include="Templates\Projects\Console\ConsoleProject.project.json.xft.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Templates\Projects\EmptyWeb\EmptyWebProject.hosting.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\Projects\EmptyWeb\EmptyWebProject.hosting.ini.xft.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\Projects\EmptyKestrelWeb\EmptyKestrelWebProject.hosting.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\Projects\EmptyKestrelWeb\EmptyKestrelWebProject.hosting.ini.xft.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\Projects\EmptyKestrelWeb\EmptyKestrelWebProject.xpt.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\Projects\EmptyKestrelWeb\EmptyKestrelWebProject.project.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\Projects\EmptyKestrelWeb\EmptyKestrelWebProject.project.json.xft.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\Projects\EmptyKestrelWeb\EmptyKestrelWebProject.Startup.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\Projects\EmptyKestrelWeb\EmptyKestrelWebProject.Startup.cs.xft.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="PostBuild.proj" />
   <ItemGroup>
     <Folder Include="MonoDevelop.Dnx.OptionsPanels\" />
+    <Folder Include="Templates\Projects\EmptyKestrelWeb\" />
   </ItemGroup>
 </Project>

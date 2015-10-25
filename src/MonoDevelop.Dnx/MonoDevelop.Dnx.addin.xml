@@ -22,6 +22,14 @@
 		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.project.json.xft.xml" />
 		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.xpt.xml" />
 
+		<Import file="Templates/Projects/EmptyKestrelWeb/EmptyKestrelWebProject.hosting.ini" />
+		<Import file="Templates/Projects/EmptyKestrelWeb/EmptyKestrelWebProject.hosting.ini.xft.xml" />
+		<Import file="Templates/Projects/EmptyKestrelWeb/EmptyKestrelWebProject.Startup.cs" />
+		<Import file="Templates/Projects/EmptyKestrelWeb/EmptyKestrelWebProject.Startup.cs.xft.xml" />
+		<Import file="Templates/Projects/EmptyKestrelWeb/EmptyKestrelWebProject.project.json" />
+		<Import file="Templates/Projects/EmptyKestrelWeb/EmptyKestrelWebProject.project.json.xft.xml" />
+		<Import file="Templates/Projects/EmptyKestrelWeb/EmptyKestrelWebProject.xpt.xml" />
+
 		<Import file="Templates/Projects/Library/LibraryProject.MyClass.cs" />
 		<Import file="Templates/Projects/Library/LibraryProject.MyClass.cs.xft.xml" />
 		<Import file="Templates/Projects/Library/LibraryProject.project.json" />
@@ -76,9 +84,16 @@
 		<ProjectTemplate
 			id="DnxLibraryProject"
 			file="Templates/Projects/Library/LibraryProject.xpt.xml" />
-		<ProjectTemplate
-			id="DnxEmptyWebProject"
-			file="Templates/Projects/EmptyWeb/EmptyWebProject.xpt.xml" />
+		<Condition id="Platform" value="Windows">
+			<ProjectTemplate
+				id="DnxEmptyWebProject"
+				file="Templates/Projects/EmptyWeb/EmptyWebProject.xpt.xml" />
+		</Condition>
+		<Condition id="Platform" value="!Windows">
+			<ProjectTemplate
+				id="DnxEmptyKestrelWebProject"
+				file="Templates/Projects/EmptyKestrelWeb/EmptyKestrelWebProject.xpt.xml" />
+		</Condition>
 	</Extension>
 
 	<Extension path="/MonoDevelop/Ide/ProjectTemplateWizards">

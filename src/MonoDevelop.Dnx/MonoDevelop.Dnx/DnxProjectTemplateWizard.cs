@@ -56,6 +56,9 @@ namespace MonoDevelop.Dnx
 		{
 			createDnxProject = !Parameters.GetBoolean ("CreateSolution");
 			Parameters["CreateDnxProject"] = createDnxProject.ToString ();
+
+			bool shouldUseKestrel = !Platform.IsWindows;
+			Parameters["UseKestrel"] = shouldUseKestrel.ToString ();
 		}
 
 		public override void ItemsCreated (IEnumerable<IWorkspaceFileObject> items)
