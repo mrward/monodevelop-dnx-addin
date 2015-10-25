@@ -56,7 +56,7 @@ namespace MonoDevelop.Dnx
 		{
 			dnxProject = EntityItem as DnxProject;
 			if (dnxProject == null || !dnxProject.IsDirty)
-				return null;
+				return new MSBuildProject ();
 
 			return CreateMSBuildProject ();
 		}
