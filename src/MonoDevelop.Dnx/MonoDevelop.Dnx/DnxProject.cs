@@ -54,6 +54,7 @@ namespace MonoDevelop.Dnx
 			: base ("C#")
 		{
 			DnxMSBuildProjectHandler.InstallHandler (this);
+			UseMSBuildEngine = false;
 		}
 
 		public DnxProject (ProjectCreateInformation info, XmlElement projectOptions)
