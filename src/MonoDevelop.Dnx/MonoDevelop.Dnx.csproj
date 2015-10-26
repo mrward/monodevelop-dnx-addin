@@ -266,18 +266,6 @@
     <None Include="Templates\Projects\Console\ConsoleProject.project.json.xft.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Templates\Projects\EmptyWeb\EmptyWebProject.hosting.ini">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Templates\Projects\EmptyWeb\EmptyWebProject.hosting.ini.xft.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Templates\Projects\EmptyKestrelWeb\EmptyKestrelWebProject.hosting.ini">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Templates\Projects\EmptyKestrelWeb\EmptyKestrelWebProject.hosting.ini.xft.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Templates\Projects\EmptyKestrelWeb\EmptyKestrelWebProject.xpt.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -3,11 +3,11 @@
 	"version": "1.0.0-*",
 
 	"dependencies": {
-		"Microsoft.AspNet.Server.Kestrel": "1.0.0-beta7"
+		"Microsoft.AspNet.Server.Kestrel": "1.0.0-beta8"
 	},
 
 	"commands": {
-		"web": "Microsoft.AspNet.Hosting --config hosting.ini"
+		"web": "Microsoft.AspNet.Hosting"
 	},
 
 	"frameworks": {
@@ -16,8 +16,6 @@
 	},
 
 	"publishExclude": [
-		"node_modules",
-		"bower_components",
 		"**.xproj",
 		"**.user",
 		"**.userprefs",
@@ -25,7 +23,6 @@
 	],
 	"exclude": [
 		"wwwroot",
-		"node_modules",
-		"bower_components"
+		"node_modules"
 	]
 }
