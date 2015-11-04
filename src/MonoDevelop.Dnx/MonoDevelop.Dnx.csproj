@@ -166,7 +166,6 @@
     <Compile Include="MonoDevelop.Dnx\AspNet5ProjectSystemFactory.cs" />
     <Compile Include="MonoDevelop.Dnx\SolutionExtensions.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxStartupHandler.cs" />
-    <Compile Include="MonoDevelop.Dnx\AspNetProjectReferenceMaintainer.cs" />
     <Compile Include="MonoDevelop.Dnx\AspNetProjectLocator.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectConfiguration.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectExecutionCommand.cs" />

@@ -133,7 +133,15 @@ namespace MonoDevelop.Dnx
 
 		public string CurrentFramework { get; private set; }
 
-		public void UpdateReferences (IEnumerable<string> references)
+		public void UpdateReferences (OmniSharp.Dnx.FrameworkProject frameworkProject)
+		{
+			if (!IsCurrentFramework (frameworkProject.Framework, frameworkProject.Project.ProjectsByFramework.Keys))
+				return;
+
+			UpdateReferences (frameworkProject.FileReferences.Keys);
+		}
+
+		void UpdateReferences (IEnumerable<string> references)
 		{
 			var oldReferenceItems = Items.OfType<ProjectReference> ().ToList ();
 			Items.RemoveRange (oldReferenceItems);

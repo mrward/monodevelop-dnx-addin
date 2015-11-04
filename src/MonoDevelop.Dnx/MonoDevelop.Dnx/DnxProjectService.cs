@@ -95,8 +95,11 @@ namespace MonoDevelop.Dnx
 		public void OnReferencesUpdated (ProjectId projectId, FrameworkProject frameworkProject)
 		{
 			DispatchService.GuiDispatch (()  => {
-				var maintainer = new AspNetProjectReferenceMaintainer (context);
-				maintainer.UpdateReferences (projectId, frameworkProject);
+				var locator = new AspNetProjectLocator (context);
+				DnxProject project = locator.FindProject (projectId);
+				if (project != null) {
+					project.UpdateReferences (frameworkProject);
+				}
 			});
 		}
 
