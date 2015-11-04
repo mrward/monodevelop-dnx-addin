@@ -59,18 +59,6 @@ namespace MonoDevelop.Dnx
 
 			return context.WorkspaceMapping.TryGetValue (projectId, out frameworkProject);
 		}
-
-		public DnxProject FindProjectForCurrentFramework (ProjectId projectId)
-		{
-			if (!Init (projectId))
-				return null;
-
-			DnxProject project = solution.FindProjectByProjectJsonFileName (frameworkProject.Project.Path);
-			if (project.IsCurrentFramework (frameworkProject.Framework, frameworkProject.Project.ProjectsByFramework.Keys)) {
-				return project;
-			}
-			return null;
-		}
 	}
 }
 
