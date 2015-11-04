@@ -47,6 +47,7 @@ namespace MonoDevelop.Dnx
 		FilePath fileName;
 		string name;
 		Dictionary<string, DependenciesMessage> dependencies = new Dictionary<string, DependenciesMessage> ();
+		Dictionary<string, List<string>> references = new Dictionary<string, List<string>> ();
 
 		public static readonly string ProjectTypeGuid = "{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}";
 
@@ -122,23 +123,21 @@ namespace MonoDevelop.Dnx
 			References.Add (projectItem);
 		}
 
-		public bool IsCurrentFramework (string framework, IEnumerable<string> frameworks)
-		{
-			if (CurrentFramework == null) {
-				CurrentFramework = frameworks.FirstOrDefault ();
-			}
-
-			return CurrentFramework == framework;
-		}
-
 		public string CurrentFramework { get; private set; }
 
 		public void UpdateReferences (OmniSharp.Dnx.FrameworkProject frameworkProject)
 		{
-			if (!IsCurrentFramework (frameworkProject.Framework, frameworkProject.Project.ProjectsByFramework.Keys))
+			if (CurrentFramework == null) {
+				CurrentFramework = frameworkProject.Project.ProjectsByFramework.Keys.FirstOrDefault ();
+			}
+
+			List<string> fileReferences = frameworkProject.FileReferences.Keys.ToList ();
+			references[frameworkProject.Framework] = fileReferences;
+
+			if (CurrentFramework != frameworkProject.Framework)
 				return;
 
-			UpdateReferences (frameworkProject.FileReferences.Keys);
+			UpdateReferences (fileReferences);
 		}
 
 		void UpdateReferences (IEnumerable<string> references)
@@ -395,6 +394,40 @@ namespace MonoDevelop.Dnx
 
 			foreach (DnxFramework framework in frameworks) {
 				yield return new DnxExecutionTarget (command, framework);
+			}
+		}
+
+		public void UpdateReferences (DnxExecutionTarget executionTarget)
+		{
+			if (IsCurrentFramework (executionTarget))
+				return;
+
+			UpdateCurrentFramework (executionTarget);
+
+			List<string> fileReferences = null;
+			if (!references.TryGetValue (CurrentFramework, out fileReferences)) {
+				LoggingService.LogWarning ("Unable to find references for framework '{0}'.", CurrentFramework);
+				return;
+			}
+
+			UpdateReferences (fileReferences);
+		}
+
+		bool IsCurrentFramework (DnxExecutionTarget executionTarget)
+		{
+			if (executionTarget.IsDefaultProfile) {
+				return CurrentFramework == references.Keys.FirstOrDefault ();
+			}
+
+			return executionTarget.Framework.Name == CurrentFramework;
+		}
+
+		void UpdateCurrentFramework (DnxExecutionTarget executionTarget)
+		{
+			if (executionTarget.IsDefaultProfile) {
+				CurrentFramework = references.Keys.FirstOrDefault ();
+			} else {
+				CurrentFramework = executionTarget.Framework.Name;
 			}
 		}
 	}

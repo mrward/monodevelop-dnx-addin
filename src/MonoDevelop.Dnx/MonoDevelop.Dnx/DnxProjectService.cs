@@ -51,6 +51,7 @@ namespace MonoDevelop.Dnx
 		{
 			IdeApp.Workspace.SolutionLoaded += SolutionLoaded;
 			IdeApp.Workspace.SolutionUnloaded += SolutionUnloaded;
+			IdeApp.Workspace.ActiveExecutionTargetChanged += ActiveExecutionTargetChanged;
 		}
 
 		void SolutionUnloaded (object sender, SolutionEventArgs e)
@@ -177,6 +178,19 @@ namespace MonoDevelop.Dnx
 			if (matchedProject != null) {
 				matchedProject.OnPackageRestoreFinished ();
 			}
+		}
+
+		void ActiveExecutionTargetChanged (object sender, EventArgs e)
+		{
+			var executionTarget = IdeApp.Workspace.ActiveExecutionTarget as DnxExecutionTarget;
+			if (executionTarget == null)
+				return;
+
+			var project = IdeApp.ProjectOperations.CurrentSelectedProject as DnxProject;
+			if (project == null)
+				return;
+
+			project.UpdateReferences (executionTarget);
 		}
 	}
 }

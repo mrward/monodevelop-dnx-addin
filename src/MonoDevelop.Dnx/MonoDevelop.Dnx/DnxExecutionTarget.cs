@@ -55,7 +55,8 @@ namespace MonoDevelop.Dnx
 		public static DnxExecutionTarget CreateDefaultTarget (string command)
 		{
 			return new DnxExecutionTarget (GenerateId (command, DefaultTargetId), command) {
-				Command = command
+				Command = command,
+				IsDefaultProfile = true
 			};
 		}
 
@@ -69,14 +70,11 @@ namespace MonoDevelop.Dnx
 
 		public DnxFramework Framework { get; private set; }
 		public string Command { get; private set; }
-
-		public bool IsDefaultProfile {
-			get { return Id == DefaultTargetId; }
-		}
+		public bool IsDefaultProfile { get; private set; }
 
 		string GenerateName ()
 		{
-			if (IsDefaultProfile) {
+			if (Framework == null) {
 				return Command;
 			}
 
