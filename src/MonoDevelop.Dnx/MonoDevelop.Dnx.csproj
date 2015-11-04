@@ -194,6 +194,7 @@
     <Compile Include="MonoDevelop.Dnx\DnxFrameworkExtensions.cs" />
     <Compile Include="MonoDevelop.Dnx.OptionsPanels\DnxRuntimeOptionsPanel.cs" />
     <Compile Include="MonoDevelop.Dnx\GlobalJsonFile.cs" />
+    <Compile Include="MonoDevelop.Dnx\DnxConfigurationParameters.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

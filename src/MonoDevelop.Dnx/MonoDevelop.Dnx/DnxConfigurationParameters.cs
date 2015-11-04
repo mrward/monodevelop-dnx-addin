@@ -1,5 +1,5 @@
 ﻿//
-// DnxProjectConfiguration.cs
+// DnxConfigurationParameters.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -25,33 +25,19 @@
 // THE SOFTWARE.
 //
 
+using System;
 using MonoDevelop.Projects;
 
 namespace MonoDevelop.Dnx
 {
-	public class DnxProjectConfiguration : DotNetProjectConfiguration
+	public class DnxConfigurationParameters : DotNetConfigurationParameters
 	{
-		public DnxProjectConfiguration (string name)
-			: base (name)
+		public DnxConfigurationParameters ()
 		{
-			Init ();
+			NoStdLib = true;
 		}
 
-		public DnxProjectConfiguration ()
-		{
-			Init ();
-		}
-
-		void Init ()
-		{
-			ExternalConsole = true;
-			CreateCompilationParameters ();
-		}
-
-		void CreateCompilationParameters ()
-		{
-			CompilationParameters = new DnxConfigurationParameters ();
-		}
+		public override bool NoStdLib { get; set; }
 	}
 }
 
