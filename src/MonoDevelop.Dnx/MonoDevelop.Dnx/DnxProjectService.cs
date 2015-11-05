@@ -192,6 +192,17 @@ namespace MonoDevelop.Dnx
 
 			project.UpdateReferences (executionTarget);
 		}
+
+		public void OnParseOptionsChanged (ProjectId projectId, ParseOptions options)
+		{
+			DispatchService.GuiDispatch (()  => {
+				var locator = new AspNetProjectLocator (context);
+				DnxProject project = locator.FindProject (projectId);
+				if (project != null) {
+					project.UpdateParseOptions (locator.FrameworkProject, options);
+				}
+			});
+		}
 	}
 }
 

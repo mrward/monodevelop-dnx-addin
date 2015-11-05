@@ -43,6 +43,10 @@ namespace MonoDevelop.Dnx
 			this.context = context;
 		}
 
+		public FrameworkProject FrameworkProject {
+			get { return frameworkProject; }
+		}
+
 		public DnxProject FindProject (ProjectId projectId)
 		{
 			if (Init (projectId))

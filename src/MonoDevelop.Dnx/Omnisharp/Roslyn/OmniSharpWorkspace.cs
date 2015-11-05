@@ -69,12 +69,12 @@ namespace OmniSharp
 //        {
 //            OnCompilationOptionsChanged(projectId, options);
 //        }
-//
-//        public void SetParseOptions(ProjectId projectId, ParseOptions parseOptions)
-//        {
-//            OnParseOptionsChanged(projectId, parseOptions);
-//        }
-//
+
+        public void SetParseOptions(ProjectId projectId, ParseOptions parseOptions)
+        {
+            OnParseOptionsChanged(projectId, parseOptions);
+        }
+
 //        public void OnDocumentChanged(DocumentId documentId, SourceText text)
 //        {
 //            OnDocumentTextChanged(documentId, text, PreservationMode.PreserveIdentity);

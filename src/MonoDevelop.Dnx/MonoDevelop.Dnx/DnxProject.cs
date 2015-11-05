@@ -48,6 +48,7 @@ namespace MonoDevelop.Dnx
 		string name;
 		Dictionary<string, DependenciesMessage> dependencies = new Dictionary<string, DependenciesMessage> ();
 		Dictionary<string, List<string>> references = new Dictionary<string, List<string>> ();
+		Dictionary<string, List<string>> preprocessorSymbols = new Dictionary<string, List<string>> ();
 
 		public static readonly string ProjectTypeGuid = "{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}";
 
@@ -127,9 +128,7 @@ namespace MonoDevelop.Dnx
 
 		public void UpdateReferences (OmniSharp.Dnx.FrameworkProject frameworkProject)
 		{
-			if (CurrentFramework == null) {
-				CurrentFramework = frameworkProject.Project.ProjectsByFramework.Keys.FirstOrDefault ();
-			}
+			EnsureCurrentFrameworkDefined (frameworkProject);
 
 			List<string> fileReferences = frameworkProject.FileReferences.Keys.ToList ();
 			references[frameworkProject.Framework] = fileReferences;
@@ -138,6 +137,13 @@ namespace MonoDevelop.Dnx
 				return;
 
 			UpdateReferences (fileReferences);
+		}
+
+		void EnsureCurrentFrameworkDefined (OmniSharp.Dnx.FrameworkProject frameworkProject)
+		{
+			if (CurrentFramework == null) {
+				CurrentFramework = frameworkProject.Project.ProjectsByFramework.Keys.FirstOrDefault ();
+			}
 		}
 
 		void UpdateReferences (IEnumerable<string> references)
@@ -404,13 +410,8 @@ namespace MonoDevelop.Dnx
 
 			UpdateCurrentFramework (executionTarget);
 
-			List<string> fileReferences = null;
-			if (!references.TryGetValue (CurrentFramework, out fileReferences)) {
-				LoggingService.LogWarning ("Unable to find references for framework '{0}'.", CurrentFramework);
-				return;
-			}
-
-			UpdateReferences (fileReferences);
+			RefreshPreprocessorSymbols ();
+			RefreshReferences ();
 		}
 
 		bool IsCurrentFramework (DnxExecutionTarget executionTarget)
@@ -429,6 +430,50 @@ namespace MonoDevelop.Dnx
 			} else {
 				CurrentFramework = executionTarget.Framework.Name;
 			}
+		}
+
+		void RefreshReferences ()
+		{
+			List<string> fileReferences = null;
+			if (!references.TryGetValue (CurrentFramework, out fileReferences)) {
+				LoggingService.LogWarning ("Unable to find references for framework '{0}'.", CurrentFramework);
+				return;
+			}
+
+			UpdateReferences (fileReferences);
+		}
+
+		public void UpdateParseOptions (OmniSharp.Dnx.FrameworkProject frameworkProject, Microsoft.CodeAnalysis.ParseOptions options)
+		{
+			EnsureCurrentFrameworkDefined (frameworkProject);
+
+			List<string> symbols = options.PreprocessorSymbolNames.ToList ();
+			preprocessorSymbols[frameworkProject.Framework] = symbols;
+
+			if (CurrentFramework != frameworkProject.Framework)
+				return;
+
+			UpdatePreprocessorSymbols (symbols);
+		}
+
+		void UpdatePreprocessorSymbols (IEnumerable<string> symbols)
+		{
+			foreach (var config in Configurations.OfType<DotNetProjectConfiguration> ()) {
+				var parameters = new DnxConfigurationParameters ();
+				parameters.UpdatePreprocessorSymbols (symbols);
+				config.CompilationParameters = parameters;
+			}
+		}
+
+		void RefreshPreprocessorSymbols ()
+		{
+			List<string> symbols = null;
+			if (!preprocessorSymbols.TryGetValue (CurrentFramework, out symbols)) {
+				LoggingService.LogWarning ("Unable to find preprocessor symbols for framework '{0}'.", CurrentFramework);
+				return;
+			}
+
+			UpdatePreprocessorSymbols (symbols);
 		}
 	}
 }

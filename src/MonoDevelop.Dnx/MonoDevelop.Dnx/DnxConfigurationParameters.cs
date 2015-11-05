@@ -26,18 +26,32 @@
 //
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using MonoDevelop.Projects;
 
 namespace MonoDevelop.Dnx
 {
 	public class DnxConfigurationParameters : DotNetConfigurationParameters
 	{
+		List<string> defineSymbols = new List<string> ();
+
 		public DnxConfigurationParameters ()
 		{
 			NoStdLib = true;
 		}
 
 		public override bool NoStdLib { get; set; }
+
+		public void UpdatePreprocessorSymbols (IEnumerable<string> symbols)
+		{
+			defineSymbols = symbols.ToList ();
+		}
+
+		public override IEnumerable<string> GetDefineSymbols ()
+		{
+			return defineSymbols;
+		}
 	}
 }
 

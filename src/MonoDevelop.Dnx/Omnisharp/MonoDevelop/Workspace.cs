@@ -73,5 +73,10 @@ namespace Microsoft.CodeAnalysis
 		{
 			DnxServices.ProjectService.OnReferencesUpdated (projectId, frameworkProject);
 		}
+
+		protected internal void OnParseOptionsChanged (ProjectId projectId, ParseOptions options)
+		{
+			DnxServices.ProjectService.OnParseOptionsChanged (projectId, options);
+		}
 	}
 }

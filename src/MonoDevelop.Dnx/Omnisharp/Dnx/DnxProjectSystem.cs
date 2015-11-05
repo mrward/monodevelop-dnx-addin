@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Hosting;
 using Microsoft.CodeAnalysis;
-//using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp;
 //using Microsoft.CodeAnalysis.Text;
 using Microsoft.Framework.DesignTimeHost.Models;
 using Microsoft.Framework.DesignTimeHost.Models.IncomingMessages;
@@ -315,10 +315,10 @@ namespace OmniSharp.Dnx
                         // Configuration and compiler options
                         var val = m.Payload.ToObject<CompilationOptionsMessage>();
 
-//                        var projectId = project.ProjectsByFramework[val.Framework.FrameworkName].ProjectId;
+                        var projectId = project.ProjectsByFramework[val.Framework.FrameworkName].ProjectId;
 
-                        var options = val.CompilationOptions.CompilationOptions;
-
+//                        var options = val.CompilationOptions.CompilationOptions;
+//
 //                        var specificDiagnosticOptions = options.SpecificDiagnosticOptions
 //                        .ToDictionary(p => p.Key, p => (ReportDiagnostic)p.Value);
 //
@@ -332,12 +332,12 @@ namespace OmniSharp.Dnx
 //                                concurrentBuild: options.ConcurrentBuild,
 //                                specificDiagnosticOptions: specificDiagnosticOptions
 //                            );
-//
-//                        var parseOptions = new CSharpParseOptions(val.CompilationOptions.LanguageVersion,
-//                                                                  preprocessorSymbols: val.CompilationOptions.Defines);
-//
+
+                        var parseOptions = new CSharpParseOptions(//val.CompilationOptions.LanguageVersion,
+                                                                  preprocessorSymbols: val.CompilationOptions.Defines);
+
 //                        _workspace.SetCompilationOptions(projectId, csharpOptions);
-//                        _workspace.SetParseOptions(projectId, parseOptions);
+                        _workspace.SetParseOptions(projectId, parseOptions);
                     }
                     else if (m.MessageType == "Sources")
                     {

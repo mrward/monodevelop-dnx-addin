@@ -195,6 +195,8 @@
     <Compile Include="MonoDevelop.Dnx.OptionsPanels\DnxRuntimeOptionsPanel.cs" />
     <Compile Include="MonoDevelop.Dnx\GlobalJsonFile.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxConfigurationParameters.cs" />
+    <Compile Include="Omnisharp\Microsoft\Roslyn\CSharpParseOptions.cs" />
+    <Compile Include="Omnisharp\Microsoft\Roslyn\ParseOptions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
