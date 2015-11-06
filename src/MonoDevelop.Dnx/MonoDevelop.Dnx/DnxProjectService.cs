@@ -74,21 +74,21 @@ namespace MonoDevelop.Dnx
 		void SolutionLoaded (object sender, SolutionEventArgs e)
 		{
 			try {
-				if (e.Solution.HasAspNetProjects ()) {
-					LoadAspNetProjectSystem (e.Solution);
+				if (e.Solution.HasDnxProjects ()) {
+					LoadDnxProjectSystem (e.Solution);
 				}
 			} catch (Exception ex) {
 				MessageService.ShowError (ex.Message);
 			}
 		}
 
-		internal void LoadAspNetProjectSystem (Solution solution)
+		internal void LoadDnxProjectSystem (Solution solution)
 		{
 			UnloadProjectSystem ();
 
 			applicationLifetime = new MonoDevelopApplicationLifetime ();
 			context = new DnxContext ();
-			var factory = new AspNet5ProjectSystemFactory ();
+			var factory = new DnxProjectSystemFactory ();
 			projectSystem = factory.CreateProjectSystem (solution, applicationLifetime, context);
 			projectSystem.Initalize ();
 		}
@@ -96,7 +96,7 @@ namespace MonoDevelop.Dnx
 		public void OnReferencesUpdated (ProjectId projectId, FrameworkProject frameworkProject)
 		{
 			DispatchService.GuiDispatch (()  => {
-				var locator = new AspNetProjectLocator (context);
+				var locator = new DnxProjectLocator (context);
 				DnxProject project = locator.FindProject (projectId);
 				if (project != null) {
 					project.UpdateReferences (frameworkProject);
@@ -196,7 +196,7 @@ namespace MonoDevelop.Dnx
 		public void OnParseOptionsChanged (ProjectId projectId, ParseOptions options)
 		{
 			DispatchService.GuiDispatch (()  => {
-				var locator = new AspNetProjectLocator (context);
+				var locator = new DnxProjectLocator (context);
 				DnxProject project = locator.FindProject (projectId);
 				if (project != null) {
 					project.UpdateParseOptions (locator.FrameworkProject, options);

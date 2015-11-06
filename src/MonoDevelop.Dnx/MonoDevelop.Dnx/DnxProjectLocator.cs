@@ -1,5 +1,5 @@
 ﻿//
-// AspNetProjectLocator.cs
+// DnxProjectLocator.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -32,13 +32,13 @@ using OmniSharp.Dnx;
 
 namespace MonoDevelop.Dnx
 {
-	public class AspNetProjectLocator
+	public class DnxProjectLocator
 	{
 		readonly DnxContext context;
 		Solution solution;
 		FrameworkProject frameworkProject;
 
-		public AspNetProjectLocator (DnxContext context)
+		public DnxProjectLocator (DnxContext context)
 		{
 			this.context = context;
 		}

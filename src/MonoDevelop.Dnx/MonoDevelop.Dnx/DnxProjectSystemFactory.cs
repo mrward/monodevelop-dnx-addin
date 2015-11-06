@@ -1,5 +1,5 @@
 ﻿//
-// AspNet5ProjectSystemFactory.cs
+// DnxProjectSystemFactory.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -34,7 +34,7 @@ using OmniSharp.Services;
 
 namespace MonoDevelop.Dnx
 {
-	public class AspNet5ProjectSystemFactory
+	public class DnxProjectSystemFactory
 	{
 		public DnxProjectSystem CreateProjectSystem (
 			Solution solution,

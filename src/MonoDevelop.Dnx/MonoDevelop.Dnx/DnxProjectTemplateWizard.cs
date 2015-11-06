@@ -151,7 +151,7 @@ namespace MonoDevelop.Dnx
 
 			OpenProjectFile (project);
 
-			DnxServices.ProjectService.LoadAspNetProjectSystem (solution);
+			DnxServices.ProjectService.LoadDnxProjectSystem (solution);
 		}
 
 		void AddSolutionItemsFolder (Solution solution)

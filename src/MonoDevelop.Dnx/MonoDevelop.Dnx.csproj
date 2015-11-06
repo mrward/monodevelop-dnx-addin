@@ -163,10 +163,8 @@
     <Compile Include="Omnisharp\MonoDevelop\MonoDevelopApplicationLifetime.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxServices.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectService.cs" />
-    <Compile Include="MonoDevelop.Dnx\AspNet5ProjectSystemFactory.cs" />
     <Compile Include="MonoDevelop.Dnx\SolutionExtensions.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxStartupHandler.cs" />
-    <Compile Include="MonoDevelop.Dnx\AspNetProjectLocator.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectConfiguration.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectExecutionCommand.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxExecutionHandler.cs" />
@@ -197,6 +195,8 @@
     <Compile Include="MonoDevelop.Dnx\DnxConfigurationParameters.cs" />
     <Compile Include="Omnisharp\Microsoft\Roslyn\CSharpParseOptions.cs" />
     <Compile Include="Omnisharp\Microsoft\Roslyn\ParseOptions.cs" />
+    <Compile Include="MonoDevelop.Dnx\DnxProjectSystemFactory.cs" />
+    <Compile Include="MonoDevelop.Dnx\DnxProjectLocator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

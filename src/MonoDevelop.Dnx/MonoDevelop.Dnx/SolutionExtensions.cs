@@ -34,7 +34,7 @@ namespace MonoDevelop.Dnx
 {
 	public static class SolutionExtensions
 	{
-		public static bool HasAspNetProjects (this Solution solution)
+		public static bool HasDnxProjects (this Solution solution)
 		{
 			return solution.GetAllSolutionItems<DnxProject> ().Any ();
 		}
