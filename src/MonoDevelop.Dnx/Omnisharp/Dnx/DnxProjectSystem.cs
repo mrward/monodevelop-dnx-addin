@@ -619,5 +619,27 @@ namespace OmniSharp.Dnx
         {
             _watcher.Dispose();
         }
+
+        public void ChangeConfiguration (string config)
+        {
+            foreach (int contextId in _context.ProjectContextMapping.Values)
+            {
+                var message = new Message();
+                message.HostId = _context.HostId;
+                message.ContextId = contextId;
+                message.MessageType = "ChangeConfiguration";
+                var configMessage = new ChangeConfigurationMessage();
+                configMessage.Configuration = config;
+                message.Payload = JToken.FromObject(configMessage);
+                try
+                {
+                    _context.Connection.Post(message);
+                }
+                catch (IOException ex)
+                {
+                    _logger.LogError("Post failed", ex);
+                }
+            }
+        }
     }
 }

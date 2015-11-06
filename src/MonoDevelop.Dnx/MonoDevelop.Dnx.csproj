@@ -195,6 +195,7 @@
     <Compile Include="MonoDevelop.Dnx\DnxConfigurationParameters.cs" />
     <Compile Include="Omnisharp\Microsoft\Roslyn\CSharpParseOptions.cs" />
     <Compile Include="Omnisharp\Microsoft\Roslyn\ParseOptions.cs" />
+    <Compile Include="Omnisharp\Dnx\IncomingMessages\ChangeConfiguration.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectSystemFactory.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectLocator.cs" />
   </ItemGroup>

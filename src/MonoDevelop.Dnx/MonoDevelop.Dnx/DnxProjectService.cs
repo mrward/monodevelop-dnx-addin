@@ -52,6 +52,7 @@ namespace MonoDevelop.Dnx
 			IdeApp.Workspace.SolutionLoaded += SolutionLoaded;
 			IdeApp.Workspace.SolutionUnloaded += SolutionUnloaded;
 			IdeApp.Workspace.ActiveExecutionTargetChanged += ActiveExecutionTargetChanged;
+			IdeApp.Workspace.ActiveConfigurationChanged += ActiveConfigurationChanged;
 		}
 
 		void SolutionUnloaded (object sender, SolutionEventArgs e)
@@ -202,6 +203,17 @@ namespace MonoDevelop.Dnx
 					project.UpdateParseOptions (locator.FrameworkProject, options);
 				}
 			});
+		}
+
+		void ActiveConfigurationChanged (object sender, EventArgs e)
+		{
+			if (projectSystem == null)
+				return;
+
+			string config = IdeApp.Workspace.ActiveConfigurationId;
+			if (config != null) {
+				projectSystem.ChangeConfiguration (config);
+			}
 		}
 	}
 }
