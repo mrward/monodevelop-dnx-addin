@@ -1,5 +1,5 @@
 ﻿//
-// DiagnosticsMessageExtension.cs
+// DiagnosticsMessageExtensions.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -33,7 +33,7 @@ using System.Text.RegularExpressions;
 
 namespace MonoDevelop.Dnx
 {
-	public static class DiagnosticsMessageExtension
+	public static class DiagnosticsMessageExtensions
 	{
 		delegate void AddError (string file, int line, int col, string errorNum, string text);
 
@@ -62,8 +62,6 @@ namespace MonoDevelop.Dnx
 		/// <param name="message">Message.</param>
 		static BuildError CreateBuildError (string message)
 		{
-			var buildError = new BuildError ();
-
 			Match match = Regex.Match (message, @"\b(\w:[/\\].*?)\((\d+),(\d+)\):.*?(CS\d+):(.*)");
 			if (match.Success) {
 				try {
