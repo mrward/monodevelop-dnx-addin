@@ -42,6 +42,7 @@ namespace MonoDevelop.Dnx
 		DnxContext context;
 		DnxProjectSystem projectSystem;
 		MonoDevelopApplicationLifetime applicationLifetime;
+		DnxProjectBuilder builder;
 
 		public DnxProjectService ()
 		{
@@ -213,6 +214,20 @@ namespace MonoDevelop.Dnx
 			string config = IdeApp.Workspace.ActiveConfigurationId;
 			if (config != null) {
 				projectSystem.ChangeConfiguration (config);
+			}
+		}
+
+		public void GetDiagnostics (DnxProjectBuilder builder)
+		{
+			this.builder = builder;
+			projectSystem.GetDiagnostics (builder.ProjectPath);
+		}
+
+		public void ReportDiagnostics (OmniSharp.Dnx.Project project, DiagnosticsMessage[] messages)
+		{
+			if (builder != null) {
+				builder.OnDiagnostics (messages);
+				builder = null;
 			}
 		}
 	}

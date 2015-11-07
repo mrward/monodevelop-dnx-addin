@@ -198,6 +198,8 @@
     <Compile Include="Omnisharp\Dnx\IncomingMessages\ChangeConfiguration.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectSystemFactory.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectLocator.cs" />
+    <Compile Include="MonoDevelop.Dnx\DnxProjectBuilder.cs" />
+    <Compile Include="MonoDevelop.Dnx\DiagnosticsMessageExtension.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -387,6 +387,11 @@ namespace OmniSharp.Dnx
                         var val = m.Payload.ToObject<Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages.ErrorMessage>();
                         _logger.LogError(val.Message);
                     }
+                    else if (m.MessageType == "AllDiagnostics")
+                    {
+                        var val = m.Payload.ToObject<DiagnosticsMessage[]>();
+                        _workspace.ReportDiagnostics(project, val);
+                    }
 
                     if (project.ProjectsByFramework.Values.All(p => p.Loaded))
                     {
@@ -639,6 +644,26 @@ namespace OmniSharp.Dnx
                 {
                     _logger.LogError("Post failed", ex);
                 }
+            }
+        }
+
+        public void GetDiagnostics (string projectPath)
+        {
+            int contextId;
+            if (!_context.ProjectContextMapping.TryGetValue (projectPath, out contextId))
+                throw new InvalidOperationException ("Unknown project.");
+
+            var message = new Message();
+            message.HostId = _context.HostId;
+            message.ContextId = contextId;
+            message.MessageType = "GetDiagnostics";
+            try
+            {
+                _context.Connection.Post(message);
+            }
+            catch (IOException ex)
+            {
+                _logger.LogError("Post failed", ex);
             }
         }
     }

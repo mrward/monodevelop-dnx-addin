@@ -184,7 +184,7 @@ namespace MonoDevelop.Dnx
 
 		protected override bool OnGetSupportsTarget (string target)
 		{
-			return false;
+			return true;
 		}
 
 		protected override bool OnGetCanExecute (ExecutionContext context, ConfigurationSelector configuration)
@@ -199,6 +199,11 @@ namespace MonoDevelop.Dnx
 
 		protected override BuildResult OnRunTarget (IProgressMonitor monitor, string target, ConfigurationSelector configuration)
 		{
+			if (target == ProjectService.BuildTarget) {
+				using (var builder = new DnxProjectBuilder (this, monitor)) {
+					return builder.Build ();
+				}
+			}
 			return new BuildResult ();
 		}
 
@@ -474,6 +479,15 @@ namespace MonoDevelop.Dnx
 			}
 
 			UpdatePreprocessorSymbols (symbols);
+		}
+
+		public string JsonPath {
+			get {
+				if (project != null) {
+					return project.Path;
+				}
+				return null;
+			}
 		}
 	}
 }
