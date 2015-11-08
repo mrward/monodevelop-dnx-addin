@@ -27,9 +27,10 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages;
-using MonoDevelop.Projects;
 using System.Text.RegularExpressions;
+using Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages;
+using MonoDevelop.Core;
+using MonoDevelop.Projects;
 
 namespace MonoDevelop.Dnx
 {
@@ -62,7 +63,7 @@ namespace MonoDevelop.Dnx
 		/// <param name="message">Message.</param>
 		static BuildError CreateBuildError (string message)
 		{
-			Match match = Regex.Match (message, @"\b(\w:[/\\].*?)\((\d+),(\d+)\):.*?(CS\d+):(.*)");
+			Match match = MatchMessage (message);
 			if (match.Success) {
 				try {
 					return new BuildError {
@@ -81,6 +82,14 @@ namespace MonoDevelop.Dnx
 			return new BuildError {
 				ErrorText = message
 			};
+		}
+
+		static Match MatchMessage (string message)
+		{
+			if (Platform.IsWindows)
+				return Regex.Match (message, @"\b(\w:[/\\].*?)\((\d+),(\d+)\):.*?(CS\d+):(.*)");
+
+			return Regex.Match (message, @"(/.*?)\((\d+),(\d+)\):.*?(CS\d+):(.*)");
 		}
 	}
 }
