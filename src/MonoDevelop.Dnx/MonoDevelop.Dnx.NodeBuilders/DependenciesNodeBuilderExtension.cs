@@ -32,8 +32,6 @@ namespace MonoDevelop.Dnx.NodeBuilders
 {
 	public class DependenciesNodeBuilderExtension : NodeBuilderExtension
 	{
-		DependenciesFolderNode currentFolderNode;
-
 		public override bool CanBuildNode (Type dataType)
 		{
 			return typeof(DnxProject).IsAssignableFrom (dataType);
@@ -46,59 +44,9 @@ namespace MonoDevelop.Dnx.NodeBuilders
 
 		public override void BuildChildNodes (ITreeBuilder treeBuilder, object dataObject)
 		{
-			Dispose ();
-
 			var project = (DnxProject)dataObject;
-			project.DependenciesChanged += ProjectDependenciesChanged;
-			project.PackageRestoreStarted += PackageRestoreStarted;
-			project.PackageRestoreFinished += PackageRestoreFinished;
-
-			currentFolderNode = new DependenciesFolderNode (project);
-			treeBuilder.AddChild (currentFolderNode);
-		}
-
-		void ProjectDependenciesChanged (object sender, EventArgs e)
-		{
-			RefreshChildNodes ();
-		}
-
-		void RefreshChildNodes ()
-		{
-			ITreeBuilder builder = Context.GetTreeBuilder (currentFolderNode);
-			if (builder != null)
-				builder.UpdateChildren ();
-		}
-
-		public override void Dispose ()
-		{
-			if (currentFolderNode != null) {
-				currentFolderNode.Project.DependenciesChanged -= ProjectDependenciesChanged;
-				currentFolderNode.Project.PackageRestoreStarted -= PackageRestoreStarted;
-				currentFolderNode.Project.PackageRestoreFinished -= PackageRestoreFinished;
-			}
-		}
-
-		void PackageRestoreStarted (object sender, EventArgs e)
-		{
-			if (currentFolderNode != null) {
-				currentFolderNode.IsRestoringPackages = true;
-				UpdateFolderNodeText ();
-			}
-		}
-
-		void PackageRestoreFinished (object sender, EventArgs e)
-		{
-			if (currentFolderNode != null) {
-				currentFolderNode.IsRestoringPackages = false;
-				UpdateFolderNodeText ();
-			}
-		}
-
-		void UpdateFolderNodeText ()
-		{
-			ITreeBuilder builder = Context.GetTreeBuilder (currentFolderNode);
-			if (builder != null)
-				builder.Update ();
+			var node = new DependenciesFolderNode (project);
+			treeBuilder.AddChild (node);
 		}
 	}
 }

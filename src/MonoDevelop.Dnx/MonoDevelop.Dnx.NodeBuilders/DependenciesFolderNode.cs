@@ -75,7 +75,9 @@ namespace MonoDevelop.Dnx.NodeBuilders
 			}
 		}
 
-		public bool IsRestoringPackages { get; set; }
+		public bool IsRestoringPackages {
+			get { return Project.IsRestoringPackages; }
+		}
 	}
 }
 

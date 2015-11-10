@@ -317,10 +317,14 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
+		public bool IsRestoringPackages { get; set; }
+
 		public event EventHandler PackageRestoreStarted;
 
 		public void OnPackageRestoreStarted ()
 		{
+			IsRestoringPackages = true;
+
 			var handler = PackageRestoreStarted;
 			if (handler != null)
 				handler (this, new EventArgs ());
@@ -330,6 +334,8 @@ namespace MonoDevelop.Dnx
 
 		public void OnPackageRestoreFinished ()
 		{
+			IsRestoringPackages = false;
+
 			var handler = PackageRestoreFinished;
 			if (handler != null)
 				handler (this, new EventArgs ());
