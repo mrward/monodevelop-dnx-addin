@@ -39,7 +39,7 @@ namespace MonoDevelop.Dnx
 			return solution.GetAllSolutionItems<DnxProject> ().Any ();
 		}
 
-		public static DnxProject FindProjectByProjectJsonFileName(this Solution solution, string fileName)
+		public static DnxProject FindProjectByProjectJsonFileName (this Solution solution, string fileName)
 		{
 			var directory = new FilePath (Path.GetDirectoryName(fileName));
 			return solution.GetAllSolutionItems<DnxProject> ()

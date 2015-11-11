@@ -46,8 +46,10 @@ namespace MonoDevelop.Dnx
 		OmniSharp.Models.DnxProject project;
 		FilePath fileName;
 		string name;
+		bool addingReferences;
 		Dictionary<string, DependenciesMessage> dependencies = new Dictionary<string, DependenciesMessage> ();
-		Dictionary<string, List<string>> references = new Dictionary<string, List<string>> ();
+		Dictionary<string, List<string>> savedFileReferences = new Dictionary<string, List<string>> ();
+		Dictionary<string, List<string>> savedProjectReferences = new Dictionary<string, List<string>> ();
 		Dictionary<string, List<string>> preprocessorSymbols = new Dictionary<string, List<string>> ();
 
 		public static readonly string ProjectTypeGuid = "{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}";
@@ -118,10 +120,21 @@ namespace MonoDevelop.Dnx
 			return String.Equals (".cs", extension, StringComparison.OrdinalIgnoreCase);
 		}
 
-		public void AddAssemblyReference (string fileName)
+		void AddAssemblyReference (string fileName)
 		{
 			var projectItem = new ProjectReference (ReferenceType.Assembly, fileName);
 			References.Add (projectItem);
+		}
+
+		void AddProjectReference (string fileName)
+		{
+			DnxProject project = ParentSolution.FindProjectByProjectJsonFileName (fileName);
+			if (project != null) {
+				var projectItem = new ProjectReference (ReferenceType.Project, project.Name);
+				References.Add (projectItem);
+			} else {
+				LoggingService.LogDebug ("Unable to find project by json filename '{0}'.", fileName);
+			}
 		}
 
 		public string CurrentFramework { get; private set; }
@@ -131,12 +144,22 @@ namespace MonoDevelop.Dnx
 			EnsureCurrentFrameworkDefined (frameworkProject);
 
 			List<string> fileReferences = frameworkProject.FileReferences.Keys.ToList ();
-			references[frameworkProject.Framework] = fileReferences;
+			savedFileReferences[frameworkProject.Framework] = fileReferences;
+
+			List<string> projectReferences = frameworkProject.ProjectReferences.Keys.ToList ();
+			savedProjectReferences[frameworkProject.Framework] = projectReferences;
 
 			if (CurrentFramework != frameworkProject.Framework)
 				return;
 
-			UpdateReferences (fileReferences);
+			try {
+				addingReferences = true;
+				RemoveExistingReferences ();
+				UpdateReferences (fileReferences);
+				UpdateProjectReferences (projectReferences);
+			} finally {
+				addingReferences = false;
+			}
 		}
 
 		void EnsureCurrentFrameworkDefined (OmniSharp.Dnx.FrameworkProject frameworkProject)
@@ -146,13 +169,23 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		void UpdateReferences (IEnumerable<string> references)
+		void RemoveExistingReferences ()
 		{
 			var oldReferenceItems = Items.OfType<ProjectReference> ().ToList ();
 			Items.RemoveRange (oldReferenceItems);
+		}
 
+		void UpdateReferences (IEnumerable<string> references)
+		{
 			foreach (string reference in references) {
 				AddAssemblyReference (reference);
+			}
+		}
+
+		void UpdateProjectReferences (IEnumerable<string> references)
+		{
+			foreach (string reference in references) {
+				AddProjectReference (reference);
 			}
 		}
 
@@ -422,13 +455,21 @@ namespace MonoDevelop.Dnx
 			UpdateCurrentFramework (executionTarget);
 
 			RefreshPreprocessorSymbols ();
-			RefreshReferences ();
+
+			try {
+				addingReferences = true;
+				RemoveExistingReferences ();
+				RefreshReferences ();
+				RefreshProjectReferences ();
+			} finally {
+				addingReferences = false;
+			}
 		}
 
 		bool IsCurrentFramework (DnxExecutionTarget executionTarget)
 		{
 			if (executionTarget.IsDefaultProfile) {
-				return CurrentFramework == references.Keys.FirstOrDefault ();
+				return CurrentFramework == savedFileReferences.Keys.FirstOrDefault ();
 			}
 
 			return executionTarget.Framework.Name == CurrentFramework;
@@ -437,7 +478,7 @@ namespace MonoDevelop.Dnx
 		void UpdateCurrentFramework (DnxExecutionTarget executionTarget)
 		{
 			if (executionTarget.IsDefaultProfile) {
-				CurrentFramework = references.Keys.FirstOrDefault ();
+				CurrentFramework = savedFileReferences.Keys.FirstOrDefault ();
 			} else {
 				CurrentFramework = executionTarget.Framework.Name;
 			}
@@ -446,12 +487,23 @@ namespace MonoDevelop.Dnx
 		void RefreshReferences ()
 		{
 			List<string> fileReferences = null;
-			if (!references.TryGetValue (CurrentFramework, out fileReferences)) {
+			if (!savedFileReferences.TryGetValue (CurrentFramework, out fileReferences)) {
 				LoggingService.LogWarning ("Unable to find references for framework '{0}'.", CurrentFramework);
 				return;
 			}
 
 			UpdateReferences (fileReferences);
+		}
+
+		void RefreshProjectReferences ()
+		{
+			List<string> projectReferences = null;
+			if (!savedProjectReferences.TryGetValue (CurrentFramework, out projectReferences)) {
+				LoggingService.LogWarning ("Unable to find project for framework '{0}'.", CurrentFramework);
+				return;
+			}
+
+			UpdateProjectReferences (projectReferences);
 		}
 
 		public void UpdateParseOptions (OmniSharp.Dnx.FrameworkProject frameworkProject, Microsoft.CodeAnalysis.ParseOptions options)
@@ -495,6 +547,45 @@ namespace MonoDevelop.Dnx
 				return null;
 			}
 		}
+
+		protected override void OnReferenceAddedToProject (ProjectReferenceEventArgs e)
+		{
+			base.OnReferenceAddedToProject (e);
+
+			if (addingReferences)
+				return;
+
+			if (e.ProjectReference.ReferenceType == ReferenceType.Project) {
+				var jsonFile = ProjectJsonFile.Read (this);
+				if (jsonFile.Exists) {
+					jsonFile.AddProjectReference (e.ProjectReference);
+					jsonFile.Save ();
+					FileService.NotifyFileChanged (jsonFile.Path);
+				} else {
+					LoggingService.LogDebug ("Unable to find project.json '{0}'", jsonFile.Path);
+				}
+			}
+		}
+
+		protected override void OnReferenceRemovedFromProject (ProjectReferenceEventArgs e)
+		{
+			base.OnReferenceRemovedFromProject (e);
+
+			if (addingReferences)
+				return;
+
+			if (e.ProjectReference.ReferenceType == ReferenceType.Project) {
+				var jsonFile = ProjectJsonFile.Read (this);
+				if (jsonFile.Exists) {
+					jsonFile.RemoveProjectReference (e.ProjectReference);
+					jsonFile.Save ();
+					FileService.NotifyFileChanged (jsonFile.Path);
+				} else {
+					LoggingService.LogDebug ("Unable to find project.json '{0}'", jsonFile.Path);
+				}
+			}
+		}
+
 	}
 }
 

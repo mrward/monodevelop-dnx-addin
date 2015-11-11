@@ -200,6 +200,8 @@
     <Compile Include="MonoDevelop.Dnx\DnxProjectLocator.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectBuilder.cs" />
     <Compile Include="MonoDevelop.Dnx\DiagnosticsMessageExtensions.cs" />
+    <Compile Include="MonoDevelop.Dnx\JsonFile.cs" />
+    <Compile Include="MonoDevelop.Dnx\ProjectJsonFile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

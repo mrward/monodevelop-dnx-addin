@@ -1,5 +1,5 @@
 ﻿//
-// GlobalJsonFile.cs
+// JsonFile.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -33,49 +33,68 @@ using Newtonsoft.Json.Linq;
 
 namespace MonoDevelop.Dnx
 {
-	public class GlobalJsonFile : JsonFile
+	public class JsonFile
 	{
-		JObject sdkObject;
+		FilePath filePath;
+		Encoding encoding = Encoding.UTF8;
 
-		GlobalJsonFile (FilePath filePath)
-			: base (filePath)
+		protected JObject jsonObject;
+
+		protected JsonFile (FilePath filePath)
 		{
+			this.filePath = filePath;
 		}
 
-		public static GlobalJsonFile Read (DnxProject project)
-		{
-			var jsonFile = new GlobalJsonFile (project.ParentSolution.BaseDirectory.Combine ("global.json"));
-			jsonFile.Read ();
-			return jsonFile;
-		}
+		public bool Exists { get; private set; }
 
-		public string DnxRuntimeVersion { get; set; }
-
-		protected override void AfterRead ()
+		protected void Read ()
 		{
-			ReadPropertiesFromJsonObject ();
-		}
-
-		void ReadPropertiesFromJsonObject ()
-		{
-			JToken sdkToken;
-			if (!jsonObject.TryGetValue ("sdk", out sdkToken))
+			Exists = JsonFileExists ();
+			if (!Exists)
 				return;
 
-			sdkObject = sdkToken as JObject;
-			if (sdkObject == null)
-				return;
+			using (var fileStream = File.OpenRead (filePath)) {
+				using (var reader = new StreamReader (fileStream)) {
+					using (var jsonReader = new JsonTextReader (reader)) {
+						jsonObject = JObject.Load (jsonReader);
+						if (reader.CurrentEncoding != null) {
+							encoding = reader.CurrentEncoding;
+						}
+					}
+				}
+			}
 
-			JToken version;
-			if (!sdkObject.TryGetValue ("version", out version))
-				return;
-
-			DnxRuntimeVersion = version.ToString ();
+			AfterRead ();
 		}
 
-		protected override void BeforeSave ()
+		protected virtual void AfterRead ()
 		{
-			sdkObject["version"] = new JValue (DnxRuntimeVersion);
+		}
+
+		bool JsonFileExists ()
+		{
+			return File.Exists (filePath);
+		}
+
+		public void Save ()
+		{
+			BeforeSave ();
+			using (var writer = new StreamWriter (filePath, false, encoding)) {
+				using (var jsonWriter = new JsonTextWriter (writer)) {
+					jsonWriter.Formatting = Formatting.Indented;
+					jsonWriter.Indentation = 1;
+					jsonWriter.IndentChar = '\t';
+					jsonObject.WriteTo (jsonWriter);
+				}
+			}
+		}
+
+		protected virtual void BeforeSave ()
+		{
+		}
+
+		public FilePath Path {
+			get { return filePath; }
 		}
 	}
 }
