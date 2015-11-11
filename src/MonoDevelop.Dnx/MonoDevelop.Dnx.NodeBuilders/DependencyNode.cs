@@ -72,7 +72,7 @@ namespace MonoDevelop.Dnx.NodeBuilders
 			if (Type == "Package" || Unresolved)
 				return new IconId ("md-dnx-nuget-package");
 			else if (Type == "Project")
-				return new IconId ("md-project");
+				return new IconId ("md-reference-project");
 
 			return Stock.Reference;
 		}
