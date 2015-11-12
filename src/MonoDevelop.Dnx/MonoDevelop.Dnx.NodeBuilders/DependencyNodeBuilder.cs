@@ -32,6 +32,14 @@ namespace MonoDevelop.Dnx.NodeBuilders
 {
 	public class DependencyNodeBuilder : TypeNodeBuilder
 	{
+		public override string ContextMenuAddinPath {
+			get { return "/MonoDevelop/Dnx/ContextMenu/ProjectPad/DependencyNode"; }
+		}
+
+		public override Type CommandHandlerType {
+			get { return typeof(DependencyNodeCommandHandler); }
+		}
+
 		public override Type NodeDataType {
 			get { return typeof(DependencyNode); }
 		}

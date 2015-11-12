@@ -586,6 +586,21 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
+		public void RemoveProjectReference (string name)
+		{
+			ProjectReference matchedProjectReference = Items.OfType<ProjectReference> ()
+				.FirstOrDefault (projectReference => IsProjectReferenceMatch (projectReference, name));
+
+			if (matchedProjectReference != null) {
+				Items.Remove (matchedProjectReference);
+			}
+		}
+
+		bool IsProjectReferenceMatch (ProjectReference projectReference, string name)
+		{
+			return (projectReference.ReferenceType == ReferenceType.Project) &&
+				(projectReference.Reference == name);
+		}
 	}
 }
 

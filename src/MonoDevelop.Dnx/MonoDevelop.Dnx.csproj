@@ -202,6 +202,7 @@
     <Compile Include="MonoDevelop.Dnx\DiagnosticsMessageExtensions.cs" />
     <Compile Include="MonoDevelop.Dnx\JsonFile.cs" />
     <Compile Include="MonoDevelop.Dnx\ProjectJsonFile.cs" />
+    <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependencyNodeCommandHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -37,6 +37,14 @@
 		<Import file="Templates/Projects/Library/LibraryProject.xpt.xml" />
 	</Runtime>
 
+	<ExtensionPoint path="/MonoDevelop/Dnx/ContextMenu/ProjectPad/DependencyNode">
+		<ExtensionNodeSet id="MonoDevelop.Components.Commands.ItemSet"/>
+	</ExtensionPoint>
+
+	<Extension path="/MonoDevelop/Dnx/ContextMenu/ProjectPad/DependencyNode">
+		<CommandItem id="MonoDevelop.Ide.Commands.EditCommands.Delete" />
+	</Extension>
+
 	<Extension path="/MonoDevelop/ProjectModel/ProjectBindings">
 		<ProjectBinding id="DnxProject" class="MonoDevelop.Dnx.DnxProjectBinding" />
 	</Extension>

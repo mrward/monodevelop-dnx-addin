@@ -71,7 +71,7 @@ namespace MonoDevelop.Dnx.NodeBuilders
 		{
 			if (Type == "Package" || Unresolved)
 				return new IconId ("md-dnx-nuget-package");
-			else if (Type == "Project")
+			else if (IsProject)
 				return new IconId ("md-reference-project");
 
 			return Stock.Reference;
@@ -115,6 +115,10 @@ namespace MonoDevelop.Dnx.NodeBuilders
 
 		public bool Unresolved {
 			get { return dependency.Type == "Unresolved"; }
+		}
+
+		public bool IsProject {
+			get { return Type == "Project"; }
 		}
 	}
 }
