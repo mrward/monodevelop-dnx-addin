@@ -103,7 +103,13 @@ namespace MonoDevelop.Dnx
 
 		ProjectFile CreateFileProjectItem (string fileName)
 		{
-			return new ProjectFile (fileName, GetDefaultBuildAction (fileName));
+			var projectFile = new ProjectFile (fileName, GetDefaultBuildAction (fileName));
+
+			if (IsProjectJsonLockFile (fileName)) {
+				AddProjectJsonDependency (projectFile);
+			}
+
+			return projectFile;
 		}
 
 		public override string GetDefaultBuildAction (string fileName)
@@ -600,6 +606,39 @@ namespace MonoDevelop.Dnx
 		{
 			return (projectReference.ReferenceType == ReferenceType.Project) &&
 				(projectReference.Reference == name);
+		}
+
+		static bool IsProjectJsonLockFile (FilePath fileName)
+		{
+			return fileName.FileName.Equals ("project.lock.json", StringComparison.OrdinalIgnoreCase);
+		}
+
+		static bool IsProjectJsonFile (FilePath fileName)
+		{
+			return fileName.FileName.Equals ("project.json", StringComparison.OrdinalIgnoreCase);
+		}
+
+		void AddProjectJsonDependency (ProjectFile projectFile)
+		{
+			FilePath projectJsonFileName = GetProjectJsonFileName ();
+			if (projectJsonFileName.IsNotNull) {
+				projectFile.DependsOn = projectJsonFileName.FileName;
+			}
+		}
+
+		FilePath GetProjectJsonFileName ()
+		{
+			ProjectFile projectJsonFile = Items.OfType<ProjectFile> ()
+				.FirstOrDefault (projectFile => IsProjectJsonFile (projectFile.FilePath));
+			
+			if (projectJsonFile != null)
+				return projectJsonFile.FilePath;
+
+			FilePath projectJsonFileName = BaseDirectory.Combine ("project.json");
+			if (File.Exists (projectJsonFileName))
+				return projectJsonFileName;
+
+			return null;
 		}
 	}
 }
