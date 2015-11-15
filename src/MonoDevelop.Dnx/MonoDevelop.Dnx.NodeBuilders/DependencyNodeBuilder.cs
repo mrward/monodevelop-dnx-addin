@@ -36,10 +36,6 @@ namespace MonoDevelop.Dnx.NodeBuilders
 			get { return "/MonoDevelop/Dnx/ContextMenu/ProjectPad/DependencyNode"; }
 		}
 
-		public override Type CommandHandlerType {
-			get { return typeof(DependencyNodeCommandHandler); }
-		}
-
 		public override Type NodeDataType {
 			get { return typeof(DependencyNode); }
 		}

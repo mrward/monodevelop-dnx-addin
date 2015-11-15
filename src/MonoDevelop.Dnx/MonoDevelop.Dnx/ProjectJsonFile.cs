@@ -29,6 +29,7 @@ using System;
 using MonoDevelop.Core;
 using Newtonsoft.Json.Linq;
 using MonoDevelop.Projects;
+using System.Collections.Generic;
 
 namespace MonoDevelop.Dnx
 {
@@ -117,6 +118,15 @@ namespace MonoDevelop.Dnx
 			jsonObject.Add ("dependencies", dependencies);
 
 			return dependencies;
+		}
+
+		public void AddNuGetPackages (IEnumerable<NuGetPackageToAdd> packagesToAdd)
+		{
+			JObject dependencies = GetOrCreateDependencies ();
+			foreach (NuGetPackageToAdd package in packagesToAdd) {
+				var packageDependency = new JProperty (package.Id, package.Version);
+				dependencies.Add (packageDependency);
+			}
 		}
 	}
 }

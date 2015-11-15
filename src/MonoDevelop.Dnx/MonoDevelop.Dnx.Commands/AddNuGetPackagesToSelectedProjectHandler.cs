@@ -1,5 +1,5 @@
 ﻿//
-// DependencyNodeCommandHandler.cs
+// AddNuGetPackagesToSelectedProjectHandler.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -25,33 +25,38 @@
 // THE SOFTWARE.
 //
 
-using System;
+using System.Collections.Generic;
+using System.Linq;
 using MonoDevelop.Components.Commands;
-using MonoDevelop.Core;
-using MonoDevelop.Ide.Commands;
-using MonoDevelop.Ide.Gui.Components;
+using MonoDevelop.Ide;
+using MonoDevelop.PackageManagement;
+using MonoDevelop.Projects;
 
-namespace MonoDevelop.Dnx.NodeBuilders
+namespace MonoDevelop.Dnx.Commands
 {
-	public class DependencyNodeCommandHandler : NodeCommandHandler
+	public class AddNuGetPackagesToSelectedProjectHandler : CommandHandler
 	{
-		[CommandUpdateHandler (EditCommands.Delete)]
-		public void UpdateRemoveItem (CommandInfo info)
+		protected DnxProject GetSelectedDnxProject ()
 		{
-			var node = (DependencyNode)CurrentNode.DataItem;
-			info.Enabled = node.IsProject;
-			info.Text = GettextCatalog.GetString ("Remove");
+			return IdeApp.ProjectOperations.CurrentSelectedProject as DnxProject;
 		}
 
-		public override void DeleteItem ()
+		protected override void Run ()
 		{
-			var node = (DependencyNode)CurrentNode.DataItem;
-			if (CurrentNode.MoveToParent (typeof(DnxProject))) {
-				var project = CurrentNode.DataItem as DnxProject;
-				if (project != null) {
-					project.RemoveProjectReference (node.Name);
-				}
+			DnxProject project = GetSelectedDnxProject ();
+			if (project == null)
+				return;
+
+			var runner = new AddPackagesDialogRunner ();
+			runner.RunToAddPackageReferences ();
+			if (runner.PackagesToAdd.Any ()) {
+				AddPackagesToProject (project, runner.PackagesToAdd.ToList ());
 			}
+		}
+
+		void AddPackagesToProject (DnxProject project, IList<NuGetPackageToAdd> packagesToAdd)
+		{
+			project.AddNuGetPackages (packagesToAdd);
 		}
 	}
 }

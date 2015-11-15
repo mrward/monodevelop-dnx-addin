@@ -41,9 +41,25 @@
 		<CommandItem id="MonoDevelop.Ide.Commands.EditCommands.Delete" />
 	</Extension>
 
+	<ExtensionPoint path="/MonoDevelop/Dnx/ContextMenu/ProjectPad/DependenciesFolderNode">
+		<ExtensionNodeSet id="MonoDevelop.Components.Commands.ItemSet"/>
+	</ExtensionPoint>
+
+	<Extension path="/MonoDevelop/Dnx/ContextMenu/ProjectPad/DependenciesFolderNode">
+		<CommandItem id="MonoDevelop.Dnx.Commands.AddNuGetPackages" />
+	</Extension>
+
 	<Extension path="/MonoDevelop/ProjectModel/ProjectBindings">
 		<ProjectBinding id="DnxProject" class="MonoDevelop.Dnx.DnxProjectBinding" />
 	</Extension>
+
+	<Extension path="/MonoDevelop/Ide/Commands">
+		<Command
+			id="MonoDevelop.Dnx.Commands.AddNuGetPackages"
+			_description="Add NuGet packages to the project"
+			_label="Add NuGet _Packages..."
+			defaultHandler="MonoDevelop.Dnx.Commands.AddNuGetPackagesToSelectedProjectHandler" />
+	</Extension>>
 
 	<Extension path = "/MonoDevelop/ProjectModel/MSBuildItemTypes">
 		<SolutionItem

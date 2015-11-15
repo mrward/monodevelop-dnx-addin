@@ -50,6 +50,7 @@ namespace MonoDevelop.Dnx
 		Dictionary<string, DependenciesMessage> dependencies = new Dictionary<string, DependenciesMessage> ();
 		Dictionary<string, List<string>> savedFileReferences = new Dictionary<string, List<string>> ();
 		Dictionary<string, List<string>> savedProjectReferences = new Dictionary<string, List<string>> ();
+
 		Dictionary<string, List<string>> preprocessorSymbols = new Dictionary<string, List<string>> ();
 
 		public static readonly string ProjectTypeGuid = "{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}";
@@ -639,6 +640,18 @@ namespace MonoDevelop.Dnx
 				return projectJsonFileName;
 
 			return null;
+		}
+
+		public void AddNuGetPackages (IEnumerable<NuGetPackageToAdd> packagesToAdd)
+		{
+			var jsonFile = ProjectJsonFile.Read (this);
+			if (jsonFile.Exists) {
+				jsonFile.AddNuGetPackages (packagesToAdd);
+				jsonFile.Save ();
+				FileService.NotifyFileChanged (jsonFile.Path);
+			} else {
+				LoggingService.LogDebug ("Unable to find project.json '{0}'", jsonFile.Path);
+			}
 		}
 	}
 }

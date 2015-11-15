@@ -37,6 +37,10 @@ namespace MonoDevelop.Dnx.NodeBuilders
 			get { return typeof(DependenciesFolderNode); }
 		}
 
+		public override string ContextMenuAddinPath {
+			get { return "/MonoDevelop/Dnx/ContextMenu/ProjectPad/DependenciesFolderNode"; }
+		}
+
 		public override string GetNodeName (ITreeNavigator thisNode, object dataObject)
 		{
 			return "Dependencies";

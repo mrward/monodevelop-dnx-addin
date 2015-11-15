@@ -77,6 +77,14 @@
       <HintPath>..\..\lib\Mono.TextEditor.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Microsoft.Web.XmlTransform">
+      <HintPath>..\packages\Microsoft.Web.Xdt.1.0.0\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>
+    </Reference>
+    <Reference Include="NuGet.Core">
+      <HintPath>..\packages\Mono.NuGet.Core.2.8.7\lib\Net40\NuGet.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="Mono.Cairo, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -202,7 +210,58 @@
     <Compile Include="MonoDevelop.Dnx\DiagnosticsMessageExtensions.cs" />
     <Compile Include="MonoDevelop.Dnx\JsonFile.cs" />
     <Compile Include="MonoDevelop.Dnx\ProjectJsonFile.cs" />
-    <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependencyNodeCommandHandler.cs" />
+    <Compile Include="MonoDevelop.Dnx.Commands\DependencyNodeCommandHandler.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\AggregateExceptionErrorMessage.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\AvailablePackagesViewModel.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\DelegateCommand.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\FailingPackageRepository.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\FallbackRepository.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\ICommand.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\ImageCache.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\ImageLoadedEventArgs.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\ImageLoader.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\IPackageExtensions.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\IPackageFromRepository.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\IPackageRepositoryCache.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\IPackageViewModelFactory.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\IPackageViewModelParent.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\IRegisteredPackageRepositories.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\ISharpDevelopPackageRepositoryFactory.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\ITask.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\ITaskFactory.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\MarkupString.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\MonoDevelopAggregateRepository.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\PackageFromRepository.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\PackageListViewTextFormatter.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\PackageManagementEnumerableExtensions.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\PackageManagementTask.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\PackageManagementTaskFactory.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\PackageRepositoryCache.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\PackageSearchCriteria.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\PackagesForSelectedPageQuery.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\PackagesForSelectedPageResult.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\PackageSourceExtensions.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\PackagesViewModel.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\PackageViewModel.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\PackageViewModelFactory.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\Page.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\Pages.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\RegisteredPackageRepositories.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\RegisteredPackageSources.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\SharpDevelopPackageRepositoryFactory.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\ViewModelBase.cs" />
+    <Compile Include="MonoDevelop.PackageManagement\WildcardVersionSpec.cs" />
+    <Compile Include="MonoDevelop.PackageManagement.Gui\AddPackagesDialog.cs" />
+    <Compile Include="MonoDevelop.PackageManagement.Gui\AddPackagesDialog.UI.cs" />
+    <Compile Include="MonoDevelop.PackageManagement.Gui\AddPackagesDialogRunner.cs">
+      <LogicalName>reference-48.png</LogicalName>
+    </Compile>
+    <Compile Include="MonoDevelop.PackageManagement.Gui\DialogExtensions.cs" />
+    <Compile Include="MonoDevelop.PackageManagement.Gui\PackageCellView.cs" />
+    <Compile Include="MonoDevelop.PackageManagement.Gui\PackageCellViewCheckBox.cs" />
+    <Compile Include="MonoDevelop.PackageManagement.Gui\PackageCellViewEventArgs.cs" />
+    <Compile Include="MonoDevelop.Dnx.Commands\AddNuGetPackagesToSelectedProjectHandler.cs" />
+    <Compile Include="MonoDevelop.Dnx\NuGetPackageToAdd.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -212,6 +271,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Icons\nuget-16%402x.png">
       <LogicalName>nuget-16@2x.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Icons\reference-48.png">
+      <LogicalName>reference-48.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Icons\reference-48%402x.png">
+      <LogicalName>reference-48@2x.png</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -289,10 +354,12 @@
     <None Include="Templates\Projects\EmptyKestrelWeb\EmptyKestrelWebProject.Startup.cs.xft.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="PostBuild.proj" />
   <ItemGroup>
     <Folder Include="MonoDevelop.Dnx.OptionsPanels\" />
     <Folder Include="Templates\Projects\EmptyKestrelWeb\" />
+    <Folder Include="MonoDevelop.Dnx.Commands\" />
   </ItemGroup>
 </Project>
