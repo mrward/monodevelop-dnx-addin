@@ -26,10 +26,11 @@
 //
 
 using System;
-using MonoDevelop.Core;
-using Newtonsoft.Json.Linq;
-using MonoDevelop.Projects;
 using System.Collections.Generic;
+using System.Linq;
+using MonoDevelop.Core;
+using MonoDevelop.Projects;
+using Newtonsoft.Json.Linq;
 
 namespace MonoDevelop.Dnx
 {
@@ -58,14 +59,6 @@ namespace MonoDevelop.Dnx
 
 		void ReadPropertiesFromJsonObject ()
 		{
-//			JToken sdkToken;
-//			if (!jsonObject.TryGetValue ("sdk", out sdkToken))
-//				return;
-//
-//			sdkObject = sdkToken as JObject;
-//			if (sdkObject == null)
-//				return;
-//
 			JToken version;
 			if (!jsonObject.TryGetValue ("version", out version))
 				return;
@@ -73,16 +66,11 @@ namespace MonoDevelop.Dnx
 			Version = version.ToString ();
 		}
 
-		protected override void BeforeSave ()
-		{
-		//	sdkObject["version"] = new JValue (DnxRuntimeVersion);
-		}
-
 		public void AddProjectReference (ProjectReference projectReference)
 		{
 			JObject dependencies = GetOrCreateDependencies ();
 			var projectDependency = new JProperty (projectReference.Reference, "1.0.0-*");
-			dependencies.Add (projectDependency);
+			InsertSorted (dependencies, projectDependency);
 		}
 
 		public void RemoveProjectReference (ProjectReference projectReference)
@@ -125,8 +113,32 @@ namespace MonoDevelop.Dnx
 			JObject dependencies = GetOrCreateDependencies ();
 			foreach (NuGetPackageToAdd package in packagesToAdd) {
 				var packageDependency = new JProperty (package.Id, package.Version);
-				dependencies.Add (packageDependency);
+				InsertSorted (dependencies, packageDependency);
 			}
+		}
+
+		static void InsertSorted (JObject parent, JProperty propertyToAdd)
+		{
+			List<JToken> children = parent.Children ().ToList ();
+			foreach (JToken child in children) {
+				child.Remove ();
+			}
+
+			bool added = false;
+
+			foreach (JToken child in children) {
+				var childProperty = child as JProperty;
+				if (childProperty != null && !added) {
+					if (string.Compare (propertyToAdd.Name, childProperty.Name, StringComparison.OrdinalIgnoreCase) < 0) {
+						parent.Add (propertyToAdd);
+						added = true;
+					}
+				}
+				parent.Add (childProperty);
+			}
+
+			if (!added)
+				parent.Add (propertyToAdd);
 		}
 	}
 }
