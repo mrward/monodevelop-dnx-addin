@@ -15,6 +15,6 @@
   <Target Name="MyPostBuildTarget">
     <Copy SourceFiles="@(LicenseItem)" DestinationFolder="$(OutputPath)merged\Licenses" />
     <Copy SourceFiles="@(TemplateItem)" DestinationFolder="$(OutputPath)merged\Templates\%(RecursiveDir)" />
-    <Exec Command="$(ILRepackCommand) /targetPlatform:v4 /lib:&quot;$(SolutionDir)..\lib&quot; /out:&quot;merged\$(AssemblyName).dll&quot; $(AssemblyName).dll &quot;$(SolutionDir)..\lib\Newtonsoft.Json.dll&quot; &quot;$(SolutionDir)..\packages\Mono.NuGet.Core.2.8.7\lib\Net40\NuGet.dll&quot;" WorkingDirectory="$(OutputPath)" />
+    <Exec Command="$(ILRepackCommand) /targetPlatform:v4 /lib:&quot;$(SolutionDir)..\lib&quot; /out:&quot;merged\$(AssemblyName).dll&quot; $(AssemblyName).dll &quot;$(SolutionDir)..\lib\Newtonsoft.Json.dll&quot; &quot;$(SolutionDir)packages\Mono.NuGet.Core.2.8.7\lib\Net40\NuGet.Core.dll&quot;" WorkingDirectory="$(OutputPath)" />
   </Target>
 </Project>
