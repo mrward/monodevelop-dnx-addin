@@ -25,7 +25,10 @@
 // THE SOFTWARE.
 //
 
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using MonoDevelop.Core;
 using Newtonsoft.Json;
@@ -95,6 +98,43 @@ namespace MonoDevelop.Dnx
 
 		public FilePath Path {
 			get { return filePath; }
+		}
+
+		protected static void InsertSorted (JObject parent, JProperty propertyToAdd)
+		{
+			List<JToken> children = parent.Children ().ToList ();
+			foreach (JToken child in children) {
+				child.Remove ();
+			}
+
+			bool added = false;
+
+			foreach (JToken child in children) {
+				if (!added) {
+					int result = Compare (propertyToAdd, child);
+					if (result <= 0) {
+						parent.Add (propertyToAdd);
+						added = true;
+						if (result == 0) {
+							continue;
+						}
+					}
+				}
+				parent.Add (child);
+			}
+
+			if (!added)
+				parent.Add (propertyToAdd);
+		}
+
+		static int Compare (JProperty a, JToken b)
+		{
+			var propertyB = b as JProperty;
+			if (propertyB != null) {
+				return String.Compare (a.Name, propertyB.Name, StringComparison.OrdinalIgnoreCase);
+			}
+
+			return 1;
 		}
 	}
 }

@@ -25,9 +25,7 @@
 // THE SOFTWARE.
 //
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using MonoDevelop.Core;
 using MonoDevelop.Projects;
 using Newtonsoft.Json.Linq;
@@ -115,30 +113,6 @@ namespace MonoDevelop.Dnx
 				var packageDependency = new JProperty (package.Id, package.Version);
 				InsertSorted (dependencies, packageDependency);
 			}
-		}
-
-		static void InsertSorted (JObject parent, JProperty propertyToAdd)
-		{
-			List<JToken> children = parent.Children ().ToList ();
-			foreach (JToken child in children) {
-				child.Remove ();
-			}
-
-			bool added = false;
-
-			foreach (JToken child in children) {
-				var childProperty = child as JProperty;
-				if (childProperty != null && !added) {
-					if (string.Compare (propertyToAdd.Name, childProperty.Name, StringComparison.OrdinalIgnoreCase) < 0) {
-						parent.Add (propertyToAdd);
-						added = true;
-					}
-				}
-				parent.Add (childProperty);
-			}
-
-			if (!added)
-				parent.Add (propertyToAdd);
 		}
 	}
 }
