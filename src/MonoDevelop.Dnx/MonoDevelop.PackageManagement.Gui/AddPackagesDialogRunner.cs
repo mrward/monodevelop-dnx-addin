@@ -43,11 +43,6 @@ namespace MonoDevelop.PackageManagement
 			Run (AddPackagesDialog.AddPackageDependenciesTitle);
 		}
 
-		public void RunToAddPackageReferences ()
-		{
-			Run (AddPackagesDialog.AddPackageReferencesTitle);
-		}
-
 		public void Run (string title, string initialSearch = null)
 		{
 			try {

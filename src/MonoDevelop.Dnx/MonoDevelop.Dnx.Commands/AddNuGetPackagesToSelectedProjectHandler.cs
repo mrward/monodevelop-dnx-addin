@@ -48,7 +48,7 @@ namespace MonoDevelop.Dnx.Commands
 				return;
 
 			var runner = new AddPackagesDialogRunner ();
-			runner.RunToAddPackageReferences ();
+			runner.RunToAddPackageDependencies ();
 			if (runner.PackagesToAdd.Any ()) {
 				AddPackagesToProject (project, runner.PackagesToAdd.ToList ());
 			}

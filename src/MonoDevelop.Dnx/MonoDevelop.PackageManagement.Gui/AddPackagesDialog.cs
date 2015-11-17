@@ -43,9 +43,6 @@ namespace MonoDevelop.PackageManagement
 		public static readonly string AddPackageDependenciesTitle = 
 			GettextCatalog.GetString ("Add NuGet Package Dependencies");
 
-		public static readonly string AddPackageReferencesTitle = 
-			GettextCatalog.GetString ("Add NuGet Package References");
-
 		PackagesViewModel viewModel;
 		List<PackageSource> packageSources;
 		DataField<bool> packageHasBackgroundColorField = new DataField<bool> ();
