@@ -132,4 +132,21 @@
 			</Section>
 		</Condition>
 	</Extension>
+
+	<Extension path="/MonoDevelop/Ide/Pads">
+		<Pad
+			id="MonoDevelop.Dnx.DnxOutputPad"
+			defaultLayout="*"
+			defaultPlacement="Center Bottom"
+			defaultStatus="AutoHide"
+			icon="md-console"
+			class="MonoDevelop.Dnx.DnxOutputPad"
+			_label="DNX Output" />
+	</Extension>
+
+	<Extension path="/MonoDevelop/Ide/GlobalOptionsDialog">
+		<Section id="MonoDevelop.Dnx" _label="DNX" insertafter="VersionControl">
+			<Section id="General" _label="General" fill="true" class="MonoDevelop.Dnx.Gui.DnxGlobalOptionsPanel" />
+		</Section>
+	</Extension>
 </ExtensionModel>

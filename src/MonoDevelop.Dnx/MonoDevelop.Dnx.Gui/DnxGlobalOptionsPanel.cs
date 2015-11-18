@@ -1,5 +1,5 @@
 ﻿//
-// Logger.cs
+// DnxGlobalOptionsPanel.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -25,26 +25,56 @@
 // THE SOFTWARE.
 //
 
-using System;
+using System.Collections.Generic;
 using Microsoft.Framework.Logging;
+using MonoDevelop.Core;
+using MonoDevelop.Ide.Gui.Dialogs;
 
-namespace MonoDevelop.Dnx.Omnisharp
+namespace MonoDevelop.Dnx.Gui
 {
-	public class Logger : Microsoft.Framework.Logging.ILogger
+	public class DnxGlobalOptionsPanel : OptionsPanel
 	{
-		public void Log (LogLevel logLevel, int eventId, object state, Exception exception, Func<object, Exception, string> formatter)
+		Gtk.ComboBox logLevelsComboBox;
+		readonly List<LogLevel> logLevels = new List<LogLevel> {
+			LogLevel.Debug,
+			LogLevel.Verbose,
+			LogLevel.Information,
+			LogLevel.Warning,
+			LogLevel.Error,
+			LogLevel.Critical
+		};
+
+		public override Gtk.Widget CreatePanelWidget()
 		{
-			DnxLoggerService.Log (logLevel, eventId, state, exception, formatter);
+			var vbox = new Gtk.VBox ();
+			var hbox = new Gtk.HBox ();
+			var label = new Gtk.Label (GettextCatalog.GetString ("DNX Output Verbosity:"));
+			label.Xalign = 0;
+			hbox.PackStart (label, false, false, 5);
+
+			logLevelsComboBox = Gtk.ComboBox.NewText ();
+			hbox.PackStart (logLevelsComboBox, true, true, 5);
+
+			AddLogLevelsToComboBox ();
+
+			vbox.PackStart (hbox, false, false, 0);
+			vbox.ShowAll ();
+			return vbox;
 		}
-		
-		public bool IsEnabled (LogLevel logLevel)
+
+		void AddLogLevelsToComboBox ()
 		{
-			return true;
+			foreach (LogLevel logLevel in logLevels) {
+				logLevelsComboBox.AppendText (logLevel.ToString ());
+			}
+
+			logLevelsComboBox.Active = logLevels.IndexOf (DnxLoggerService.LogLevel);
 		}
-		
-		public IDisposable BeginScope (object state)
+
+		public override void ApplyChanges()
 		{
-			throw new NotImplementedException ();
+			DnxLoggerService.LogLevel = logLevels [logLevelsComboBox.Active];
 		}
 	}
 }
+

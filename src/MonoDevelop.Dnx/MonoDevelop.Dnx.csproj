@@ -262,6 +262,9 @@
     <Compile Include="MonoDevelop.PackageManagement.Gui\PackageCellViewEventArgs.cs" />
     <Compile Include="MonoDevelop.Dnx.Commands\AddNuGetPackagesToSelectedProjectHandler.cs" />
     <Compile Include="MonoDevelop.Dnx\NuGetPackageToAdd.cs" />
+    <Compile Include="MonoDevelop.Dnx.Gui\DnxOutputPad.cs" />
+    <Compile Include="MonoDevelop.Dnx\DnxLoggerService.cs" />
+    <Compile Include="MonoDevelop.Dnx.Gui\DnxGlobalOptionsPanel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -361,5 +364,6 @@
     <Folder Include="MonoDevelop.Dnx.OptionsPanels\" />
     <Folder Include="Templates\Projects\EmptyKestrelWeb\" />
     <Folder Include="MonoDevelop.Dnx.Commands\" />
+    <Folder Include="MonoDevelop.Dnx.Gui\" />
   </ItemGroup>
 </Project>
