@@ -100,14 +100,14 @@ namespace MonoDevelop.Dnx.NodeBuilders
 
 		void ProjectDependenciesChanged (object sender, EventArgs e)
 		{
-			RefreshChildNodes (sender);
+			RefreshNode (sender);
 		}
 
-		void RefreshChildNodes (object project)
+		void RefreshNode (object project)
 		{
 			ITreeBuilder builder = GetBuilder ((DnxProject)project);
 			if (builder != null)
-				builder.UpdateChildren ();
+				builder.UpdateAll ();
 		}
 
 		ITreeBuilder GetBuilder (object sender)
@@ -122,12 +122,12 @@ namespace MonoDevelop.Dnx.NodeBuilders
 
 		void PackageRestoreStarted (object sender, EventArgs e)
 		{
-			RefreshChildNodes (sender);
+			RefreshNode (sender);
 		}
 
 		void PackageRestoreFinished (object sender, EventArgs e)
 		{
-			RefreshChildNodes (sender);
+			RefreshNode (sender);
 		}
 	}
 }
