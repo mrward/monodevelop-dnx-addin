@@ -113,7 +113,7 @@ namespace MonoDevelop.Dnx.NodeBuilders
 		ITreeBuilder GetBuilder (object sender)
 		{
 			var project = (DnxProject)sender;
-			ITreeBuilder builder = Context.GetTreeBuilder (project);
+			ITreeBuilder builder = Context.GetTreeBuilder (project.Project);
 			if (builder != null && builder.MoveToChild ("Dependencies", typeof(DependenciesFolderNode)))
 				return builder;
 
