@@ -126,7 +126,7 @@
 	</Extension>
 
 	<Extension path="/MonoDevelop/ProjectModel/Gui/ItemOptionPanels/Build">
-		<Condition id="ItemType" value="MonoDevelop.Dnx.DnxProject">
+		<Condition id="ItemType" value="MonoDevelop.Dnx.XProject">
 			<Section
 				id="DNXRuntime"
 				_label="DNX Runtime">

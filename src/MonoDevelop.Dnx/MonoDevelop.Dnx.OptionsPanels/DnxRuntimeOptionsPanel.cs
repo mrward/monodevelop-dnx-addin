@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MonoDevelop.Core;
 using MonoDevelop.Ide.Gui.Dialogs;
+using MonoDevelop.Projects;
 
 namespace MonoDevelop.Dnx.OptionsPanels
 {
@@ -60,7 +61,8 @@ namespace MonoDevelop.Dnx.OptionsPanels
 		void PopulateOptionsPanel ()
 		{
 			dnxRuntimeVersions = GetDnxRuntimeVersions ().ToList ();
-			globalJsonFile = GlobalJsonFile.Read ((DnxProject)DataObject);
+			var project = (XProject)DataObject;
+			globalJsonFile = GlobalJsonFile.Read (project.AsFlavor<DnxProject> ());
 			if (globalJsonFile.Exists) {
 				originalDnxRuntimeVersion = globalJsonFile.DnxRuntimeVersion;
 			}
