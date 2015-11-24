@@ -37,7 +37,7 @@ namespace MonoDevelop.Dnx
 			return command is DnxProjectExecutionCommand;
 		}
 
-		public IProcessAsyncOperation Execute (ExecutionCommand command, IConsole console)
+		public ProcessAsyncOperation Execute (ExecutionCommand command, OperationConsole console)
 		{
 			var dnxCommand = (DnxProjectExecutionCommand)command;
 			return Runtime.ProcessService.StartConsoleProcess (

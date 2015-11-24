@@ -188,7 +188,7 @@ namespace MonoDevelop.Dnx
 			if (executionTarget == null)
 				return;
 
-			var project = IdeApp.ProjectOperations.CurrentSelectedProject as DnxProject;
+			var project = IdeApp.ProjectOperations.CurrentSelectedProject.AsFlavor<DnxProject> ();
 			if (project == null)
 				return;
 

@@ -88,12 +88,15 @@ namespace MonoDevelop.Dnx
 
 		static DnxProject GetCreatedProject (IEnumerable<IWorkspaceFileObject> items)
 		{
-			return items.OfType<DnxProject> ().FirstOrDefault ();
+			return items.OfType<DotNetProject> ()
+				.Select (project => project.AsFlavor<DnxProject> ())
+				.FirstOrDefault (project => project != null);
 		}
 
 		DnxProject CreateProject (Solution solution, string projectName)
 		{
-			var project = new DnxProject ();
+			Project xproject = IdeApp.Services.ProjectService.CreateProject (DnxProject.ProjectTypeGuid, "Dnx");
+			DnxProject project = xproject.AsFlavor<DnxProject> ();
 			project.IsDirty = true;
 			project.GenerateNewProjectFileName (solution, projectName);
 
@@ -110,7 +113,7 @@ namespace MonoDevelop.Dnx
 
 		void RemoveProjectFromSolution (DnxProject project)
 		{
-			project.ParentFolder.Items.Remove (project);
+			project.ParentFolder.Items.Remove (project.Project);
 			project.Dispose ();
 		}
 
@@ -126,13 +129,13 @@ namespace MonoDevelop.Dnx
 		{
 			string projectName = Parameters["UserDefinedProjectName"];
 			DnxProject project = CreateProject (solution, projectName);
-			srcFolder.AddItem (project);
+			srcFolder.AddItem (project.Project);
 
 			project.AddConfigurations ();
 
 			if (newSolution) {
 				solution.GenerateDefaultDnxProjectConfigurations (project);
-				solution.StartupItem = project;
+				solution.StartupItem = project.Project;
 			} else {
 				solution.EnsureConfigurationHasBuildEnabled (project);
 			}
@@ -147,11 +150,13 @@ namespace MonoDevelop.Dnx
 
 			CreateFilesFromTemplate (project);
 
-			solution.Save (new NullProgressMonitor ());
-
-			OpenProjectFile (project);
-
-			DnxServices.ProjectService.LoadDnxProjectSystem (solution);
+			IdeApp.ProjectOperations.SaveAsync (solution)
+				.ContinueWith (t => {
+					Runtime.RunInMainThread (() => {
+						OpenProjectFile (project);
+						DnxServices.ProjectService.LoadDnxProjectSystem (solution);
+					});
+			});
 		}
 
 		void AddSolutionItemsFolder (Solution solution)
@@ -168,7 +173,8 @@ namespace MonoDevelop.Dnx
 
 		void OpenProjectFile (DnxProject project)
 		{
-			IdeApp.Workbench.OpenProjectFile (project, Parameters["OpenFile"]);
+			FilePath fileName = project.BaseDirectory.Combine (Parameters["OpenFile"]);
+			IdeApp.Workbench.OpenDocument (fileName, project.Project, true);
 		}
 	}
 }

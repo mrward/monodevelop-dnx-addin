@@ -34,7 +34,7 @@ namespace MonoDevelop.Dnx.NodeBuilders
 	{
 		public override bool CanBuildNode (Type dataType)
 		{
-			return typeof(DnxProject).IsAssignableFrom (dataType);
+			return typeof(XProject).IsAssignableFrom (dataType);
 		}
 
 		public override bool HasChildNodes (ITreeBuilder builder, object dataObject)
@@ -44,8 +44,9 @@ namespace MonoDevelop.Dnx.NodeBuilders
 
 		public override void BuildChildNodes (ITreeBuilder treeBuilder, object dataObject)
 		{
-			var project = (DnxProject)dataObject;
-			var node = new DependenciesFolderNode (project);
+			var project = (XProject)dataObject;
+			var dnxProject = project.GetFlavor<DnxProject> ();
+			var node = new DependenciesFolderNode (dnxProject);
 			treeBuilder.AddChild (node);
 		}
 	}

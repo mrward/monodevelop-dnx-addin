@@ -36,14 +36,16 @@ namespace MonoDevelop.Dnx
 	{
 		public static bool HasDnxProjects (this Solution solution)
 		{
-			return solution.GetAllSolutionItems<DnxProject> ().Any ();
+			return solution.GetAllProjectsWithFlavor<DnxProject> ().Any ();
 		}
 
 		public static DnxProject FindProjectByProjectJsonFileName (this Solution solution, string fileName)
 		{
 			var directory = new FilePath (Path.GetDirectoryName(fileName));
-			return solution.GetAllSolutionItems<DnxProject> ()
-				.FirstOrDefault (project => project.BaseDirectory == directory);
+			return solution.GetAllProjectsWithFlavor<DnxProject> ()
+				.Where (project => project.BaseDirectory == directory)
+				.Select (project => project.AsFlavor<DnxProject> ())
+				.FirstOrDefault ();
 		}
 
 		public static SolutionFolder AddSolutionFolder (this Solution solution, string name, params FilePath[] files)
@@ -62,11 +64,11 @@ namespace MonoDevelop.Dnx
 
 		public static void GenerateDefaultDnxProjectConfigurations (this Solution solution, DnxProject project)
 		{
-			foreach (SolutionItemConfiguration configuration in project.Configurations) {
+			foreach (SolutionItemConfiguration configuration in project.Project.Configurations) {
 				SolutionConfiguration existingConfiguration = solution.GetConfiguration (configuration);
 				if (existingConfiguration == null) {
 					SolutionConfiguration newConfiguration = solution.AddConfiguration (configuration.Name, false);
-					newConfiguration.AddItem (project);
+					newConfiguration.AddItem (project.Project);
 				}
 			}
 		}
@@ -84,7 +86,7 @@ namespace MonoDevelop.Dnx
 		{
 			foreach (SolutionConfiguration solutionConfiguration in solution.Configurations) {
 				foreach (SolutionConfigurationEntry projectConfiguration in solutionConfiguration.Configurations) {
-					if (projectConfiguration.Item == project && !projectConfiguration.Build) {
+					if (projectConfiguration.Item == project.Project && !projectConfiguration.Build) {
 						projectConfiguration.Build = true;
 					}
 				}

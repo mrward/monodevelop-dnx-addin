@@ -26,104 +26,100 @@
 //
 
 using System;
+using System.Linq;
+using System.Xml;
 using MonoDevelop.Core;
 using MonoDevelop.Projects.Formats.MSBuild;
-using System.Xml;
 
 namespace MonoDevelop.Dnx
 {
-	public class DnxMSBuildProjectHandler : MSBuildProjectHandler
+	public class DnxMSBuildProjectHandler
 	{
 		DnxProject dnxProject;
 		MSBuildProject msbuildProject;
 
-		public DnxMSBuildProjectHandler ()
+		public DnxMSBuildProjectHandler (DnxProject project)
 		{
+			dnxProject = project;
 		}
 
-		public DnxMSBuildProjectHandler (string typeGuid, string import, string itemId)
-			: base (typeGuid, import, itemId)
-		{
+		DnxProject EntityItem {
+			get { return dnxProject; }
 		}
 
-		public static void InstallHandler (DnxProject project)
-		{
-			var itemType = new DnxMSBuildProjectItemType ();
-			itemType.InitializeHandler (project);
-		}
+//		public static void InstallHandler (DnxProject project)
+//		{
+//			var itemType = new DnxMSBuildProjectItemType ();
+//			itemType.InitializeHandler (project);
+//		}
 
-		protected override MSBuildProject SaveProject (IProgressMonitor monitor)
+		public void SaveProject (ProgressMonitor monitor, MSBuildProject project)
 		{
 			dnxProject = EntityItem as DnxProject;
 			if (dnxProject == null || !dnxProject.IsDirty)
-				return new MSBuildProject ();
+				return;
 
-			return CreateMSBuildProject ();
+			msbuildProject = project;
+
+			CreateMSBuildProject ();
 		}
 
-		MSBuildProject CreateMSBuildProject ()
+		void CreateMSBuildProject ()
 		{
-			msbuildProject = new MSBuildProject ();
 			msbuildProject.ToolsVersion = "14.0";
 			msbuildProject.DefaultTargets = "Build";
+
+			MSBuildPropertyGroup propertyGroup = msbuildProject.PropertyGroups.FirstOrDefault ();
+			if (propertyGroup != null)
+				msbuildProject.Remove (propertyGroup);
 
 			string projectGuid = GetProjectGuid (dnxProject.ItemId);
 			string rootNamespace = dnxProject.DefaultNamespace;
 
 			AddVisualStudioProperties ();
-			AddDnxProps ();
-			AddGlobalsProperties (projectGuid, rootNamespace);
+			MSBuildPropertyGroup globals = AddGlobalsProperties (projectGuid, rootNamespace);
 			AddSchemaVersion ();
 			AddDnxTargets ();
-
-			return msbuildProject;
+			AddDnxProps (globals);
 		}
 
 		void AddVisualStudioProperties()
 		{
-			XmlElement propertyGroup = AddPropertyGroup ();
+			MSBuildPropertyGroup propertyGroup = AddPropertyGroup ();
 			AddPropertyWithNotEmptyCondition (propertyGroup, "VisualStudioVersion", "14.0");
 			AddPropertyWithNotEmptyCondition (propertyGroup, "VSToolsPath", @"$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)");
 		}
 
-		XmlElement AddPropertyGroup ()
+		MSBuildPropertyGroup AddPropertyGroup ()
 		{
-			XmlElement propertyGroup = msbuildProject.Document.CreateElement (null, "PropertyGroup", MSBuildProject.Schema);
-			msbuildProject.Document.DocumentElement.AppendChild (propertyGroup);
-			return propertyGroup;
+			return msbuildProject.AddNewPropertyGroup (true);
 		}
 
-		void AddPropertyWithNotEmptyCondition (XmlElement propertyGroup, string name, string unevaluatedValue)
+		void AddPropertyWithNotEmptyCondition (MSBuildPropertyGroup propertyGroup, string name, string unevaluatedValue)
 		{
 			string condition = String.Format("'$({0})' == ''", name);
-			XmlElement property = AddProperty (propertyGroup, name, unevaluatedValue);
-			property.SetAttribute ("Condition", condition);
+			propertyGroup.SetValue (name, unevaluatedValue, null, false, condition);
 		}
 
-		XmlElement AddProperty (XmlElement propertyGroup, string name, string unevaluatedValue)
+		MSBuildProperty AddProperty (MSBuildPropertyGroup propertyGroup, string name, string unevaluatedValue)
 		{
-			XmlElement property = msbuildProject.Document.CreateElement (null, name, MSBuildProject.Schema);
-			property.InnerText = unevaluatedValue;
-			propertyGroup.AppendChild (property);
-			return property;
+			propertyGroup.SetValue (name, unevaluatedValue);
+			return propertyGroup.GetProperty (name);
 		}
 
-		void AddDnxProps ()
+		void AddDnxProps (MSBuildPropertyGroup globals)
 		{
-			AddImport (@"$(VSToolsPath)\DNX\Microsoft.DNX.Props", "'$(VSToolsPath)' != ''");
+			AddImport (@"$(VSToolsPath)\DNX\Microsoft.DNX.Props", "'$(VSToolsPath)' != ''", globals);
 		}
 
-		void AddImport (string name, string condition)
+		void AddImport (string name, string condition, MSBuildObject before = null)
 		{
-			XmlElement import = msbuildProject.Document.CreateElement (null, "Import", MSBuildProject.Schema);
-			import.SetAttribute ("Project", name);
-			import.SetAttribute ("Condition", condition);
-			msbuildProject.Document.DocumentElement.AppendChild (import);
+			msbuildProject.AddNewImport (name, condition, before);
 		}
 
 		void AddSchemaVersion ()
 		{
-			XmlElement propertyGroup = AddPropertyGroup ();
+			MSBuildPropertyGroup propertyGroup = AddPropertyGroup ();
 			AddProperty (propertyGroup, "SchemaVersion", "2.0");
 		}
 
@@ -132,15 +128,17 @@ namespace MonoDevelop.Dnx
 			AddImport (@"$(VSToolsPath)\DNX\Microsoft.DNX.targets", "'$(VSToolsPath)' != ''");
 		}
 
-		void AddGlobalsProperties (string projectGuid, string rootNamespace)
+		MSBuildPropertyGroup AddGlobalsProperties (string projectGuid, string rootNamespace)
 		{
-			XmlElement propertyGroup = AddPropertyGroup ();
-			propertyGroup.SetAttribute ("Label", "Globals");
+			MSBuildPropertyGroup propertyGroup = AddPropertyGroup ();
+			propertyGroup.Label = "Globals";
 
 			AddProperty (propertyGroup, "ProjectGuid", projectGuid);
 			AddProperty (propertyGroup, "RootNamespace", rootNamespace);
 			AddPropertyWithNotEmptyCondition (propertyGroup, "BaseIntermediateOutputPath", @"..\..\artifacts\obj\$(MSBuildProjectName)");
 			AddPropertyWithNotEmptyCondition (propertyGroup, "OutputPath", @"..\..\artifacts\bin\$(MSBuildProjectName)\");
+
+			return propertyGroup;
 		}
 
 		static string GetProjectGuid (string projectGuid)

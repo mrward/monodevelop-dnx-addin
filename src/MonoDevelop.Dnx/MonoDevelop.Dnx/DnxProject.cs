@@ -38,10 +38,11 @@ using OmniSharp.Models;
 
 using DependenciesMessage = Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages.DependenciesMessage;
 using FrameworkData = Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages.FrameworkData;
+using System.Threading.Tasks;
 
 namespace MonoDevelop.Dnx
 {
-	public class DnxProject : DotNetAssemblyProject
+	public class DnxProject : DotNetProjectExtension
 	{
 		OmniSharp.Models.DnxProject project;
 		FilePath fileName;
@@ -56,22 +57,62 @@ namespace MonoDevelop.Dnx
 		public static readonly string ProjectTypeGuid = "{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}";
 
 		public DnxProject ()
-			: base ("C#")
+//			: base ("C#")
 		{
-			DnxMSBuildProjectHandler.InstallHandler (this);
-			UseMSBuildEngine = false;
+//			DnxMSBuildProjectHandler.InstallHandler (this);
+//			UseMSBuildEngine = false;
 		}
 
-		public DnxProject (ProjectCreateInformation info, XmlElement projectOptions)
-			: this ()
-		{
-			AddConfigurations ();
+//		public DnxProject (ProjectCreateInformation info, XmlElement projectOptions)
+//			: this ()
+//		{
+//		}
+
+		public ProjectItemCollection Items {
+			get { return Project.Items; }
 		}
 
-		public override IEnumerable<string> GetProjectTypes ()
-		{
-			yield return "Dnx";
+		public ProjectReferenceCollection References {
+			get { return Project.References; }
 		}
+
+		public SolutionItemConfigurationCollection Configurations {
+			get { return Project.Configurations; }
+		}
+
+		public FilePath BaseDirectory {
+			get { return Project.BaseDirectory; }
+		}
+
+		public Solution ParentSolution {
+			get { return Project.ParentSolution; }
+		}
+
+		public string Name {
+			get { return Project.Name; }
+		}
+
+		public FilePath FileName {
+			get { return Project.FileName; }
+			set { Project.FileName = value; }
+		}
+
+		public string ItemId {
+			get { return Project.ItemId; }
+		}
+
+		public string DefaultNamespace {
+			get { return Project.DefaultNamespace; }
+		}
+
+		public SolutionFolder ParentFolder {
+			get { return Project.ParentFolder; }
+		}
+
+//		public override IEnumerable<string> GetProjectTypes ()
+//		{
+//			yield return "Dnx";
+//		}
 
 		protected override void OnEndLoad ()
 		{
@@ -104,7 +145,7 @@ namespace MonoDevelop.Dnx
 
 		ProjectFile CreateFileProjectItem (string fileName)
 		{
-			var projectFile = new ProjectFile (fileName, GetDefaultBuildAction (fileName));
+			var projectFile = new ProjectFile (fileName, OnGetDefaultBuildAction (fileName));
 
 			if (IsProjectJsonLockFile (fileName)) {
 				AddProjectJsonDependency (projectFile);
@@ -113,12 +154,12 @@ namespace MonoDevelop.Dnx
 			return projectFile;
 		}
 
-		public override string GetDefaultBuildAction (string fileName)
+		protected override string OnGetDefaultBuildAction (string fileName)
 		{
 			if (IsCSharpFile (fileName)) {
 				return BuildAction.Compile;
 			}
-			return base.GetDefaultBuildAction (fileName);
+			return base.OnGetDefaultBuildAction (fileName);
 		}
 
 		static bool IsCSharpFile (string fileName)
@@ -129,7 +170,7 @@ namespace MonoDevelop.Dnx
 
 		void AddAssemblyReference (string fileName)
 		{
-			var projectItem = new ProjectReference (ReferenceType.Assembly, fileName);
+			var projectItem = ProjectReference.CreateCustomReference (ReferenceType.Assembly, fileName);
 			References.Add (projectItem);
 		}
 
@@ -137,7 +178,7 @@ namespace MonoDevelop.Dnx
 		{
 			DnxProject project = ParentSolution.FindProjectByProjectJsonFileName (fileName);
 			if (project != null) {
-				var projectItem = new ProjectReference (ReferenceType.Project, project.Name);
+				var projectItem = ProjectReference.CreateCustomReference (ReferenceType.Project, project.Name);
 				References.Add (projectItem);
 			} else {
 				LoggingService.LogDebug ("Unable to find project by json filename '{0}'.", fileName);
@@ -202,6 +243,12 @@ namespace MonoDevelop.Dnx
 			base.OnExecutionTargetsChanged ();
 		}
 
+		protected override void OnInitializeFromTemplate (ProjectCreateInformation projectCreateInfo, XmlElement template)
+		{
+			base.OnInitializeFromTemplate (projectCreateInfo, template);
+			AddConfigurations ();
+		}
+
 		internal void AddConfigurations ()
 		{
 			AddConfiguration ("Debug");
@@ -214,7 +261,7 @@ namespace MonoDevelop.Dnx
 			Configurations.Add (configuration);
 		}
 
-		protected override ExecutionCommand CreateExecutionCommand (ConfigurationSelector configSel, DotNetProjectConfiguration configuration)
+		protected override ExecutionCommand OnCreateExecutionCommand (ConfigurationSelector configSel, DotNetProjectConfiguration configuration)
 		{
 			return new DnxProjectExecutionCommand (
 				BaseDirectory,
@@ -232,43 +279,40 @@ namespace MonoDevelop.Dnx
 			return true;
 		}
 
-		protected override bool OnGetNeedsBuilding (ConfigurationSelector configuration)
-		{
-			return false;
-		}
+//		protected override bool OnGetNeedsBuilding (ConfigurationSelector configuration)
+//		{
+//			return false;
+//		}
 
-		protected override BuildResult OnRunTarget (IProgressMonitor monitor, string target, ConfigurationSelector configuration)
+		protected async override Task<TargetEvaluationResult> OnRunTarget (ProgressMonitor monitor, string target, ConfigurationSelector configuration, TargetEvaluationContext context)
 		{
 			if (target == ProjectService.BuildTarget) {
 				using (var builder = new DnxProjectBuilder (this, monitor)) {
-					return builder.Build ();
+					return (new TargetEvaluationResult (builder.Build ()));
 				}
 			}
-			return new BuildResult ();
+			return new TargetEvaluationResult(BuildResult.CreateSuccess ());
 		}
 
-		protected override void DoExecute (IProgressMonitor monitor, ExecutionContext context, ConfigurationSelector configuration)
+		protected async override Task OnExecute (ProgressMonitor monitor, ExecutionContext context, ConfigurationSelector configuration)
 		{
 			var config = GetConfiguration (configuration) as DotNetProjectConfiguration;
 			monitor.Log.WriteLine (GettextCatalog.GetString ("Running {0} ...", Name));
 
-			IConsole console = CreateConsole (config, context);
-			var aggregatedOperationMonitor = new AggregatedOperationMonitor (monitor);
+			OperationConsole console = CreateConsole (config, context, monitor);
 
 			try {
 				try {
-					ExecutionCommand executionCommand = CreateExecutionCommand (configuration, config);
+					ExecutionCommand executionCommand = OnCreateExecutionCommand (configuration, config);
 					if (context.ExecutionTarget != null)
 						executionCommand.Target = context.ExecutionTarget;
 
-					IProcessAsyncOperation asyncOp = new DnxExecutionHandler ().Execute (executionCommand, console);
-					aggregatedOperationMonitor.AddOperation (asyncOp);
-					asyncOp.WaitForCompleted ();
+					ProcessAsyncOperation asyncOp = new DnxExecutionHandler ().Execute (executionCommand, console);
+					await asyncOp.Task;
 
 					monitor.Log.WriteLine (GettextCatalog.GetString ("The application exited with code: {0}", asyncOp.ExitCode));
 				} finally {
 					console.Dispose ();
-					aggregatedOperationMonitor.Dispose ();
 				}
 			} catch (Exception ex) {
 				LoggingService.LogError (string.Format ("Cannot execute \"{0}\"", Name), ex);
@@ -276,59 +320,64 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		IConsole CreateConsole (DotNetProjectConfiguration config, ExecutionContext context)
+		SolutionItemConfiguration GetConfiguration (ConfigurationSelector configuration)
 		{
-			if (config.ExternalConsole)
-				return context.ExternalConsoleFactory.CreateConsole (!config.PauseConsoleOutput);
-			return context.ConsoleFactory.CreateConsole (!config.PauseConsoleOutput);
+			return Project.GetConfiguration (configuration);
 		}
 
-		public override FilePath GetOutputFileName (ConfigurationSelector configuration)
+		OperationConsole CreateConsole (DotNetProjectConfiguration config, ExecutionContext context, ProgressMonitor monitor)
+		{
+			if (config.ExternalConsole)
+				return context.ExternalConsoleFactory.CreateConsole (!config.PauseConsoleOutput, monitor.CancellationToken);
+			return context.ConsoleFactory.CreateConsole (monitor.CancellationToken);
+		}
+
+		protected override FilePath OnGetOutputFileName (ConfigurationSelector configuration)
 		{
 			return null;
 		}
 
-		/// <summary>
-		/// Have to override the SolutionEntityItem otherwise the FileFormat 
-		/// changes the file extension back to .csproj when GetValidFileName is called.
-		/// This is because the FileFormat finds the DotNetProjectNode for csproj files
-		/// when looking at the /MonoDevelop/ProjectModel/MSBuildItemTypes extension.
-		/// There does not seem to be a way to insert the DotNetProjectNode for DnxProjects
-		/// since these extensions do not have an id.
-		/// </summary>
-		public override FilePath FileName {
-			get {
-				return fileName;
-			}
-			set {
-				fileName = value;
-				fileName = fileName.ChangeExtension (".xproj");
-				if (ItemHandler.SyncFileName)
-					Name = fileName.FileNameWithoutExtension;
-				NotifyModified ("FileName");
-			}
-		}
+//		/// <summary>
+//		/// Have to override the SolutionEntityItem otherwise the FileFormat 
+//		/// changes the file extension back to .csproj when GetValidFileName is called.
+//		/// This is because the FileFormat finds the DotNetProjectNode for csproj files
+//		/// when looking at the /MonoDevelop/ProjectModel/MSBuildItemTypes extension.
+//		/// There does not seem to be a way to insert the DotNetProjectNode for DnxProjects
+//		/// since these extensions do not have an id.
+//		/// </summary>
+//		public override FilePath FileName {
+//			get {
+//				return fileName;
+//			}
+//			set {
+//				fileName = value;
+//				fileName = fileName.ChangeExtension (".xproj");
+//				if (ItemHandler.SyncFileName)
+//					Name = fileName.FileNameWithoutExtension;
+//				NotifyModified ("FileName");
+//			}
+//		}
 
-		public override string Name {
-			get {
-				return name ?? string.Empty;
-			}
-			set {
-				if (name == value)
-					return;
-				string oldName = name;
-				name = value;
-				if (!Loading && ItemHandler.SyncFileName) {
-					if (string.IsNullOrEmpty (fileName))
-						FileName = value;
-					else {
-						string ext = fileName.Extension;
-						FileName = fileName.ParentDirectory.Combine (value) + ext;
-					}
-				}
-				OnNameChanged (new SolutionItemRenamedEventArgs(this, oldName, name));
-			}
-		}
+//		public override string Name {
+//			get {
+//				return name ?? string.Empty;
+//			}
+//			set {
+//				if (name == value)
+//					return;
+//				string oldName = name;
+//				name = value;
+//				if (!Loading && ItemHandler.SyncFileName) {
+//					if (string.IsNullOrEmpty (fileName))
+//						FileName = value;
+//					else {
+//						string ext = fileName.Extension;
+//						FileName = fileName.ParentDirectory.Combine (value) + ext;
+//					}
+//				}
+//				OnNameChanged (new SolutionItemRenamedEventArgs(this, oldName, name));
+//			}
+//		}
 
 		public void UpdateDependencies (DependenciesMessage message)
 		{
@@ -383,19 +432,21 @@ namespace MonoDevelop.Dnx
 
 		internal bool IsDirty { get; set; }
 
-		protected override void OnSave (IProgressMonitor monitor)
+		protected override Task OnSave (ProgressMonitor monitor)
 		{
 			if (IsDirty) {
-				defaultNamespace = GetDefaultNamespace (FileName);
-				base.OnSave (monitor);
+				var xproject = (XProject)Project;
+				xproject.SetDefaultNamespace (FileName);
+				return base.OnSave (monitor);
 			}
 			IsDirty = false;
+			return Task.FromResult (0);
 		}
 
-		public override bool SupportsConfigurations ()
-		{
-			return true;
-		}
+//		public override bool SupportsConfigurations ()
+//		{
+//			return true;
+//		}
 
 		public void GenerateNewProjectFileName (Solution solution, string projectName)
 		{
@@ -406,7 +457,7 @@ namespace MonoDevelop.Dnx
 
 		public void CreateProjectDirectory ()
 		{
-			CreateDirectory (BaseDirectory);
+			CreateDirectory (Project.BaseDirectory);
 		}
 
 		static void CreateDirectory (FilePath directory)
@@ -418,13 +469,13 @@ namespace MonoDevelop.Dnx
 
 		public SolutionFolder GetSrcSolutionFolder ()
 		{
-			return ParentSolution.RootFolder.Items.OfType<SolutionFolder> ()
+			return Project.ParentSolution.RootFolder.Items.OfType<SolutionFolder> ()
 				.FirstOrDefault (item => item.Name == "src");
 		}
 
 		public void CreateWebRootDirectory ()
 		{
-			FilePath webRootDirectory = BaseDirectory.Combine ("wwwroot");
+			FilePath webRootDirectory = Project.BaseDirectory.Combine ("wwwroot");
 			CreateDirectory (webRootDirectory);
 		}
 
@@ -652,6 +703,30 @@ namespace MonoDevelop.Dnx
 			} else {
 				LoggingService.LogDebug ("Unable to find project.json '{0}'", jsonFile.Path);
 			}
+		}
+
+		protected override void OnWriteProject (ProgressMonitor monitor, MonoDevelop.Projects.Formats.MSBuild.MSBuildProject msproject)
+		{
+			var projectBuilder = new DnxMSBuildProjectHandler (this);
+			projectBuilder.SaveProject (monitor, msproject);
+		}
+
+		protected override Task<List<string>> OnGetReferencedAssemblies (ConfigurationSelector configuration)
+		{
+			var references = new List<string> ();
+
+			foreach (ProjectReference reference in Project.References.Where (r => r.ReferenceType != ReferenceType.Project)) {
+				foreach (string assembly in reference.GetReferencedFileNames (configuration)) {
+					references.Add (assembly);
+				}
+			}
+
+			return Task.FromResult<List<string>> (references);
+		}
+
+		protected override IEnumerable<SolutionItem> OnGetReferencedItems (ConfigurationSelector configuration)
+		{
+			return base.OnGetReferencedItems (configuration);
 		}
 	}
 }

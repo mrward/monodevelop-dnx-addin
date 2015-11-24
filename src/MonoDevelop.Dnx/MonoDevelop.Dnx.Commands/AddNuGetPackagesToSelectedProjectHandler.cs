@@ -38,7 +38,7 @@ namespace MonoDevelop.Dnx.Commands
 	{
 		protected DnxProject GetSelectedDnxProject ()
 		{
-			return IdeApp.ProjectOperations.CurrentSelectedProject as DnxProject;
+			return IdeApp.ProjectOperations.CurrentSelectedProject.AsFlavor<DnxProject> ();
 		}
 
 		protected override void Run ()

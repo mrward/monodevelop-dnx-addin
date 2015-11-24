@@ -46,10 +46,10 @@ namespace MonoDevelop.Dnx
 
 		public static void CreateFilesFromTemplate (DnxProject project, string projectTemplateName, params string[] files)
 		{
-			CreateFileFromTemplate (project, projectTemplateName, "project.json");
+			CreateFileFromTemplate (project.Project, projectTemplateName, "project.json");
 
 			foreach (string templateFileName in files) {
-				CreateFileFromTemplate (project, projectTemplateName, templateFileName);
+				CreateFileFromTemplate (project.Project, projectTemplateName, templateFileName);
 			}
 		}
 
@@ -76,7 +76,7 @@ namespace MonoDevelop.Dnx
 			CreateFileFromTemplate (project, project.ParentSolution.RootFolder, templateSourceDirectory, fileTemplateName);
 		}
 
-		static void CreateFileFromTemplate (Project project, SolutionItem policyItem, FilePath templateSourceDirectory, string fileTemplateName)
+		static void CreateFileFromTemplate (Project project, SolutionFolderItem policyItem, FilePath templateSourceDirectory, string fileTemplateName)
 		{
 			string templateFileName = templateSourceDirectory.Combine (fileTemplateName + ".xft.xml");
 			using (Stream stream = File.OpenRead (templateFileName)) {
@@ -92,7 +92,7 @@ namespace MonoDevelop.Dnx
 
 		public static void CreateFileFromTemplate (Solution solution, FilePath templateSourceDirectory, string templateName)
 		{
-			var project = new GenericProject ();
+			var project = new XProject ();
 			project.BaseDirectory = solution.BaseDirectory;
 			CreateFileFromTemplate (project, solution.RootFolder, templateSourceDirectory, templateName);
 		}

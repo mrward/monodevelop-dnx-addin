@@ -36,7 +36,7 @@ namespace MonoDevelop.Dnx
 {
 	public static class DiagnosticsMessageExtensions
 	{
-		delegate void AddError (string file, int line, int col, string errorNum, string text);
+		delegate BuildResult AddError (string file, int line, int col, string errorNum, string text);
 
 		public static BuildResult ToBuildResult (this DiagnosticsMessage message)
 		{

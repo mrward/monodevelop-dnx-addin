@@ -32,7 +32,7 @@ using MonoDevelop.Projects;
 
 namespace MonoDevelop.Dnx
 {
-	public class DnxConfigurationParameters : DotNetConfigurationParameters
+	public class DnxConfigurationParameters : DotNetCompilerParameters
 	{
 		List<string> defineSymbols = new List<string> ();
 

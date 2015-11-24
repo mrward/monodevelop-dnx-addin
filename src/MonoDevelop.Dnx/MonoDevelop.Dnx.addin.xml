@@ -49,25 +49,29 @@
 		<CommandItem id="MonoDevelop.Dnx.Commands.AddNuGetPackages" />
 	</Extension>
 
-	<Extension path="/MonoDevelop/ProjectModel/ProjectBindings">
-		<ProjectBinding id="DnxProject" class="MonoDevelop.Dnx.DnxProjectBinding" />
-	</Extension>
-
 	<Extension path="/MonoDevelop/Ide/Commands">
 		<Command
 			id="MonoDevelop.Dnx.Commands.AddNuGetPackages"
 			_description="Add NuGet packages to the project"
 			_label="Add NuGet _Packages..."
 			defaultHandler="MonoDevelop.Dnx.Commands.AddNuGetPackagesToSelectedProjectHandler" />
-	</Extension>>
+	</Extension>
 
-	<Extension path = "/MonoDevelop/ProjectModel/MSBuildItemTypes">
-		<SolutionItem
-			guid="{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}"
+	<Extension path="/MonoDevelop/ProjectModel/MSBuildItemTypes">
+		<DotNetProjectType
 			language="C#"
-			type="MonoDevelop.Dnx.DnxProject"
 			extension="xproj"
-			handlerType="MonoDevelop.Dnx.DnxMSBuildProjectHandler" />
+			guid="{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}"
+			type="MonoDevelop.Dnx.XProject"
+			msbuildSupport="NotSupported" />
+	</Extension>
+
+	<Extension path="/MonoDevelop/ProjectModel/ProjectModelExtensions">
+		<ProjectFlavor
+			guid="{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}"
+			type="MonoDevelop.Dnx.DnxProject"
+			msbuildSupport="NotSupported"
+			alias="Dnx" />
 	</Extension>
 
 	<Extension path="/MonoDevelop/Ide/StartupHandlers">

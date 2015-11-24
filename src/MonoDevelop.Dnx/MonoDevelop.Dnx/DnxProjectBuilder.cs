@@ -36,35 +36,35 @@ namespace MonoDevelop.Dnx
 	public class DnxProjectBuilder : IDisposable
 	{
 		DnxProject project;
-		IProgressMonitor monitor;
+		ProgressMonitor monitor;
 		ManualResetEventSlim waitEvent = new ManualResetEventSlim ();
 		bool cancelled;
 		DiagnosticsMessage[] messages;
 
-		public DnxProjectBuilder (DnxProject project, IProgressMonitor monitor)
+		public DnxProjectBuilder (DnxProject project, ProgressMonitor monitor)
 		{
 			this.project = project;
 			this.monitor = monitor;
-			this.monitor.CancelRequested += CancelRequested;
+//			this.monitor.CancelRequested += CancelRequested;
 		}
 
 		public string ProjectPath {
 			get { return project.JsonPath; }
 		}
 
-		void CancelRequested (IProgressMonitor monitor)
-		{
-			cancelled = true;
-			waitEvent.Set ();
-		}
+//		void CancelRequested (IProgressMonitor monitor)
+//		{
+//			cancelled = true;
+//			waitEvent.Set ();
+//		}
 
 		public void Dispose ()
 		{
-			IProgressMonitor currentMonitor = monitor;
-			if (currentMonitor != null) {
-				currentMonitor.CancelRequested -= CancelRequested;
-				monitor = null;
-			}
+//			IProgressMonitor currentMonitor = monitor;
+//			if (currentMonitor != null) {
+//				currentMonitor.CancelRequested -= CancelRequested;
+//				monitor = null;
+//			}
 		}
 
 		public BuildResult Build ()
