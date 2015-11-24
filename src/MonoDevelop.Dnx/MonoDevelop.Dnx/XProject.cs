@@ -61,48 +61,6 @@ namespace MonoDevelop.Dnx
 		{
 			DefaultNamespace = GetDefaultNamespace (fileName);
 		}
-
-//		/// <summary>
-//		/// Have to override the SolutionEntityItem otherwise the FileFormat 
-//		/// changes the file extension back to .csproj when GetValidFileName is called.
-//		/// This is because the FileFormat finds the DotNetProjectNode for csproj files
-//		/// when looking at the /MonoDevelop/ProjectModel/MSBuildItemTypes extension.
-//		/// There does not seem to be a way to insert the DotNetProjectNode for DnxProjects
-//		/// since these extensions do not have an id.
-//		/// </summary>
-//		public override FilePath FileName {
-//			get {
-//				return fileName;
-//			}
-//			set {
-//				fileName = value;
-//				fileName = fileName.ChangeExtension (".xproj");
-//				if (ItemHandler.SyncFileName)
-//					Name = fileName.FileNameWithoutExtension;
-//				NotifyModified ("FileName");
-//			}
-//		}
-
-//		public override string Name {
-//			get {
-//				return name ?? string.Empty;
-//			}
-//			set {
-//				if (name == value)
-//					return;
-//				string oldName = name;
-//				name = value;
-//				if (!Loading && ItemHandler.SyncFileName) {
-//					if (string.IsNullOrEmpty (fileName))
-//						FileName = value;
-//					else {
-//						string ext = fileName.Extension;
-//						FileName = fileName.ParentDirectory.Combine (value) + ext;
-//					}
-//				}
-//				OnNameChanged (new SolutionItemRenamedEventArgs(this, oldName, name));
-//			}
-//		}
 	}
 }
 
