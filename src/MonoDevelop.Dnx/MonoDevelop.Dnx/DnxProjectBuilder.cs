@@ -27,6 +27,7 @@
 
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages;
 using MonoDevelop.Core;
 using MonoDevelop.Projects;
@@ -38,6 +39,7 @@ namespace MonoDevelop.Dnx
 		DnxProject project;
 		ProgressMonitor monitor;
 		ManualResetEventSlim waitEvent = new ManualResetEventSlim ();
+		CancellationTokenRegistration cancelRegistration;
 		bool cancelled;
 		DiagnosticsMessage[] messages;
 
@@ -45,26 +47,31 @@ namespace MonoDevelop.Dnx
 		{
 			this.project = project;
 			this.monitor = monitor;
-//			this.monitor.CancelRequested += CancelRequested;
+			cancelRegistration = this.monitor.CancellationToken.Register (CancelRequested);
 		}
 
 		public string ProjectPath {
 			get { return project.JsonPath; }
 		}
 
-//		void CancelRequested (IProgressMonitor monitor)
-//		{
-//			cancelled = true;
-//			waitEvent.Set ();
-//		}
+		void CancelRequested ()
+		{
+			cancelled = true;
+			waitEvent.Set ();
+		}
 
 		public void Dispose ()
 		{
-//			IProgressMonitor currentMonitor = monitor;
-//			if (currentMonitor != null) {
-//				currentMonitor.CancelRequested -= CancelRequested;
-//				monitor = null;
-//			}
+			ProgressMonitor currentMonitor = monitor;
+			if (currentMonitor != null) {
+				cancelRegistration.Dispose ();
+				monitor = null;
+			}
+		}
+
+		public Task<BuildResult> BuildAsnc ()
+		{
+			return Task.Run (() => Build ());
 		}
 
 		public BuildResult Build ()
@@ -74,7 +81,7 @@ namespace MonoDevelop.Dnx
 			waitEvent.Wait ();
 
 			if (cancelled || messages == null) {
-				return new BuildResult ();
+				return BuildResult.CreateCancelled ();
 			}
 			return CreateBuildResult ();
 		}

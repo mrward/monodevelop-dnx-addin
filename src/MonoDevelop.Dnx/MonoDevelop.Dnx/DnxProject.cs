@@ -268,10 +268,11 @@ namespace MonoDevelop.Dnx
 		{
 			if (target == ProjectService.BuildTarget) {
 				using (var builder = new DnxProjectBuilder (this, monitor)) {
-					return (new TargetEvaluationResult (builder.Build ()));
+					BuildResult result = await builder.BuildAsnc ();
+					return new TargetEvaluationResult (result);
 				}
 			}
-			return new TargetEvaluationResult(BuildResult.CreateSuccess ());
+			return new TargetEvaluationResult (BuildResult.CreateSuccess ());
 		}
 
 		protected async override Task OnExecute (ProgressMonitor monitor, ExecutionContext context, ConfigurationSelector configuration)
