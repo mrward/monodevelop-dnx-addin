@@ -275,32 +275,6 @@ namespace MonoDevelop.Dnx
 			return new TargetEvaluationResult (BuildResult.CreateSuccess ());
 		}
 
-		protected async override Task OnExecute (ProgressMonitor monitor, ExecutionContext context, ConfigurationSelector configuration)
-		{
-			var config = GetConfiguration (configuration) as DotNetProjectConfiguration;
-			monitor.Log.WriteLine (GettextCatalog.GetString ("Running {0} ...", Name));
-
-			OperationConsole console = CreateConsole (config, context, monitor);
-
-			try {
-				try {
-					ExecutionCommand executionCommand = OnCreateExecutionCommand (configuration, config);
-					if (context.ExecutionTarget != null)
-						executionCommand.Target = context.ExecutionTarget;
-
-					ProcessAsyncOperation asyncOp = new DnxExecutionHandler ().Execute (executionCommand, console);
-					await asyncOp.Task;
-
-					monitor.Log.WriteLine (GettextCatalog.GetString ("The application exited with code: {0}", asyncOp.ExitCode));
-				} finally {
-					console.Dispose ();
-				}
-			} catch (Exception ex) {
-				LoggingService.LogError (string.Format ("Cannot execute \"{0}\"", Name), ex);
-				monitor.ReportError (GettextCatalog.GetString ("Cannot execute \"{0}\"", Name), ex);
-			}
-		}
-
 		SolutionItemConfiguration GetConfiguration (ConfigurationSelector configuration)
 		{
 			return Project.GetConfiguration (configuration);

@@ -45,6 +45,7 @@ namespace MonoDevelop.Dnx
 		void Init ()
 		{
 			ExternalConsole = true;
+			OutputAssembly = "In-Memory";
 			CreateCompilationParameters ();
 		}
 

@@ -39,24 +39,11 @@ namespace MonoDevelop.Dnx
 			DnxRuntime = runtime;
 		}
 
-		static string GetDnxFileName ()
-		{
-			if (Platform.IsWindows) {
-				return "dnx.exe";
-			}
-			return "dnx";
-		}
-
 		public DnxRuntime DnxRuntime { get; private set; }
 		public string WorkingDirectory { get; private set; }
 
 		public DnxExecutionTarget DnxExecutionTarget {
 			get { return base.Target as DnxExecutionTarget; }
-		}
-
-		public string GetCommand ()
-		{
-			return Path.Combine (GetDnxRuntimePath (), "bin", GetDnxFileName ());
 		}
 
 		public string GetArguments ()
@@ -68,7 +55,7 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		string GetDnxRuntimePath ()
+		public FilePath GetDnxRuntimePath ()
 		{
 			if (DnxExecutionTarget == null || DnxExecutionTarget.Framework == null)
 				return DnxRuntime.Path;

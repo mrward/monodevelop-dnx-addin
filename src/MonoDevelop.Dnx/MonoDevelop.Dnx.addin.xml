@@ -83,6 +83,14 @@
 		<ExecutionHandler id="Dnx" class ="MonoDevelop.Dnx.DnxExecutionHandler" />
 	</Extension>
 
+	<Extension path="/MonoDevelop/Debugging/DebuggerEngines">
+		<DebuggerEngine
+			id="MonoDevelop.Dnx.DnxDebuggerEngine"
+			name="Mono Soft Debugger for Dnx"
+			features="Breakpoints, Pause, Stepping, DebugFile, ConditionalBreakpoints, Tracepoints, Catchpoints, Disassembly"
+			type="MonoDevelop.Dnx.DnxDebuggerEngine" />
+	</Extension>
+
 	<Extension path="/MonoDevelop/Ide/Pads/ProjectPad">
 		<NodeBuilder class="MonoDevelop.Dnx.NodeBuilders.DependenciesNodeBuilderExtension" />
 		<NodeBuilder class="MonoDevelop.Dnx.NodeBuilders.DependenciesFolderNodeBuilder" />
