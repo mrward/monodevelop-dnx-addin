@@ -92,7 +92,7 @@ namespace MonoDevelop.Dnx
 		void AddPropertyWithNotEmptyCondition (MSBuildPropertyGroup propertyGroup, string name, string unevaluatedValue)
 		{
 			string condition = String.Format("'$({0})' == ''", name);
-			propertyGroup.SetValue (name, unevaluatedValue, null, false, condition);
+			propertyGroup.SetValue (name, unevaluatedValue, condition: condition);
 		}
 
 		MSBuildProperty AddProperty (MSBuildPropertyGroup propertyGroup, string name, string unevaluatedValue)
