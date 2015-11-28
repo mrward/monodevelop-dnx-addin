@@ -224,6 +224,7 @@
     <Compile Include="MonoDevelop.Dnx\DnxLoggerService.cs" />
     <Compile Include="MonoDevelop.Dnx.Gui\DnxGlobalOptionsPanel.cs" />
     <Compile Include="MonoDevelop.Dnx\XProject.cs" />
+    <Compile Include="MonoDevelop.Dnx\DnxWindowsDebuggerEngine.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

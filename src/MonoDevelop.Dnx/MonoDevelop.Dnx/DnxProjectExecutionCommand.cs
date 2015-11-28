@@ -46,6 +46,19 @@ namespace MonoDevelop.Dnx
 			get { return base.Target as DnxExecutionTarget; }
 		}
 
+		public string GetCommand ()
+		{
+			return GetDnxRuntimePath ().Combine ("bin", GetDnxFileName ());
+		}
+
+		string GetDnxFileName ()
+		{
+			if (Platform.IsWindows) {
+				return "dnx.exe";
+			}
+			return "Microsoft.Dnx.Host.Mono.dll";
+		}
+
 		public string GetArguments ()
 		{
 			if (DnxRuntime.UsesCurrentDirectoryByDefault) {

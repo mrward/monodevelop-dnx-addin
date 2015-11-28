@@ -89,6 +89,11 @@
 			name="Mono Soft Debugger for Dnx"
 			features="Breakpoints, Pause, Stepping, DebugFile, ConditionalBreakpoints, Tracepoints, Catchpoints, Disassembly"
 			type="MonoDevelop.Dnx.DnxDebuggerEngine" />
+		<DebuggerEngine
+			id="MonoDevelop.Dnx.DnxWindowsDebuggerEngine"
+			name="Microsoft .NET Debugger for Dnx"
+			features="Tracepoints, Catchpoints, DebugFile, Stepping, Pause, Breakpoints, ConditionalBreakpoints"
+			type="MonoDevelop.Dnx.DnxWindowsDebuggerEngine" />
 	</Extension>
 
 	<Extension path="/MonoDevelop/Ide/Pads/ProjectPad">

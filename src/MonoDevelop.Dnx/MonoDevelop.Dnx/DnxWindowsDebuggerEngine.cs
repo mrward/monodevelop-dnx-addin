@@ -1,5 +1,5 @@
 ﻿//
-// DnxExecutionHandler.cs
+// DnxWindowsDebuggerEngine.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -25,37 +25,42 @@
 // THE SOFTWARE.
 //
 
-using MonoDevelop.Core.Execution;
+using System;
+using System.Linq;
+using Mono.Debugging.Client;
 using MonoDevelop.Core;
-using System.Collections.Generic;
+using MonoDevelop.Core.Execution;
+using MonoDevelop.Debugger;
 
 namespace MonoDevelop.Dnx
 {
-	public class DnxExecutionHandler : IExecutionHandler
+	public class DnxWindowsDebuggerEngine : DebuggerEngineBackend
 	{
-		public bool CanExecute (ExecutionCommand command)
-		{
-			return command is DnxProjectExecutionCommand;
-		}
+		DebuggerEngine engine;
 
-		public static DotNetExecutionCommand ConvertCommand (DnxProjectExecutionCommand dnxCommand)
-		{
-			return new DotNetExecutionCommand (
-				dnxCommand.GetCommand (),
-				dnxCommand.GetArguments (),
-				dnxCommand.WorkingDirectory,
-				new Dictionary<string, string> {
-					{ "DNX_BUILD_PORTABLE_PDB", "0" }
+		DebuggerEngine DebuggerEngine {
+			get {
+				if (engine == null) {
+					engine = DebuggingService.GetDebuggerEngines ().FirstOrDefault (e => e.Id == "MonoDevelop.Debugger.Win32");
 				}
-			) {
-				UserAssemblyPaths = new List<string> ()
-			};
+				return engine;
+			}
 		}
 
-		ProcessAsyncOperation IExecutionHandler.Execute (ExecutionCommand command, OperationConsole console)
+		public override bool CanDebugCommand (ExecutionCommand cmd)
 		{
-			var dotNetCommand = ConvertCommand ((DnxProjectExecutionCommand)command);
-			return Runtime.SystemAssemblyService.DefaultRuntime.GetExecutionHandler ().Execute (dotNetCommand, console);
+			return cmd is DnxProjectExecutionCommand && Platform.IsWindows && DebuggerEngine != null;
+		}
+
+		public override DebuggerStartInfo CreateDebuggerStartInfo (ExecutionCommand cmd)
+		{
+			var dotNetCommand = DnxExecutionHandler.ConvertCommand ((DnxProjectExecutionCommand)cmd);
+			return DebuggerEngine.CreateDebuggerStartInfo (dotNetCommand);
+		}
+
+		public override DebuggerSession CreateSession ()
+		{
+			return DebuggerEngine.CreateSession ();
 		}
 	}
 }
