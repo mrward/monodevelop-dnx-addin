@@ -45,8 +45,9 @@ namespace MonoDevelop.Dnx
 				dnxCommand.GetArguments (),
 				dnxCommand.WorkingDirectory,
 				new Dictionary<string, string> {
-					{ "DNX_BUILD_PORTABLE_PDB","1" }
-				}) {
+					{ "DNX_BUILD_PORTABLE_PDB", "0" }
+				}
+			) {
 				UserAssemblyPaths = new List<string> ()
 			};
 		}
