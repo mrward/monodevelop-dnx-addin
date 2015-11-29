@@ -35,6 +35,7 @@ using MonoDevelop.Ide;
 using MonoDevelop.Projects;
 using OmniSharp.Dnx;
 using Solution = MonoDevelop.Projects.Solution;
+using System.Collections.Concurrent;
 
 namespace MonoDevelop.Dnx
 {
@@ -43,7 +44,7 @@ namespace MonoDevelop.Dnx
 		DnxContext context;
 		DnxProjectSystem projectSystem;
 		MonoDevelopApplicationLifetime applicationLifetime;
-		DnxProjectBuilder builder;
+		ConcurrentDictionary<string, DnxProjectBuilder> builders = new ConcurrentDictionary<string, DnxProjectBuilder> ();
 
 		public DnxProjectService ()
 		{
@@ -209,16 +210,24 @@ namespace MonoDevelop.Dnx
 
 		public void GetDiagnostics (DnxProjectBuilder builder)
 		{
-			this.builder = builder;
+			builders.AddOrUpdate (builder.ProjectPath, _ => builder, (a, b) => builder);
 			projectSystem.GetDiagnostics (builder.ProjectPath);
 		}
 
 		public void ReportDiagnostics (OmniSharp.Dnx.Project project, DiagnosticsMessage[] messages)
 		{
-			if (builder != null) {
+			DnxProjectBuilder builder;
+			if (builders.TryGetValue (project.Path, out builder)) {
 				builder.OnDiagnostics (messages);
-				builder = null;
+			} else {
+				LoggingService.LogWarning ("Unable to find builder by json file. '{0}'", project.Path);
 			}
+		}
+
+		public void RemoveBuilder (DnxProjectBuilder builder)
+		{
+			DnxProjectBuilder builderRemoved;
+			builders.TryRemove (builder.ProjectPath, out builderRemoved);
 		}
 
 		public void OnCompilationOptionsChanged (ProjectId projectId, CSharpCompilationOptions compilationOptions, CSharpParseOptions parseOptions)

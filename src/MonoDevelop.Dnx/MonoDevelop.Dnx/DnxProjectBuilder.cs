@@ -64,6 +64,7 @@ namespace MonoDevelop.Dnx
 		{
 			ProgressMonitor currentMonitor = monitor;
 			if (currentMonitor != null) {
+				DnxServices.ProjectService.RemoveBuilder (this);
 				cancelRegistration.Dispose ();
 				monitor = null;
 			}
