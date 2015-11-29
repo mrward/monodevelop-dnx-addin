@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
-//using Microsoft.CodeAnalysis.Host.Mef;
+using Microsoft.CodeAnalysis.Host.Mef;
 //using Microsoft.CodeAnalysis.Text;
 //using OmniSharp.Roslyn;
 using DependenciesMessage = Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages.DependenciesMessage;
@@ -17,14 +17,14 @@ namespace OmniSharp
 //
 //        public BufferManager BufferManager { get; private set; }
 //
-//        public OmnisharpWorkspace() : this(MefHostServices.DefaultHost)
-//        {
-//        }
+        public OmnisharpWorkspace() : this(MefHostServices.DefaultHost)
+        {
+        }
 
-//        public OmnisharpWorkspace(MefHostServices hostServices) : base(hostServices, "Custom")
-//        {
+        public OmnisharpWorkspace(MefHostServices hostServices) : base(hostServices, "Custom")
+        {
 //            BufferManager = new BufferManager(this);
-//        }
+        }
 
         public void AddProject(ProjectInfo projectInfo)
         {
@@ -73,6 +73,7 @@ namespace OmniSharp
 
         public void SetParseOptions(ProjectId projectId, ParseOptions parseOptions)
         {
+			DnxServices.ProjectService.OnParseOptionsChanged (projectId, parseOptions);
             OnParseOptionsChanged(projectId, parseOptions);
         }
 
@@ -107,14 +108,19 @@ namespace OmniSharp
 //            return true;
 //        }
 
-        public void DependenciesUpdated(Project project, DependenciesMessage message)
+        public void DependenciesUpdated(OmniSharp.Dnx.Project project, DependenciesMessage message)
         {
             DnxServices.ProjectService.DependenciesUpdated(project, message);
         }
 
-        public void ReportDiagnostics(Project project, DiagnosticsMessage[] messages)
+        public void ReportDiagnostics(OmniSharp.Dnx.Project project, DiagnosticsMessage[] messages)
         {
             DnxServices.ProjectService.ReportDiagnostics(project, messages);
+        }
+
+        public void ReferencesUpdated (ProjectId projectId, FrameworkProject frameworkProject)
+        {
+            DnxServices.ProjectService.OnReferencesUpdated (projectId, frameworkProject);
         }
     }
 }

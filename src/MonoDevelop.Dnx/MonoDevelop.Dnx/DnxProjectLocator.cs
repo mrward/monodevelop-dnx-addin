@@ -35,7 +35,7 @@ namespace MonoDevelop.Dnx
 	public class DnxProjectLocator
 	{
 		readonly DnxContext context;
-		Solution solution;
+		MonoDevelop.Projects.Solution solution;
 		FrameworkProject frameworkProject;
 
 		public DnxProjectLocator (DnxContext context)

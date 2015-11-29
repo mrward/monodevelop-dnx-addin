@@ -27,14 +27,20 @@
 using System;
 using Microsoft.CodeAnalysis;
 using OmniSharp.Services;
+using System.Collections.Concurrent;
 
 namespace MonoDevelop.Dnx.Omnisharp
 {
 	public class MetadataFileReferenceCache : IMetadataFileReferenceCache
 	{
+		ConcurrentDictionary<string, MetadataReference> cache = new ConcurrentDictionary<string, MetadataReference> ();
+
 		public MetadataReference GetMetadataReference (string path)
 		{
-			return new MetadataFileReference (path);
+			string key = path.ToLowerInvariant ();
+			return cache.GetOrAdd (key, filePath => {
+				return MetadataReference.CreateFromFile (filePath);
+			});
 		}
 	}
 }

@@ -34,6 +34,7 @@ using MonoDevelop.Ide;
 using MonoDevelop.Projects;
 using OmniSharp.Dnx;
 using OmniSharp.Models;
+using Solution = MonoDevelop.Projects.Solution;
 
 namespace MonoDevelop.Dnx
 {

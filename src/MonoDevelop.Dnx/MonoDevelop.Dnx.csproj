@@ -85,13 +85,6 @@
     <Compile Include="Omnisharp\Microsoft\AspNet\Logging\LogValuesFormatter.cs" />
     <Compile Include="Omnisharp\Microsoft\AspNet\Logging\TypeNameHelper.cs" />
     <Compile Include="Omnisharp\Microsoft\AspNet\Options\IOptions.cs" />
-    <Compile Include="Omnisharp\Microsoft\Roslyn\Hash.cs" />
-    <Compile Include="Omnisharp\Microsoft\Roslyn\LanguageNames.cs" />
-    <Compile Include="Omnisharp\Microsoft\Roslyn\MetadataReference.cs" />
-    <Compile Include="Omnisharp\Microsoft\Roslyn\ProjectId.cs" />
-    <Compile Include="Omnisharp\Microsoft\Roslyn\ProjectInfo.cs" />
-    <Compile Include="Omnisharp\Microsoft\Roslyn\ProjectReference.cs" />
-    <Compile Include="Omnisharp\Microsoft\Roslyn\VersionStamp.cs" />
     <Compile Include="Omnisharp\Models\DnxFramework.cs" />
     <Compile Include="Omnisharp\Models\DnxProject.cs" />
     <Compile Include="Omnisharp\Models\ErrorMessage.cs" />
@@ -158,8 +151,6 @@
     <Compile Include="MonoDevelop.Dnx.OptionsPanels\DnxRuntimeOptionsPanel.cs" />
     <Compile Include="MonoDevelop.Dnx\GlobalJsonFile.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxConfigurationParameters.cs" />
-    <Compile Include="Omnisharp\Microsoft\Roslyn\CSharpParseOptions.cs" />
-    <Compile Include="Omnisharp\Microsoft\Roslyn\ParseOptions.cs" />
     <Compile Include="Omnisharp\Dnx\IncomingMessages\ChangeConfiguration.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectSystemFactory.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectLocator.cs" />

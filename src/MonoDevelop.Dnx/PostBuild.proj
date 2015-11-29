@@ -12,6 +12,20 @@
     <LicenseItem Include="Licenses\*.txt" />
     <TemplateItem Include="Templates\**\*.*" />
   </ItemGroup>
+  <ItemGroup>
+      <Reference Include="Microsoft.CodeAnalysis.CSharp">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Collections.Immutable">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.Workspaces">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
   <Target Name="MyPostBuildTarget">
     <Copy SourceFiles="@(LicenseItem)" DestinationFolder="$(OutputPath)merged\Licenses" />
     <Copy SourceFiles="@(TemplateItem)" DestinationFolder="$(OutputPath)merged\Templates\%(RecursiveDir)" />
