@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Host.Mef;
 //using Microsoft.CodeAnalysis.Text;
 //using OmniSharp.Roslyn;
@@ -66,14 +67,13 @@ namespace OmniSharp
             OnProjectRemoved(projectId);
         }
 
-//        public void SetCompilationOptions(ProjectId projectId, CompilationOptions options)
-//        {
-//            OnCompilationOptionsChanged(projectId, options);
-//        }
+        public void SetCompilationOptions(ProjectId projectId, CompilationOptions options)
+        {
+            OnCompilationOptionsChanged(projectId, options);
+        }
 
         public void SetParseOptions(ProjectId projectId, ParseOptions parseOptions)
         {
-			DnxServices.ProjectService.OnParseOptionsChanged (projectId, parseOptions);
             OnParseOptionsChanged(projectId, parseOptions);
         }
 
@@ -121,6 +121,11 @@ namespace OmniSharp
         public void ReferencesUpdated (ProjectId projectId, FrameworkProject frameworkProject)
         {
             DnxServices.ProjectService.OnReferencesUpdated (projectId, frameworkProject);
+        }
+
+        public void CompilationOptionsChanged (ProjectId projectId, CSharpCompilationOptions options, CSharpParseOptions parseOptions)
+        {
+            DnxServices.ProjectService.OnCompilationOptionsChanged (projectId, options, parseOptions);
         }
     }
 }

@@ -27,13 +27,13 @@
 
 using System;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages;
 using MonoDevelop.Dnx.Omnisharp;
 using MonoDevelop.Core;
 using MonoDevelop.Ide;
 using MonoDevelop.Projects;
 using OmniSharp.Dnx;
-using OmniSharp.Models;
 using Solution = MonoDevelop.Projects.Solution;
 
 namespace MonoDevelop.Dnx
@@ -196,17 +196,6 @@ namespace MonoDevelop.Dnx
 			project.UpdateReferences (executionTarget);
 		}
 
-		public void OnParseOptionsChanged (ProjectId projectId, ParseOptions options)
-		{
-			DispatchService.GuiDispatch (()  => {
-				var locator = new DnxProjectLocator (context);
-				DnxProject project = locator.FindProject (projectId);
-				if (project != null) {
-					project.UpdateParseOptions (locator.FrameworkProject, options);
-				}
-			});
-		}
-
 		void ActiveConfigurationChanged (object sender, EventArgs e)
 		{
 			if (projectSystem == null)
@@ -230,6 +219,17 @@ namespace MonoDevelop.Dnx
 				builder.OnDiagnostics (messages);
 				builder = null;
 			}
+		}
+
+		public void OnCompilationOptionsChanged (ProjectId projectId, CSharpCompilationOptions compilationOptions, CSharpParseOptions parseOptions)
+		{
+			DispatchService.GuiDispatch (()  => {
+				var locator = new DnxProjectLocator (context);
+				DnxProject project = locator.FindProject (projectId);
+				if (project != null) {
+					project.UpdateCompilationOptions (locator.FrameworkProject, compilationOptions, parseOptions);
+				}
+			});
 		}
 	}
 }

@@ -3,13 +3,13 @@
 
 using System.Collections.Generic;
 using System.Linq;
-//using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Microsoft.Framework.Runtime.Roslyn
 {
     public class CompilationSettings
     {
-//        public LanguageVersion LanguageVersion { get; set; }
+        public LanguageVersion LanguageVersion { get; set; }
         public IEnumerable<string> Defines { get; set; }
         public WritableCSharpCompilationOptions CompilationOptions { get; set; }
 

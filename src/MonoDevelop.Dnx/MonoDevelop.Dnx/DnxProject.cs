@@ -29,16 +29,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml;
+using Microsoft.CodeAnalysis.CSharp;
 using MonoDevelop.Core;
 using MonoDevelop.Core.Execution;
-using MonoDevelop.Core.ProgressMonitoring;
 using MonoDevelop.Projects;
 using OmniSharp.Models;
 
 using DependenciesMessage = Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages.DependenciesMessage;
-using FrameworkData = Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages.FrameworkData;
-using System.Threading.Tasks;
 
 namespace MonoDevelop.Dnx
 {
@@ -50,7 +49,7 @@ namespace MonoDevelop.Dnx
 		Dictionary<string, List<string>> savedFileReferences = new Dictionary<string, List<string>> ();
 		Dictionary<string, List<string>> savedProjectReferences = new Dictionary<string, List<string>> ();
 
-		Dictionary<string, List<string>> preprocessorSymbols = new Dictionary<string, List<string>> ();
+		Dictionary<string, CSharpCompilationAndParseOptions> savedCompilationOptions = new Dictionary<string, CSharpCompilationAndParseOptions> ();
 
 		public static readonly string ProjectTypeGuid = "{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}";
 
@@ -420,7 +419,7 @@ namespace MonoDevelop.Dnx
 
 			UpdateCurrentFramework (executionTarget);
 
-			RefreshPreprocessorSymbols ();
+			RefreshCompilationOptions ();
 
 			try {
 				addingReferences = true;
@@ -470,39 +469,6 @@ namespace MonoDevelop.Dnx
 			}
 
 			UpdateProjectReferences (projectReferences);
-		}
-
-		public void UpdateParseOptions (OmniSharp.Dnx.FrameworkProject frameworkProject, Microsoft.CodeAnalysis.ParseOptions options)
-		{
-			EnsureCurrentFrameworkDefined (frameworkProject);
-
-			List<string> symbols = options.PreprocessorSymbolNames.ToList ();
-			preprocessorSymbols[frameworkProject.Framework] = symbols;
-
-			if (CurrentFramework != frameworkProject.Framework)
-				return;
-
-			UpdatePreprocessorSymbols (symbols);
-		}
-
-		void UpdatePreprocessorSymbols (IEnumerable<string> symbols)
-		{
-			foreach (var config in Configurations.OfType<DotNetProjectConfiguration> ()) {
-				var parameters = new DnxConfigurationParameters ();
-				parameters.UpdatePreprocessorSymbols (symbols);
-				config.CompilationParameters = parameters;
-			}
-		}
-
-		void RefreshPreprocessorSymbols ()
-		{
-			List<string> symbols = null;
-			if (!preprocessorSymbols.TryGetValue (CurrentFramework, out symbols)) {
-				LoggingService.LogWarning ("Unable to find preprocessor symbols for framework '{0}'.", CurrentFramework);
-				return;
-			}
-
-			UpdatePreprocessorSymbols (symbols);
 		}
 
 		public string JsonPath {
@@ -635,6 +601,41 @@ namespace MonoDevelop.Dnx
 		protected override IEnumerable<SolutionItem> OnGetReferencedItems (ConfigurationSelector configuration)
 		{
 			return base.OnGetReferencedItems (configuration);
+		}
+
+		public void UpdateCompilationOptions (
+			OmniSharp.Dnx.FrameworkProject frameworkProject,
+			CSharpCompilationOptions compilationOptions,
+			CSharpParseOptions parseOptions)
+		{
+			EnsureCurrentFrameworkDefined (frameworkProject);
+
+			var options = new CSharpCompilationAndParseOptions (compilationOptions, parseOptions);
+			savedCompilationOptions[frameworkProject.Framework] = options;
+
+			if (CurrentFramework != frameworkProject.Framework)
+				return;
+
+			UpdateCompilationOptions (options);
+		}
+
+		void UpdateCompilationOptions (CSharpCompilationAndParseOptions options)
+		{
+			foreach (var config in Configurations.OfType<DotNetProjectConfiguration> ()) {
+				var parameters = new DnxConfigurationParameters (options.CompilationOptions, options.ParseOptions);
+				config.CompilationParameters = parameters;
+			}
+		}
+
+		void RefreshCompilationOptions ()
+		{
+			CSharpCompilationAndParseOptions options;
+			if (!savedCompilationOptions.TryGetValue (CurrentFramework, out options)) {
+				LoggingService.LogWarning ("Unable to find compilation options for framework '{0}'.", CurrentFramework);
+				return;
+			}
+
+			UpdateCompilationOptions (options);
 		}
 	}
 }

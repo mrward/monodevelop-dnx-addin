@@ -317,27 +317,28 @@ namespace OmniSharp.Dnx
 
                         var projectId = project.ProjectsByFramework[val.Framework.FrameworkName].ProjectId;
 
-//                        var options = val.CompilationOptions.CompilationOptions;
-//
-//                        var specificDiagnosticOptions = options.SpecificDiagnosticOptions
-//                        .ToDictionary(p => p.Key, p => (ReportDiagnostic)p.Value);
-//
-//                        var csharpOptions = new CSharpCompilationOptions(
-//                                outputKind: (OutputKind)options.OutputKind,
-//                                optimizationLevel: (OptimizationLevel)options.OptimizationLevel,
-//                                platform: (Platform)options.Platform,
-//                                generalDiagnosticOption: (ReportDiagnostic)options.GeneralDiagnosticOption,
-//                                warningLevel: options.WarningLevel,
-//                                allowUnsafe: options.AllowUnsafe,
-//                                concurrentBuild: options.ConcurrentBuild,
-//                                specificDiagnosticOptions: specificDiagnosticOptions
-//                            );
+                        var options = val.CompilationOptions.CompilationOptions;
 
-                        var parseOptions = new CSharpParseOptions(//val.CompilationOptions.LanguageVersion,
+                        var specificDiagnosticOptions = options.SpecificDiagnosticOptions
+                        .ToDictionary(p => p.Key, p => (ReportDiagnostic)p.Value);
+
+                        var csharpOptions = new CSharpCompilationOptions(
+                                outputKind: (OutputKind)options.OutputKind,
+                                optimizationLevel: (OptimizationLevel)options.OptimizationLevel,
+                                platform: (Platform)options.Platform,
+                                generalDiagnosticOption: (ReportDiagnostic)options.GeneralDiagnosticOption,
+                                warningLevel: options.WarningLevel,
+                                allowUnsafe: options.AllowUnsafe,
+                                concurrentBuild: options.ConcurrentBuild,
+                                specificDiagnosticOptions: specificDiagnosticOptions
+                            );
+
+                        var parseOptions = new CSharpParseOptions(val.CompilationOptions.LanguageVersion,
                                                                   preprocessorSymbols: val.CompilationOptions.Defines);
 
-//                        _workspace.SetCompilationOptions(projectId, csharpOptions);
+                        _workspace.SetCompilationOptions(projectId, csharpOptions);
                         _workspace.SetParseOptions(projectId, parseOptions);
+                        _workspace.CompilationOptionsChanged(projectId, csharpOptions, parseOptions);
                     }
                     else if (m.MessageType == "Sources")
                     {

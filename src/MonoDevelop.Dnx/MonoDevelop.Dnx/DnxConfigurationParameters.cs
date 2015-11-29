@@ -37,46 +37,54 @@ namespace MonoDevelop.Dnx
 {
 	public class DnxConfigurationParameters : DotNetCompilerParameters
 	{
-		List<string> defineSymbols = new List<string> ();
+		CSharpParseOptions parseOptions;
+		CSharpCompilationOptions compilationOptions;
 
 		public DnxConfigurationParameters ()
 		{
-			NoStdLib = true;
 		}
 
-		public override bool NoStdLib { get; set; }
-
-		public void UpdatePreprocessorSymbols (IEnumerable<string> symbols)
+		public DnxConfigurationParameters (CSharpCompilationOptions compilationOptions, CSharpParseOptions parseOptions)
+			: this ()
 		{
-			defineSymbols = symbols.ToList ();
+			this.compilationOptions = compilationOptions;
+			this.parseOptions = parseOptions;
+		}
+
+		public override bool NoStdLib {
+			get { return true; }
+			set { }
 		}
 
 		public override IEnumerable<string> GetDefineSymbols ()
 		{
-			return defineSymbols;
+			if (parseOptions != null)
+				return parseOptions.PreprocessorSymbolNames;
+
+			return Enumerable.Empty<string> ();
 		}
 
 		public override CompilationOptions CreateCompilationOptions ()
 		{
-			var xproject = (XProject)ParentProject;
-			var dnxProject = xproject.AsFlavor<DnxProject> ();
+			if (compilationOptions != null)
+				return compilationOptions;
 
 			return new CSharpCompilationOptions (
 				OutputKind.ConsoleApplication,
 				null,
-				null, //project.MainClass,
+				null,
 				"Script",
 				null,
 				OptimizationLevel.Debug,
-				true, //GenerateOverflowChecks,
-				false, //UnsafeCode,
+				true,
+				false,
 				null,
 				null,
 				ImmutableArray<byte>.Empty,
 				null,
 				Platform.AnyCpu,
 				ReportDiagnostic.Default,
-				4, //WarningLevel,
+				4,
 				null,
 				false,
 				assemblyIdentityComparer: DesktopAssemblyIdentityComparer.Default
@@ -85,6 +93,9 @@ namespace MonoDevelop.Dnx
 
 		public override ParseOptions CreateParseOptions ()
 		{
+			if (parseOptions != null)
+				return parseOptions;
+
 			return new CSharpParseOptions (
 				LanguageVersion.CSharp6,
 				DocumentationMode.Parse,
