@@ -27,7 +27,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using MonoDevelop.Projects;
 
 namespace MonoDevelop.Dnx
@@ -51,6 +54,43 @@ namespace MonoDevelop.Dnx
 		public override IEnumerable<string> GetDefineSymbols ()
 		{
 			return defineSymbols;
+		}
+
+		public override CompilationOptions CreateCompilationOptions ()
+		{
+			var xproject = (XProject)ParentProject;
+			var dnxProject = xproject.AsFlavor<DnxProject> ();
+
+			return new CSharpCompilationOptions (
+				OutputKind.ConsoleApplication,
+				null,
+				null, //project.MainClass,
+				"Script",
+				null,
+				OptimizationLevel.Debug,
+				true, //GenerateOverflowChecks,
+				false, //UnsafeCode,
+				null,
+				null,
+				ImmutableArray<byte>.Empty,
+				null,
+				Platform.AnyCpu,
+				ReportDiagnostic.Default,
+				4, //WarningLevel,
+				null,
+				false,
+				assemblyIdentityComparer: DesktopAssemblyIdentityComparer.Default
+			);
+		}
+
+		public override ParseOptions CreateParseOptions ()
+		{
+			return new CSharpParseOptions (
+				LanguageVersion.CSharp6,
+				DocumentationMode.Parse,
+				SourceCodeKind.Regular,
+				ImmutableArray<string>.Empty.AddRange (GetDefineSymbols ())
+			);
 		}
 	}
 }
