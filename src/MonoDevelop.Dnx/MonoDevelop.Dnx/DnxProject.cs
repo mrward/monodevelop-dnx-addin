@@ -487,8 +487,22 @@ namespace MonoDevelop.Dnx
 			if (executionTarget.IsDefaultProfile) {
 				CurrentFramework = savedFileReferences.Keys.FirstOrDefault ();
 			} else {
-				CurrentFramework = executionTarget.Framework.Name;
+				CurrentFramework = GetBestFrameworkMatch (executionTarget.Framework);
 			}
+		}
+
+		string GetBestFrameworkMatch (DnxFramework framework)
+		{
+			if (savedFileReferences.ContainsKey (framework.Name))
+				return framework.Name;
+
+			string bestFrameworkMatch = savedFileReferences.Keys.FirstOrDefault (key => framework.IsMatch (key));
+			if (bestFrameworkMatch != null)
+				return bestFrameworkMatch;
+
+			LoggingService.LogWarning ("Unable to find matching framework '{0}' for project '{1}'", framework.Name, Name);
+
+			return savedFileReferences.Keys.FirstOrDefault ();
 		}
 
 		void RefreshReferences ()
