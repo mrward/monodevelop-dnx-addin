@@ -26,6 +26,7 @@
 //
 
 using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using MonoDevelop.Core;
 using MonoDevelop.Projects;
@@ -36,7 +37,12 @@ namespace MonoDevelop.Dnx
 	{
 		public static bool HasDnxProjects (this Solution solution)
 		{
-			return solution.GetAllSolutionItems<DnxProject> ().Any ();
+			return solution.GetDnxProjects ().Any ();
+		}
+
+		public static IEnumerable<DnxProject> GetDnxProjects (this Solution solution)
+		{
+			return solution.GetAllSolutionItems<DnxProject> ();
 		}
 
 		public static DnxProject FindProjectByProjectJsonFileName (this Solution solution, string fileName)

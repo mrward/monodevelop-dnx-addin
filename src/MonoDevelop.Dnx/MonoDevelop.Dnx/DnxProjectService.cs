@@ -188,11 +188,13 @@ namespace MonoDevelop.Dnx
 			if (executionTarget == null)
 				return;
 
-			var project = IdeApp.ProjectOperations.CurrentSelectedProject as DnxProject;
-			if (project == null)
+			Solution solution = IdeApp.ProjectOperations.CurrentSelectedSolution;
+			if (solution == null)
 				return;
 
-			project.UpdateReferences (executionTarget);
+			foreach (DnxProject project in solution.GetDnxProjects ()) {
+				project.UpdateReferences (executionTarget);
+			}
 		}
 
 		public void OnParseOptionsChanged (ProjectId projectId, ParseOptions options)
