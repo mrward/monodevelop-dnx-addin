@@ -26,6 +26,7 @@
 //
 
 using System;
+using MonoDevelop.Dnx.Commands;
 using MonoDevelop.Ide.Gui.Components;
 using MonoDevelop.Projects;
 
@@ -39,6 +40,10 @@ namespace MonoDevelop.Dnx.NodeBuilders
 
 		public override string ContextMenuAddinPath {
 			get { return "/MonoDevelop/Dnx/ContextMenu/ProjectPad/DependenciesFolderNode"; }
+		}
+
+		public override Type CommandHandlerType {
+			get { return typeof(DependenciesFolderNodeCommandHandler); }
 		}
 
 		public override string GetNodeName (ITreeNavigator thisNode, object dataObject)

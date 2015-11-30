@@ -265,6 +265,7 @@
     <Compile Include="MonoDevelop.Dnx.Gui\DnxOutputPad.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxLoggerService.cs" />
     <Compile Include="MonoDevelop.Dnx.Gui\DnxGlobalOptionsPanel.cs" />
+    <Compile Include="MonoDevelop.Dnx.Commands\DependenciesFolderNodeCommandHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -1,5 +1,5 @@
 ﻿//
-// AddNuGetPackagesToSelectedProjectHandler.cs
+// DependenciesFolderNodeCommandHandler.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -25,43 +25,19 @@
 // THE SOFTWARE.
 //
 
-using System.Collections.Generic;
-using System.Linq;
-using MonoDevelop.Components.Commands;
-using MonoDevelop.Ide;
-using MonoDevelop.PackageManagement;
-using MonoDevelop.Projects;
+using System;
+using MonoDevelop.Dnx.NodeBuilders;
+using MonoDevelop.Ide.Gui.Components;
 
 namespace MonoDevelop.Dnx.Commands
 {
-	public class AddNuGetPackagesToSelectedProjectHandler : CommandHandler
+	public class DependenciesFolderNodeCommandHandler : NodeCommandHandler
 	{
-		protected DnxProject GetSelectedDnxProject ()
+		public override void ActivateItem ()
 		{
-			return IdeApp.ProjectOperations.CurrentSelectedProject as DnxProject;
-		}
-
-		protected override void Run ()
-		{
-			DnxProject project = GetSelectedDnxProject ();
-			if (project == null)
-				return;
-
-			AddPackages (project);
-		}
-
-		public void AddPackages (DnxProject project)
-		{
-			var runner = new AddPackagesDialogRunner ();
-			runner.RunToAddPackageDependencies ();
-			if (runner.PackagesToAdd.Any ()) {
-				AddPackagesToProject (project, runner.PackagesToAdd.ToList ());
-			}
-		}
-
-		void AddPackagesToProject (DnxProject project, IList<NuGetPackageToAdd> packagesToAdd)
-		{
-			project.AddNuGetPackages (packagesToAdd);
+			var node = (DependenciesFolderNode)CurrentNode.DataItem;
+			var handler = new AddNuGetPackagesToSelectedProjectHandler ();
+			handler.AddPackages (node.Project);
 		}
 	}
 }
