@@ -26,6 +26,7 @@
 //
 
 using System;
+using MonoDevelop.Dnx.Commands;
 using MonoDevelop.Ide.Gui.Components;
 
 namespace MonoDevelop.Dnx.NodeBuilders
@@ -38,6 +39,10 @@ namespace MonoDevelop.Dnx.NodeBuilders
 
 		public override Type NodeDataType {
 			get { return typeof(DependencyNode); }
+		}
+
+		public override Type CommandHandlerType {
+			get { return typeof(DependencyNodeCommandHandler); }
 		}
 
 		public override string GetNodeName (ITreeNavigator thisNode, object dataObject)
