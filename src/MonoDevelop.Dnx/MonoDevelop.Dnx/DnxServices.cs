@@ -25,6 +25,10 @@
 // THE SOFTWARE.
 //
 
+using System;
+using MonoDevelop.Core;
+using MonoDevelop.Core.Assemblies;
+
 namespace MonoDevelop.Dnx
 {
 	public static class DnxServices
@@ -38,6 +42,32 @@ namespace MonoDevelop.Dnx
 		public static void Initialize ()
 		{
 			ProjectService.Initialize ();
+			IsPortablePdbSupported = GetPortablePdbSupported ();
+		}
+
+		public static bool IsPortablePdbSupported { get; private set; }
+
+		static bool GetPortablePdbSupported ()
+		{
+			if (Platform.IsWindows) {
+				return true;
+			}
+
+			return IsAtLeastMono43 ();
+		}
+
+		static bool IsAtLeastMono43 ()
+		{
+			MonoRuntimeInfo monoInfo = MonoRuntimeInfo.FromCurrentRuntime ();
+			if (monoInfo == null)
+				return false;
+
+			Version version;
+			if (!Version.TryParse (monoInfo.MonoVersion, out version))
+				return false;
+
+			var version43 = new Version ("4.3.0");
+			return version >= version43;
 		}
 	}
 }

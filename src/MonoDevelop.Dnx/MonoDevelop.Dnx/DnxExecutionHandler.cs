@@ -45,11 +45,19 @@ namespace MonoDevelop.Dnx
 				dnxCommand.GetArguments (),
 				dnxCommand.WorkingDirectory,
 				new Dictionary<string, string> {
-					{ "DNX_BUILD_PORTABLE_PDB", "0" }
+					{ "DNX_BUILD_PORTABLE_PDB", GetDnxBuildPortablePDBValue () }
 				}
 			) {
 				UserAssemblyPaths = new List<string> ()
 			};
+		}
+
+		static string GetDnxBuildPortablePDBValue ()
+		{
+			if (DnxServices.IsPortablePdbSupported)
+				return "1";
+
+			return "0";
 		}
 
 		ProcessAsyncOperation IExecutionHandler.Execute (ExecutionCommand command, OperationConsole console)
