@@ -39,11 +39,16 @@ namespace MonoDevelop.Dnx.NodeBuilders
 	{
 		DependenciesMessage message;
 		DependencyDescription dependency;
+		FrameworkNode parentNode;
 
-		public DependencyNode (DependenciesMessage message, DependencyDescription dependency)
+		public DependencyNode (
+			DependenciesMessage message,
+			DependencyDescription dependency,
+			FrameworkNode parentNode = null)
 		{
 			this.message = message;
 			this.dependency = dependency;
+			this.parentNode = parentNode;
 		}
 
 		public string Name {
@@ -62,6 +67,10 @@ namespace MonoDevelop.Dnx.NodeBuilders
 			get { return dependency.Path; }
 		}
 
+		public bool IsTopLevel {
+			get { return parentNode != null; }
+		}
+
 		public string GetLabel ()
 		{
 			return String.Format ("{0} <span color='grey'>({1})</span>", dependency.Name, dependency.Version);
@@ -69,7 +78,7 @@ namespace MonoDevelop.Dnx.NodeBuilders
 
 		public IconId GetIconId ()
 		{
-			if (Type == "Package" || Unresolved)
+			if (IsNuGetPackage || Unresolved)
 				return new IconId ("md-dnx-nuget-package");
 			else if (IsProject)
 				return new IconId ("md-reference-project");
@@ -119,6 +128,23 @@ namespace MonoDevelop.Dnx.NodeBuilders
 
 		public bool IsProject {
 			get { return Type == "Project"; }
+		}
+
+		public bool IsNuGetPackage {
+			get { return Type == "Package"; }
+		}
+
+		public bool CanDelete ()
+		{
+			return IsTopLevel && (IsProject || IsNuGetPackage);
+		}
+
+		public string GetParentFrameworkShortName ()
+		{
+			if (parentNode != null)
+				return parentNode.FrameworkShortName;
+
+			return null;
 		}
 	}
 }

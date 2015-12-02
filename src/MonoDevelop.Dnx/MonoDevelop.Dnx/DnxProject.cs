@@ -651,6 +651,18 @@ namespace MonoDevelop.Dnx
 
 			UpdateCompilationOptions (options);
 		}
+
+		public void RemoveNuGetPackage (string frameworkShortName, string packageId)
+		{
+			var jsonFile = ProjectJsonFile.Read (this);
+			if (jsonFile.Exists) {
+				jsonFile.RemoveNuGetPackage (frameworkShortName, packageId);
+				jsonFile.Save ();
+				FileService.NotifyFileChanged (jsonFile.Path);
+			} else {
+				LoggingService.LogDebug ("Unable to find project.json '{0}'", jsonFile.Path);
+			}
+		}
 	}
 }
 

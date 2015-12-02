@@ -35,6 +35,7 @@ namespace MonoDevelop.Dnx
 	public class ProjectJsonFile : JsonFile
 	{
 		JObject dependencies;
+		JObject frameworks;
 
 		ProjectJsonFile (FilePath filePath)
 			: base (filePath)
@@ -113,6 +114,69 @@ namespace MonoDevelop.Dnx
 				var packageDependency = new JProperty (package.Id, package.Version);
 				InsertSorted (dependencies, packageDependency);
 			}
+		}
+
+		public void RemoveNuGetPackage (string frameworkShortName, string packageId)
+		{
+			JObject dependencies = GetDependencies ();
+			if (dependencies == null) {
+				LoggingService.LogDebug ("Unable to find dependencies in project.json");
+				return;
+			}
+
+			if (dependencies.Remove (packageId))
+				return;
+
+			if (string.IsNullOrEmpty (frameworkShortName)) {
+				LoggingService.LogDebug ("Unable to find null framework in project.json");
+				return;
+			}
+
+			JObject frameworkDependencies = GetFrameworkDependencies (frameworkShortName);
+			if (frameworkDependencies == null) {
+				LoggingService.LogDebug ("Unable to find dependencies for framework '{0}' in project.json", frameworkShortName);
+				return;
+			}
+
+			frameworkDependencies.Remove (packageId);
+		}
+
+		JObject GetFrameworkDependencies (string name)
+		{
+			JObject frameworks = GetFrameworks ();
+			if (frameworks == null) {
+				LoggingService.LogDebug ("Unable to find frameworks in project.json");
+				return null;
+			}
+
+			JObject framework = null;
+			JToken token;
+			if (frameworks.TryGetValue (name, out token)) {
+				framework = token as JObject;
+			} else {
+				LoggingService.LogDebug ("Unable to find framework '{0}' in project.json", name);
+				return null;
+			}
+
+			JObject frameworkDependencies = null;
+			if (framework.TryGetValue ("dependencies", out token)) {
+				frameworkDependencies = token as JObject;
+			}
+
+			return frameworkDependencies;
+		}
+
+		JObject GetFrameworks ()
+		{
+			if (frameworks != null)
+				return frameworks;
+
+			JToken token;
+			if (jsonObject.TryGetValue ("frameworks", out token)) {
+				frameworks = token as JObject;
+			}
+
+			return frameworks;
 		}
 	}
 }

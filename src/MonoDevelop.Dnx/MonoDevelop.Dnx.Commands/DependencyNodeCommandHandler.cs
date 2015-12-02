@@ -30,6 +30,7 @@ using MonoDevelop.Core;
 using MonoDevelop.Dnx.NodeBuilders;
 using MonoDevelop.Ide.Commands;
 using MonoDevelop.Ide.Gui.Components;
+using MonoDevelop.Projects;
 
 namespace MonoDevelop.Dnx.Commands
 {
@@ -39,19 +40,30 @@ namespace MonoDevelop.Dnx.Commands
 		public void UpdateRemoveItem (CommandInfo info)
 		{
 			var node = (DependencyNode)CurrentNode.DataItem;
-			info.Enabled = node.IsProject;
+			info.Enabled = node.CanDelete ();
 			info.Text = GettextCatalog.GetString ("Remove");
 		}
 
 		public override void DeleteItem ()
 		{
 			var node = (DependencyNode)CurrentNode.DataItem;
-			if (CurrentNode.MoveToParent (typeof(DnxProject))) {
-				var project = CurrentNode.DataItem as DnxProject;
-				if (project != null) {
+			if (CurrentNode.MoveToParent (typeof(XProject))) {
+				DnxProject project = GetDnxProject (CurrentNode.DataItem);
+				if (project != null && node.IsProject) {
 					project.RemoveProjectReference (node.Name);
+				} else if (project != null && node.IsNuGetPackage) {
+					project.RemoveNuGetPackage (node.GetParentFrameworkShortName (), node.Name);
 				}
 			}
+		}
+
+		static DnxProject GetDnxProject (object dataItem)
+		{
+			var xproject = dataItem as XProject;
+			if (xproject != null)
+				return xproject.AsFlavor<DnxProject> ();
+
+			return null;
 		}
 	}
 }

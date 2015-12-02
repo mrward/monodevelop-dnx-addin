@@ -84,7 +84,8 @@ namespace MonoDevelop.Dnx.OptionsPanels
 				"1.0.0-beta6",
 				"1.0.0-beta7",
 				"1.0.0-beta8",
-				"1.0.0-rc1-final"
+				"1.0.0-rc1-final",
+				"1.0.0-rc1-update1"
 			};
 		}
 

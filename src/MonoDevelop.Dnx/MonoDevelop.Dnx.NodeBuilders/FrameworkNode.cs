@@ -49,6 +49,10 @@ namespace MonoDevelop.Dnx.NodeBuilders
 			get { return message.Framework.FriendlyName; }
 		}
 
+		public string FrameworkShortName {
+			get { return message.Framework.ShortName; }
+		}
+
 		public string GetLabel ()
 		{
 			return Name;
@@ -69,7 +73,7 @@ namespace MonoDevelop.Dnx.NodeBuilders
 			foreach (DependencyItem item in rootDependency.Dependencies) {
 				var matchedDependency = message.Dependencies[item.Name];
 				if (matchedDependency != null) {
-					yield return new DependencyNode (message, matchedDependency);
+					yield return new DependencyNode (message, matchedDependency, this);
 				}
 			}
 		}

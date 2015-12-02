@@ -56,6 +56,7 @@ namespace MonoDevelop.Dnx
 			IdeApp.Workspace.SolutionUnloaded += SolutionUnloaded;
 			IdeApp.Workspace.ActiveExecutionTargetChanged += ActiveExecutionTargetChanged;
 			IdeApp.Workspace.ActiveConfigurationChanged += ActiveConfigurationChanged;
+			FileService.FileChanged += FileChanged;
 		}
 
 		void SolutionUnloaded (object sender, SolutionEventArgs e)
@@ -241,6 +242,32 @@ namespace MonoDevelop.Dnx
 					project.UpdateCompilationOptions (locator.FrameworkProject, compilationOptions, parseOptions);
 				}
 			});
+		}
+
+		void FileChanged (object sender, FileEventArgs e)
+		{
+			Solution solution = IdeApp.ProjectOperations.CurrentSelectedSolution;
+			if (solution == null)
+				return;
+
+			if (!solution.HasDnxProjects ())
+				return;
+
+			if (!IsGlobalJsonFileChanged (e))
+				return;
+
+			LoadDnxProjectSystem (solution);
+		}
+
+		static bool IsGlobalJsonFileChanged (FileEventArgs e)
+		{
+			foreach (FileEventInfo fileInfo in e) {
+				if (fileInfo.FileName.FileName.Equals ("global.json", StringComparison.OrdinalIgnoreCase)) {
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }
