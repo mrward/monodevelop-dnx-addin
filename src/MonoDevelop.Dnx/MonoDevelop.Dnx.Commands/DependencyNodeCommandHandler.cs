@@ -51,7 +51,7 @@ namespace MonoDevelop.Dnx.Commands
 				if (project != null && node.IsProject) {
 					project.RemoveProjectReference (node.Name);
 				} else if (project != null && node.IsNuGetPackage) {
-					project.RemoveNuGetPackage (node.Name);
+					project.RemoveNuGetPackage (node.GetParentFrameworkShortName (), node.Name);
 				}
 			}
 		}

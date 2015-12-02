@@ -39,15 +39,16 @@ namespace MonoDevelop.Dnx.NodeBuilders
 	{
 		DependenciesMessage message;
 		DependencyDescription dependency;
+		FrameworkNode parentNode;
 
 		public DependencyNode (
 			DependenciesMessage message,
 			DependencyDescription dependency,
-			bool topLevel = false)
+			FrameworkNode parentNode = null)
 		{
 			this.message = message;
 			this.dependency = dependency;
-			IsTopLevel = topLevel;
+			this.parentNode = parentNode;
 		}
 
 		public string Name {
@@ -66,7 +67,9 @@ namespace MonoDevelop.Dnx.NodeBuilders
 			get { return dependency.Path; }
 		}
 
-		public bool IsTopLevel { get; private set; }
+		public bool IsTopLevel {
+			get { return parentNode != null; }
+		}
 
 		public string GetLabel ()
 		{
@@ -134,6 +137,14 @@ namespace MonoDevelop.Dnx.NodeBuilders
 		public bool CanDelete ()
 		{
 			return IsTopLevel && (IsProject || IsNuGetPackage);
+		}
+
+		public string GetParentFrameworkShortName ()
+		{
+			if (parentNode != null)
+				return parentNode.FrameworkShortName;
+
+			return null;
 		}
 	}
 }

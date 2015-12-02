@@ -668,11 +668,11 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		public void RemoveNuGetPackage (string packageId)
+		public void RemoveNuGetPackage (string frameworkShortName, string packageId)
 		{
 			var jsonFile = ProjectJsonFile.Read (this);
 			if (jsonFile.Exists) {
-				jsonFile.RemoveNuGetPackage (packageId);
+				jsonFile.RemoveNuGetPackage (frameworkShortName, packageId);
 				jsonFile.Save ();
 				FileService.NotifyFileChanged (jsonFile.Path);
 			} else {
