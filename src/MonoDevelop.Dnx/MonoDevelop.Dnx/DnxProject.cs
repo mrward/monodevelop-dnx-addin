@@ -667,6 +667,18 @@ namespace MonoDevelop.Dnx
 				LoggingService.LogDebug ("Unable to find project.json '{0}'", jsonFile.Path);
 			}
 		}
+
+		public void RemoveNuGetPackage (string packageId)
+		{
+			var jsonFile = ProjectJsonFile.Read (this);
+			if (jsonFile.Exists) {
+				jsonFile.RemoveNuGetPackage (packageId);
+				jsonFile.Save ();
+				FileService.NotifyFileChanged (jsonFile.Path);
+			} else {
+				LoggingService.LogDebug ("Unable to find project.json '{0}'", jsonFile.Path);
+			}
+		}
 	}
 }
 

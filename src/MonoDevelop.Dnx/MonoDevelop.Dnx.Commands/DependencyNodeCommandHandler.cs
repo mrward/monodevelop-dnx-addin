@@ -39,7 +39,7 @@ namespace MonoDevelop.Dnx.Commands
 		public void UpdateRemoveItem (CommandInfo info)
 		{
 			var node = (DependencyNode)CurrentNode.DataItem;
-			info.Enabled = node.IsProject;
+			info.Enabled = node.CanDelete ();
 			info.Text = GettextCatalog.GetString ("Remove");
 		}
 
@@ -48,8 +48,10 @@ namespace MonoDevelop.Dnx.Commands
 			var node = (DependencyNode)CurrentNode.DataItem;
 			if (CurrentNode.MoveToParent (typeof(DnxProject))) {
 				var project = CurrentNode.DataItem as DnxProject;
-				if (project != null) {
+				if (project != null && node.IsProject) {
 					project.RemoveProjectReference (node.Name);
+				} else if (project != null && node.IsNuGetPackage) {
+					project.RemoveNuGetPackage (node.Name);
 				}
 			}
 		}
