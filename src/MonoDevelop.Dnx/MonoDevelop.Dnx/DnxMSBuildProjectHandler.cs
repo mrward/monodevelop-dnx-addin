@@ -64,7 +64,7 @@ namespace MonoDevelop.Dnx
 		MSBuildProject CreateMSBuildProject ()
 		{
 			msbuildProject = new MSBuildProject ();
-			msbuildProject.ToolsVersion = "14.0";
+			msbuildProject.ToolsVersion = GetToolsVersion ();
 			msbuildProject.DefaultTargets = "Build";
 
 			string projectGuid = GetProjectGuid (dnxProject.ItemId);
@@ -77,6 +77,24 @@ namespace MonoDevelop.Dnx
 			AddDnxTargets ();
 
 			return msbuildProject;
+		}
+
+		static string GetToolsVersion ()
+		{
+			if (SupportsMSBuild14 ())
+				return "14.0";
+
+			return "4.0";
+		}
+
+		static bool SupportsMSBuild14 ()
+		{
+			Version ideVersion = null;
+			if (Version.TryParse (BuildInfo.Version, out ideVersion)) {
+				var version510 = new Version (5, 10);
+				return ideVersion >= version510;
+			}
+			return false;
 		}
 
 		void AddVisualStudioProperties()
