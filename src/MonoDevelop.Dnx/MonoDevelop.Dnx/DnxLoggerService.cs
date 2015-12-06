@@ -28,6 +28,9 @@
 using System;
 using Microsoft.Framework.Logging;
 using MonoDevelop.Core;
+using MonoDevelop.Ide;
+using MonoDevelop.Ide.Gui.Components;
+using MonoDevelop.Projects;
 
 namespace MonoDevelop.Dnx
 {
@@ -41,6 +44,8 @@ namespace MonoDevelop.Dnx
 			string logLevelText = PropertyService.Get (DnxOutputLogLevelProperty, LogLevel.Warning.ToString ());
 			if (!Enum.TryParse (logLevelText, out logLevel))
 				logLevel = LogLevel.Warning;
+
+			IdeApp.Workspace.SolutionUnloaded += SolutionUnloaded;
 		}
 
 		public static LogLevel LogLevel {
@@ -53,9 +58,34 @@ namespace MonoDevelop.Dnx
 
 		public static void Log (LogLevel logLevel, int eventId, object state, Exception exception, Func<object, Exception, string> formatter)
 		{
-			DnxOutputPad pad = DnxOutputPad.Instance;
-			if (pad != null)
-				pad.Log (logLevel, eventId, state, exception, formatter);
+			if (!IsEnabled (logLevel))
+				return;
+
+			LogView logView = DnxOutputPad.LogView;
+			string message = formatter.Invoke (state, exception) + Environment.NewLine;
+			switch (logLevel) {
+				case LogLevel.Verbose:
+					logView.WriteConsoleLogText (message);
+					break;
+				case LogLevel.Information:
+				case LogLevel.Warning:
+					logView.WriteText (message);
+					break;
+				case LogLevel.Critical:
+				case LogLevel.Error:
+					logView.WriteError (message);
+					break;
+			}
+		}
+
+		static public bool IsEnabled (LogLevel logLevel)
+		{
+			return logLevel >= LogLevel;
+		}
+
+		static void SolutionUnloaded (object sender, SolutionEventArgs e)
+		{
+			DnxOutputPad.LogView.Clear ();
 		}
 	}
 }
