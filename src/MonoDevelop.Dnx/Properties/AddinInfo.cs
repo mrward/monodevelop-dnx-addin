@@ -11,3 +11,5 @@
 [assembly:AddinDependency ("Core", "5.9")]
 [assembly:AddinDependency ("Ide", "5.9")]
 [assembly:AddinDependency ("DesignerSupport", "5.9")]
+[assembly:AddinDependency ("Debugger", "5.9")]
+[assembly:AddinDependency ("Debugger.Soft", "5.9")]

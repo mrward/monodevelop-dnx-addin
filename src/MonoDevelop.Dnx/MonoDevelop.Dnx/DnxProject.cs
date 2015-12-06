@@ -247,42 +247,6 @@ namespace MonoDevelop.Dnx
 			return new BuildResult ();
 		}
 
-		protected override void DoExecute (IProgressMonitor monitor, ExecutionContext context, ConfigurationSelector configuration)
-		{
-			var config = GetConfiguration (configuration) as DotNetProjectConfiguration;
-			monitor.Log.WriteLine (GettextCatalog.GetString ("Running {0} ...", Name));
-
-			IConsole console = CreateConsole (config, context);
-			var aggregatedOperationMonitor = new AggregatedOperationMonitor (monitor);
-
-			try {
-				try {
-					ExecutionCommand executionCommand = CreateExecutionCommand (configuration, config);
-					if (context.ExecutionTarget != null)
-						executionCommand.Target = context.ExecutionTarget;
-
-					IProcessAsyncOperation asyncOp = new DnxExecutionHandler ().Execute (executionCommand, console);
-					aggregatedOperationMonitor.AddOperation (asyncOp);
-					asyncOp.WaitForCompleted ();
-
-					monitor.Log.WriteLine (GettextCatalog.GetString ("The application exited with code: {0}", asyncOp.ExitCode));
-				} finally {
-					console.Dispose ();
-					aggregatedOperationMonitor.Dispose ();
-				}
-			} catch (Exception ex) {
-				LoggingService.LogError (string.Format ("Cannot execute \"{0}\"", Name), ex);
-				monitor.ReportError (GettextCatalog.GetString ("Cannot execute \"{0}\"", Name), ex);
-			}
-		}
-
-		IConsole CreateConsole (DotNetProjectConfiguration config, ExecutionContext context)
-		{
-			if (config.ExternalConsole)
-				return context.ExternalConsoleFactory.CreateConsole (!config.PauseConsoleOutput);
-			return context.ConsoleFactory.CreateConsole (!config.PauseConsoleOutput);
-		}
-
 		public override FilePath GetOutputFileName (ConfigurationSelector configuration)
 		{
 			return null;

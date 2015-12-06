@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 //
 
+using System.Collections.Generic;
 using MonoDevelop.Core.Execution;
 using MonoDevelop.Core;
 
@@ -37,15 +38,32 @@ namespace MonoDevelop.Dnx
 			return command is DnxProjectExecutionCommand;
 		}
 
-		public IProcessAsyncOperation Execute (ExecutionCommand command, IConsole console)
+		public static DotNetExecutionCommand ConvertCommand (DnxProjectExecutionCommand dnxCommand)
 		{
-			var dnxCommand = (DnxProjectExecutionCommand)command;
-			return Runtime.ProcessService.StartConsoleProcess (
+			return new DotNetExecutionCommand (
 				dnxCommand.GetCommand (),
 				dnxCommand.GetArguments (),
 				dnxCommand.WorkingDirectory,
-				console,
-				null);
+				new Dictionary<string, string> {
+					{ "DNX_BUILD_PORTABLE_PDB", GetDnxBuildPortablePDBValue () }
+				}
+			) {
+				UserAssemblyPaths = new List<string> ()
+			};
+		}
+
+		static string GetDnxBuildPortablePDBValue ()
+		{
+			if (DnxServices.IsPortablePdbSupported)
+				return "1";
+
+			return "0";
+		}
+
+		public IProcessAsyncOperation Execute (ExecutionCommand command, IConsole console)
+		{
+			var dotNetCommand = ConvertCommand ((DnxProjectExecutionCommand)command);
+			return Runtime.SystemAssemblyService.DefaultRuntime.GetExecutionHandler ().Execute (dotNetCommand, console);
 		}
 	}
 }

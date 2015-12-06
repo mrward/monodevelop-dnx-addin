@@ -1,5 +1,5 @@
 ﻿//
-// DnxProjectExecutionCommand.cs
+// DnxWindowsDebuggerEngine.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -25,64 +25,42 @@
 // THE SOFTWARE.
 //
 
-using System.IO;
+using System;
+using System.Linq;
+using Mono.Debugging.Client;
 using MonoDevelop.Core;
 using MonoDevelop.Core.Execution;
+using MonoDevelop.Debugger;
 
 namespace MonoDevelop.Dnx
 {
-	public class DnxProjectExecutionCommand : ExecutionCommand
+	public class DnxWindowsDebuggerEngine : DebuggerEngineBackend
 	{
-		public DnxProjectExecutionCommand (string directory, DnxRuntime runtime)
-		{
-			WorkingDirectory = directory;
-			DnxRuntime = runtime;
-		}
+		DebuggerEngine engine;
 
-		public DnxRuntime DnxRuntime { get; private set; }
-		public string WorkingDirectory { get; private set; }
-
-		public DnxExecutionTarget DnxExecutionTarget {
-			get { return base.Target as DnxExecutionTarget; }
-		}
-
-		public string GetCommand ()
-		{
-			return GetDnxRuntimePath ().Combine ("bin", GetDnxFileName ());
-		}
-
-		string GetDnxFileName ()
-		{
-			if (Platform.IsWindows) {
-				return "dnx.exe";
-			}
-			return "Microsoft.Dnx.Host.Mono.dll";
-		}
-
-		public string GetArguments ()
-		{
-			if (DnxRuntime.UsesCurrentDirectoryByDefault) {
-				return GetDnxCommand ();
-			} else {
-				return string.Format (". {0}", GetDnxCommand ());
+		DebuggerEngine DebuggerEngine {
+			get {
+				if (engine == null) {
+					engine = DebuggingService.GetDebuggerEngines ().FirstOrDefault (e => e.Id == "MonoDevelop.Debugger.Win32");
+				}
+				return engine;
 			}
 		}
 
-		FilePath GetDnxRuntimePath ()
+		public override bool CanDebugCommand (ExecutionCommand cmd)
 		{
-			if (DnxExecutionTarget == null || DnxExecutionTarget.Framework == null)
-				return DnxRuntime.Path;
-
-			return DnxRuntime.GetRuntimePath (DnxExecutionTarget.Framework);
+			return cmd is DnxProjectExecutionCommand && Platform.IsWindows && DebuggerEngine != null;
 		}
 
-		string GetDnxCommand ()
+		public override DebuggerStartInfo CreateDebuggerStartInfo (ExecutionCommand cmd)
 		{
-			if (DnxExecutionTarget == null)
-				return null;
+			var dotNetCommand = DnxExecutionHandler.ConvertCommand ((DnxProjectExecutionCommand)cmd);
+			return DebuggerEngine.CreateDebuggerStartInfo (dotNetCommand);
+		}
 
-			return DnxExecutionTarget.Command;
+		public override DebuggerSession CreateSession ()
+		{
+			return DebuggerEngine.CreateSession ();
 		}
 	}
 }
-

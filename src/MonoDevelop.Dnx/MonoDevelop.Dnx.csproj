@@ -85,6 +85,18 @@
     </Reference>
     <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="Mono.Cairo, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
+    <Reference Include="MonoDevelop.Debugger">
+      <HintPath>..\..\lib\MonoDevelop.Debugger.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Debugging">
+      <HintPath>..\..\lib\Mono.Debugging.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="MonoDevelop.Debugger.Soft">
+      <HintPath>..\..\lib\MonoDevelop.Debugger.Soft.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -211,6 +223,7 @@
     <Compile Include="MonoDevelop.Dnx\JsonFile.cs" />
     <Compile Include="MonoDevelop.Dnx\ProjectJsonFile.cs" />
     <Compile Include="MonoDevelop.Dnx.Commands\DependencyNodeCommandHandler.cs" />
+    <Compile Include="MonoDevelop.Dnx\DnxDebuggerEngine.cs" />
     <Compile Include="MonoDevelop.PackageManagement\AggregateExceptionErrorMessage.cs" />
     <Compile Include="MonoDevelop.PackageManagement\AvailablePackagesViewModel.cs" />
     <Compile Include="MonoDevelop.PackageManagement\DelegateCommand.cs" />
@@ -266,6 +279,7 @@
     <Compile Include="MonoDevelop.Dnx\DnxLoggerService.cs" />
     <Compile Include="MonoDevelop.Dnx.Gui\DnxGlobalOptionsPanel.cs" />
     <Compile Include="MonoDevelop.Dnx.Commands\DependenciesFolderNodeCommandHandler.cs" />
+    <Compile Include="MonoDevelop.Dnx\DnxWindowsDebuggerEngine.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
