@@ -72,9 +72,23 @@ namespace MonoDevelop.Dnx
 
 		public FilePath GetRuntimePath (DnxFramework framework)
 		{
-			string runtime = framework.GetDnxRuntime ();
-			string modifiedFileName = Path.FileName.Replace ("-clr-", "-" + runtime + "-");
+			string modifiedFileName = GetModifiedRuntimeFileName (Path.FileName, framework);
 			return Path.ParentDirectory.Combine (modifiedFileName);
+		}
+
+		static string GetModifiedRuntimeFileName (string fileName, DnxFramework framework)
+		{
+			if (framework.IsCoreClr ()) {
+				if (Platform.IsWindows) {
+					return fileName.Replace ("-clr-", "-coreclr-");
+				} else if (Platform.IsMac) {
+					return fileName.Replace ("-mono", "-coreclr-darwin-x64");
+				} else if (Platform.IsLinux) {
+					return fileName.Replace ("-mono", "-coreclr-linux-x64");
+				}
+			}
+
+			return fileName;
 		}
 	}
 }
