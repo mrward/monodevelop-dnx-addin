@@ -49,6 +49,11 @@ namespace MonoDevelop.Dnx
 			}
 			return false;
 		}
+
+		public static bool IsCoreClr (this DnxFramework framework)
+		{
+			return framework.GetDnxRuntime () == "coreclr";
+		}
 	}
 }
 

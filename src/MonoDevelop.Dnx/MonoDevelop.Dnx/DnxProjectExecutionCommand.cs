@@ -56,6 +56,11 @@ namespace MonoDevelop.Dnx
 			if (Platform.IsWindows) {
 				return "dnx.exe";
 			}
+
+			if (TargetFrameworkIsCoreClr ()) {
+				return "dnx";
+			}
+
 			return "Microsoft.Dnx.Host.Mono.dll";
 		}
 
@@ -70,10 +75,15 @@ namespace MonoDevelop.Dnx
 
 		FilePath GetDnxRuntimePath ()
 		{
-			if (DnxExecutionTarget == null || DnxExecutionTarget.Framework == null)
+			if (!HasTargetFramework ())
 				return DnxRuntime.Path;
 
 			return DnxRuntime.GetRuntimePath (DnxExecutionTarget.Framework);
+		}
+
+		bool HasTargetFramework ()
+		{
+			return DnxExecutionTarget != null && DnxExecutionTarget.Framework != null;
 		}
 
 		string GetDnxCommand ()
@@ -82,6 +92,14 @@ namespace MonoDevelop.Dnx
 				return null;
 
 			return DnxExecutionTarget.Command;
+		}
+
+		public bool TargetFrameworkIsCoreClr ()
+		{
+			if (!HasTargetFramework ())
+				return false;
+
+			return DnxExecutionTarget.IsCoreClr ();
 		}
 	}
 }
