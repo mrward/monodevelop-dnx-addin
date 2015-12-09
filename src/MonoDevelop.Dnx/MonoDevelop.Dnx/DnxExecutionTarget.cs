@@ -90,6 +90,14 @@ namespace MonoDevelop.Dnx
 		{
 			return Name;
 		}
+
+		public bool IsCoreClr ()
+		{
+			if (IsDefaultProfile)
+				return false;
+
+			return Framework.IsCoreClr ();
+		}
 	}
 }
 

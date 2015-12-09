@@ -273,10 +273,41 @@ namespace MonoDevelop.Dnx
 			}
 			return new TargetEvaluationResult (BuildResult.CreateSuccess ());
 		}
-
+		
 		SolutionItemConfiguration GetConfiguration (ConfigurationSelector configuration)
 		{
 			return Project.GetConfiguration (configuration);
+		}
+		
+		protected async override Task OnExecute (ProgressMonitor monitor, ExecutionContext context, ConfigurationSelector configuration)
+		{
+			if (!CurrentExecutionTargetIsCoreClr (context.ExecutionTarget)) {
+				base.DoExecute (monitor, context, configuration);
+				return;
+			}
+
+			var config = GetConfiguration (configuration) as DotNetProjectConfiguration;
+			monitor.Log.WriteLine (GettextCatalog.GetString ("Running {0} ...", Name));
+
+			OperationConsole console = CreateConsole (config, context, monitor);
+
+			try {
+				try {
+					ExecutionCommand executionCommand = OnCreateExecutionCommand (configuration, config);
+					if (context.ExecutionTarget != null)
+						executionCommand.Target = context.ExecutionTarget;
+
+					ProcessAsyncOperation asyncOp = Execute (executionCommand, console);
+					await asyncOp.Task;
+
+					monitor.Log.WriteLine (GettextCatalog.GetString ("The application exited with code: {0}", asyncOp.ExitCode));
+				} finally {
+					console.Dispose ();
+				}
+			} catch (Exception ex) {
+				LoggingService.LogError (string.Format ("Cannot execute \"{0}\"", Name), ex);
+				monitor.ReportError (GettextCatalog.GetString ("Cannot execute \"{0}\"", Name), ex);
+			}
 		}
 
 		OperationConsole CreateConsole (DotNetProjectConfiguration config, ExecutionContext context, ProgressMonitor monitor)
@@ -284,6 +315,26 @@ namespace MonoDevelop.Dnx
 			if (config.ExternalConsole)
 				return context.ExternalConsoleFactory.CreateConsole (!config.PauseConsoleOutput, monitor.CancellationToken);
 			return context.ConsoleFactory.CreateConsole (monitor.CancellationToken);
+		}
+
+		ProcessAsyncOperation Execute (ExecutionCommand command, IConsole console)
+		{
+			var dnxCommand = (DnxProjectExecutionCommand)command;
+			return Runtime.ProcessService.StartConsoleProcess (
+				dnxCommand.GetCommand (),
+				dnxCommand.GetArguments (),
+				dnxCommand.WorkingDirectory,
+				console,
+				null);
+		}
+
+		bool CurrentExecutionTargetIsCoreClr (ExecutionTarget executionTarget)
+		{
+			var dnxExecutionTarget = executionTarget as DnxExecutionTarget;
+			if (dnxExecutionTarget != null) {
+				return dnxExecutionTarget.IsCoreClr ();
+			}
+			return false;
 		}
 
 		protected override FilePath OnGetOutputFileName (ConfigurationSelector configuration)

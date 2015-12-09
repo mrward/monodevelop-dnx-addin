@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 //
 
+using System.Collections.Generic;
 using MonoDevelop.Core.Execution;
 using MonoDevelop.Core;
 using System.Collections.Generic;
@@ -60,7 +61,7 @@ namespace MonoDevelop.Dnx
 			return "0";
 		}
 
-		ProcessAsyncOperation IExecutionHandler.Execute (ExecutionCommand command, OperationConsole console)
+		public ProcessAsyncOperation Execute (ExecutionCommand command, OperationConsole console)
 		{
 			var dotNetCommand = ConvertCommand ((DnxProjectExecutionCommand)command);
 			return Runtime.SystemAssemblyService.DefaultRuntime.GetExecutionHandler ().Execute (dotNetCommand, console);

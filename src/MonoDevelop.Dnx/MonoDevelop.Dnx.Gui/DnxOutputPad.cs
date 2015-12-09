@@ -37,24 +37,18 @@ using MonoDevelop.Core;
 
 namespace MonoDevelop.Dnx
 {
-	public class DnxOutputPad : AbstractPadContent, ILogger
+	public class DnxOutputPad : AbstractPadContent
 	{
 		static DnxOutputPad instance;
-		readonly LogView logView = new LogView ();
+		static readonly LogView logView = new LogView ();
 
 		public DnxOutputPad ()
 		{
 			instance = this;
-			IdeApp.Workspace.SolutionLoaded += SolutionLoaded;
 		}
 
 		public static DnxOutputPad Instance {
 			get { return instance; }
-		}
-
-		public override void Dispose ()
-		{
-			IdeApp.Workspace.SolutionLoaded -= SolutionLoaded;
 		}
 
 		public override void Initialize (IPadWindow container)
@@ -73,49 +67,13 @@ namespace MonoDevelop.Dnx
 			get { return logView; }
 		}
 
-		public LogView LogView {
+		public static LogView LogView {
 			get { return logView; }
 		}
 
 		void ButtonClearClick (object sender, EventArgs e)
 		{
 			logView.Clear ();
-		}
-
-		void SolutionLoaded (object sender, SolutionEventArgs e)
-		{
-			logView.Clear ();
-		}
-
-		public void Log (LogLevel logLevel, int eventId, object state, Exception exception, Func<object, Exception, string> formatter)
-		{
-			if (!IsEnabled (logLevel))
-				return;
-
-			string message = formatter.Invoke (state, exception) + Environment.NewLine;
-			switch (logLevel) {
-				case LogLevel.Verbose:
-					logView.WriteConsoleLogText (message);
-				break;
-				case LogLevel.Information:
-				case LogLevel.Warning:
-					logView.WriteText (message);
-				break;
-				case LogLevel.Critical:
-				case LogLevel.Error:
-					logView.WriteError (message);
-				break;
-			}
-		}
-
-		public bool IsEnabled (LogLevel logLevel)
-		{
-			return logLevel >= DnxLoggerService.LogLevel;
-		}
-
-		public IDisposable BeginScope (object state)
-		{
-			throw new NotImplementedException ();
 		}
 	}
 }
