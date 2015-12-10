@@ -282,7 +282,7 @@ namespace MonoDevelop.Dnx
 		protected async override Task OnExecute (ProgressMonitor monitor, ExecutionContext context, ConfigurationSelector configuration)
 		{
 			if (!CurrentExecutionTargetIsCoreClr (context.ExecutionTarget)) {
-				base.DoExecute (monitor, context, configuration);
+				await base.OnExecute (monitor, context, configuration);
 				return;
 			}
 
@@ -317,7 +317,7 @@ namespace MonoDevelop.Dnx
 			return context.ConsoleFactory.CreateConsole (monitor.CancellationToken);
 		}
 
-		ProcessAsyncOperation Execute (ExecutionCommand command, IConsole console)
+		ProcessAsyncOperation Execute (ExecutionCommand command, OperationConsole console)
 		{
 			var dnxCommand = (DnxProjectExecutionCommand)command;
 			return Runtime.ProcessService.StartConsoleProcess (

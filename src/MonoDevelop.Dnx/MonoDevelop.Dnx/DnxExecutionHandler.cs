@@ -28,7 +28,6 @@
 using System.Collections.Generic;
 using MonoDevelop.Core.Execution;
 using MonoDevelop.Core;
-using System.Collections.Generic;
 
 namespace MonoDevelop.Dnx
 {
