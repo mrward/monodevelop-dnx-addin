@@ -69,6 +69,9 @@ namespace MonoDevelop.Dnx
 
 		public BuildResult Build ()
 		{
+			if (!DnxServices.ProjectService.HasCurrentDnxRuntime)
+				return CreateDnxRuntimeErrorBuildResult ();
+
 			DnxServices.ProjectService.GetDiagnostics (this);
 
 			waitEvent.Wait ();
@@ -77,6 +80,13 @@ namespace MonoDevelop.Dnx
 				return new BuildResult ();
 			}
 			return CreateBuildResult ();
+		}
+
+		BuildResult CreateDnxRuntimeErrorBuildResult ()
+		{
+			var buildResult = new BuildResult ();
+			buildResult.AddError (DnxServices.ProjectService.CurrentRuntimeError);
+			return buildResult;
 		}
 
 		public void OnDiagnostics (DiagnosticsMessage[] messages)

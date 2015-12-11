@@ -68,6 +68,10 @@ namespace OmniSharp.Dnx
             lifetime.ApplicationStopping.Register(OnShutdown);
         }
 
+        internal DnxPaths DnxPaths {
+            get { return _dnxPaths; }
+        }
+
         public void Initalize()
         {
             var runtimePath = _dnxPaths.RuntimePath;

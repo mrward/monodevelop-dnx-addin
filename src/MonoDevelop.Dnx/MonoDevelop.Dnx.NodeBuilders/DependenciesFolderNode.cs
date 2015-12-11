@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using MonoDevelop.Core;
 using MonoDevelop.Ide.Gui;
+using MonoDevelop.Ide.Tasks;
 
 namespace MonoDevelop.Dnx.NodeBuilders
 {
@@ -61,6 +62,22 @@ namespace MonoDevelop.Dnx.NodeBuilders
 
 		public IconId ClosedIcon {
 			get { return Stock.ClosedReferenceFolder; }
+		}
+
+		public TaskSeverity? GetStatusSeverity ()
+		{
+			if (!DnxServices.ProjectService.HasCurrentDnxRuntime)
+				return TaskSeverity.Error;
+
+			return null;
+		}
+
+		public string GetStatusMessage ()
+		{
+			if (!DnxServices.ProjectService.HasCurrentDnxRuntime)
+				return DnxServices.ProjectService.CurrentRuntimeError;
+
+			return null;
 		}
 
 		public bool HasDependencies ()
