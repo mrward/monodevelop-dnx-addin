@@ -644,7 +644,7 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		protected override void OnWriteProject (ProgressMonitor monitor, MonoDevelop.Projects.Formats.MSBuild.MSBuildProject msproject)
+		protected override void OnWriteProject (ProgressMonitor monitor, MonoDevelop.Projects.MSBuild.MSBuildProject msproject)
 		{
 			var projectBuilder = new DnxMSBuildProjectHandler (this);
 			projectBuilder.SaveProject (monitor, msproject);
