@@ -13,3 +13,4 @@
 [assembly:AddinDependency ("DesignerSupport", "5.9")]
 [assembly:AddinDependency ("Debugger", "5.9")]
 [assembly:AddinDependency ("Debugger.Soft", "5.9")]
+[assembly:AddinDependency ("SourceEditor2", "5.9")]

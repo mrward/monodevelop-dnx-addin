@@ -53,7 +53,6 @@ namespace MonoDevelop.Dnx
 		{
 			IdeApp.Workspace.SolutionLoaded += SolutionLoaded;
 			IdeApp.Workspace.SolutionUnloaded += SolutionUnloaded;
-			IdeApp.Workspace.ActiveExecutionTargetChanged += ActiveExecutionTargetChanged;
 			IdeApp.Workspace.ActiveConfigurationChanged += ActiveConfigurationChanged;
 			FileService.FileChanged += FileChanged;
 		}
@@ -209,21 +208,6 @@ namespace MonoDevelop.Dnx
 			DnxProject matchedProject = FindProjectByProjectJsonFileName (projectJsonFileName);
 			if (matchedProject != null) {
 				matchedProject.OnPackageRestoreFinished ();
-			}
-		}
-
-		void ActiveExecutionTargetChanged (object sender, EventArgs e)
-		{
-			var executionTarget = IdeApp.Workspace.ActiveExecutionTarget as DnxExecutionTarget;
-			if (executionTarget == null)
-				return;
-
-			Solution solution = IdeApp.ProjectOperations.CurrentSelectedSolution;
-			if (solution == null)
-				return;
-
-			foreach (DnxProject project in solution.GetDnxProjects ()) {
-				project.UpdateReferences (executionTarget);
 			}
 		}
 

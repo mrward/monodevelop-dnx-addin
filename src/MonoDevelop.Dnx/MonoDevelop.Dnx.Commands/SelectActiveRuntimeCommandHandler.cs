@@ -1,5 +1,5 @@
 ﻿//
-// DnxFrameworkExtensions.cs
+// SelectActiveRuntimeHandler.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -26,23 +26,36 @@
 //
 
 using System;
+using MonoDevelop.Components.Commands;
+using MonoDevelop.Ide;
 using OmniSharp.Models;
 
-namespace MonoDevelop.Dnx
+namespace MonoDevelop.Dnx.Commands
 {
-	public static class DnxFrameworkExtensions
+	public class SelectActiveRuntimeCommandHandler : CommandHandler
 	{
-		public static string GetDnxRuntime (this DnxFramework framework)
+		protected override void Update (CommandArrayInfo info)
 		{
-			if (framework.Name.StartsWith ("dnxcore", StringComparison.OrdinalIgnoreCase)) {
-				return "coreclr";
+			var project = IdeApp.ProjectOperations.CurrentSelectedProject as DnxProject;
+			if (project == null) {
+				info.Bypass = true;
+				return;
 			}
-			return "clr";
+
+			foreach (DnxFramework framework in project.GetFrameworks ()) {
+				CommandInfo item = info.Add (framework.FriendlyName, framework);
+				if (framework.Name == project.CurrentFramework) {
+					item.Checked = true;
+				}
+			}
 		}
 
-		public static bool IsCoreClr (this DnxFramework framework)
+		protected override void Run (object dataItem)
 		{
-			return framework.GetDnxRuntime () == "coreclr";
+			var project = IdeApp.ProjectOperations.CurrentSelectedProject as DnxProject;
+			if (project != null) {
+				project.UpdateReferences ((DnxFramework)dataItem);
+			}
 		}
 	}
 }

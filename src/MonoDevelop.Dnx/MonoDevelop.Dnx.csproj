@@ -280,6 +280,7 @@
     <Compile Include="MonoDevelop.Dnx.Gui\DnxGlobalOptionsPanel.cs" />
     <Compile Include="MonoDevelop.Dnx.Commands\DependenciesFolderNodeCommandHandler.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxWindowsDebuggerEngine.cs" />
+    <Compile Include="MonoDevelop.Dnx.Commands\SelectActiveRuntimeCommandHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
