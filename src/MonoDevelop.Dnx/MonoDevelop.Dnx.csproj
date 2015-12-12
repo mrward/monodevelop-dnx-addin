@@ -9,6 +9,8 @@
     <RootNamespace>MonoDevelop.Dnx</RootNamespace>
     <AssemblyName>MonoDevelop.Dnx</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <MDProfileVersion>6.0</MDProfileVersion>
+    <MDBinDir>..\..\..\monodevelop\main\build\bin</MDBinDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -218,6 +220,7 @@
     <Compile Include="MonoDevelop.Dnx\DnxWindowsDebuggerEngine.cs" />
     <Compile Include="MonoDevelop.Dnx\CSharpCompilationAndParseOptions.cs" />
     <Compile Include="MonoDevelop.Dnx.Commands\DependenciesFolderNodeCommandHandler.cs" />
+    <Compile Include="MonoDevelop.Dnx.Commands\SelectActiveRuntimeCommandHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -45,6 +45,7 @@ namespace MonoDevelop.Dnx
 		DnxProjectSystem projectSystem;
 		MonoDevelopApplicationLifetime applicationLifetime;
 		ConcurrentDictionary<string, DnxProjectBuilder> builders = new ConcurrentDictionary<string, DnxProjectBuilder> ();
+		string initializeError = String.Empty;
 
 		public DnxProjectService ()
 		{
@@ -54,7 +55,6 @@ namespace MonoDevelop.Dnx
 		{
 			IdeApp.Workspace.SolutionLoaded += SolutionLoaded;
 			IdeApp.Workspace.SolutionUnloaded += SolutionUnloaded;
-			IdeApp.Workspace.ActiveExecutionTargetChanged += ActiveExecutionTargetChanged;
 			IdeApp.Workspace.ActiveConfigurationChanged += ActiveConfigurationChanged;
 			FileService.FileChanged += FileChanged;
 		}
@@ -66,12 +66,15 @@ namespace MonoDevelop.Dnx
 
 		void UnloadProjectSystem ()
 		{
+			initializeError = String.Empty;
 			if (applicationLifetime != null) {
 				applicationLifetime.Stopping ();
 				applicationLifetime.Dispose ();
 				applicationLifetime = null;
-				projectSystem.Dispose ();
-				projectSystem = null;
+				if (projectSystem != null) {
+					projectSystem.Dispose ();
+					projectSystem = null;
+				}
 				context = null;
 			}
 		}
@@ -83,7 +86,9 @@ namespace MonoDevelop.Dnx
 					LoadDnxProjectSystem (e.Solution);
 				}
 			} catch (Exception ex) {
-				MessageService.ShowError (ex.Message);
+				LoggingService.LogError ("DNX project system initialize failed.", ex);
+				UnloadProjectSystem ();
+				initializeError = "Unable to initialize DNX project system. " + ex.Message;
 			}
 		}
 
@@ -96,6 +101,21 @@ namespace MonoDevelop.Dnx
 			var factory = new DnxProjectSystemFactory ();
 			projectSystem = factory.CreateProjectSystem (solution, applicationLifetime, context);
 			projectSystem.Initalize ();
+
+			if (context.RuntimePath == null) {
+				string error = GetRuntimeError (projectSystem);
+				throw new ApplicationException (error);
+			}
+		}
+
+		static string GetRuntimeError (DnxProjectSystem projectSystem)
+		{
+			if (projectSystem.DnxPaths != null &&
+				projectSystem.DnxPaths.RuntimePath != null &&
+				projectSystem.DnxPaths.RuntimePath.Error != null) {
+				return projectSystem.DnxPaths.RuntimePath.Error.Text;
+			}
+			return "Unable to find DNX runtime.";
 		}
 
 		public void OnReferencesUpdated (ProjectId projectId, FrameworkProject frameworkProject)
@@ -129,6 +149,14 @@ namespace MonoDevelop.Dnx
 				}
 				return null;
 			}
+		}
+
+		public bool HasCurrentDnxRuntime {
+			get { return context != null; }
+		}
+
+		public string CurrentRuntimeError {
+			get { return initializeError; }
 		}
 
 		public void DependenciesUpdated (OmniSharp.Dnx.Project project, DependenciesMessage message)
@@ -182,21 +210,6 @@ namespace MonoDevelop.Dnx
 			DnxProject matchedProject = FindProjectByProjectJsonFileName (projectJsonFileName);
 			if (matchedProject != null) {
 				matchedProject.OnPackageRestoreFinished ();
-			}
-		}
-
-		void ActiveExecutionTargetChanged (object sender, EventArgs e)
-		{
-			var executionTarget = IdeApp.Workspace.ActiveExecutionTarget as DnxExecutionTarget;
-			if (executionTarget == null)
-				return;
-
-			Solution solution = IdeApp.ProjectOperations.CurrentSelectedSolution;
-			if (solution == null)
-				return;
-
-			foreach (DnxProject project in solution.GetDnxProjects ()) {
-				project.UpdateReferences (executionTarget);
 			}
 		}
 

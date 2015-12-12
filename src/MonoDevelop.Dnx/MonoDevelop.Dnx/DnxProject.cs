@@ -463,12 +463,12 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		public void UpdateReferences (DnxExecutionTarget executionTarget)
+		public void UpdateReferences (DnxFramework framework)
 		{
-			if (IsCurrentFramework (executionTarget))
+			if (framework.Name == CurrentFramework)
 				return;
 
-			UpdateCurrentFramework (executionTarget);
+			CurrentFramework = framework.Name;
 
 			RefreshCompilationOptions ();
 
@@ -480,38 +480,6 @@ namespace MonoDevelop.Dnx
 			} finally {
 				addingReferences = false;
 			}
-		}
-
-		bool IsCurrentFramework (DnxExecutionTarget executionTarget)
-		{
-			if (executionTarget.IsDefaultProfile) {
-				return CurrentFramework == savedFileReferences.Keys.FirstOrDefault ();
-			}
-
-			return executionTarget.Framework.Name == CurrentFramework;
-		}
-
-		void UpdateCurrentFramework (DnxExecutionTarget executionTarget)
-		{
-			if (executionTarget.IsDefaultProfile) {
-				CurrentFramework = savedFileReferences.Keys.FirstOrDefault ();
-			} else {
-				CurrentFramework = GetBestFrameworkMatch (executionTarget.Framework);
-			}
-		}
-
-		string GetBestFrameworkMatch (DnxFramework framework)
-		{
-			if (savedFileReferences.ContainsKey (framework.Name))
-				return framework.Name;
-
-			string bestFrameworkMatch = savedFileReferences.Keys.FirstOrDefault (key => framework.IsMatch (key));
-			if (bestFrameworkMatch != null)
-				return bestFrameworkMatch;
-
-			LoggingService.LogWarning ("Unable to find matching framework '{0}' for project '{1}'", framework.Name, Name);
-
-			return savedFileReferences.Keys.FirstOrDefault ();
 		}
 
 		void RefreshReferences ()
@@ -712,6 +680,15 @@ namespace MonoDevelop.Dnx
 				FileService.NotifyFileChanged (jsonFile.Path);
 			} else {
 				LoggingService.LogDebug ("Unable to find project.json '{0}'", jsonFile.Path);
+			}
+		}
+
+		public IEnumerable<DnxFramework> GetFrameworks ()
+		{
+			if (project != null) {
+				foreach (DnxFramework framework in project.Frameworks) {
+					yield return framework;
+				}
 			}
 		}
 	}

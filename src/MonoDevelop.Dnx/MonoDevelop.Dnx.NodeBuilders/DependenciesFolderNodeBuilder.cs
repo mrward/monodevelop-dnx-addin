@@ -57,6 +57,8 @@ namespace MonoDevelop.Dnx.NodeBuilders
 			nodeInfo.Label = node.GetLabel ();
 			nodeInfo.Icon = Context.GetIcon (node.Icon);
 			nodeInfo.ClosedIcon = Context.GetIcon (node.ClosedIcon);
+			nodeInfo.StatusSeverity = node.GetStatusSeverity ();
+			nodeInfo.StatusMessage = node.GetStatusMessage ();
 		}
 
 		public override int CompareObjects (ITreeNavigator thisNode, ITreeNavigator otherNode)

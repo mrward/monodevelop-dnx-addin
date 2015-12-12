@@ -55,6 +55,11 @@
 			_description="Add NuGet packages to the project"
 			_label="Add NuGet _Packages..."
 			defaultHandler="MonoDevelop.Dnx.Commands.AddNuGetPackagesToSelectedProjectHandler" />
+		<Command
+			id="MonoDevelop.Dnx.Commands.SelectActiveFramework"
+			type = "radio|array"
+			defaultHandler="MonoDevelop.Dnx.Commands.SelectActiveRuntimeCommandHandler"
+			_label="_Active DNX Framework" />
 	</Extension>
 
 	<Extension path="/MonoDevelop/ProjectModel/MSBuildItemTypes">
@@ -166,5 +171,14 @@
 		<Section id="MonoDevelop.Dnx" _label="DNX" insertafter="VersionControl">
 			<Section id="General" _label="General" fill="true" class="MonoDevelop.Dnx.Gui.DnxGlobalOptionsPanel" />
 		</Section>
+	</Extension>
+
+	<Extension path="/MonoDevelop/SourceEditor2/ContextMenu/Editor">
+		<Condition id="FileType" fileExtensions=".cs">
+			<SeparatorItem id="SelectActiveFrameworkSeparator" />
+			<ItemSet id="SelectActiveFramework" _label = "Active Framework" autohide = "true">
+				<CommandItem id="MonoDevelop.Dnx.Commands.SelectActiveFramework" />
+			</ItemSet>
+		</Condition>
 	</Extension>
 </ExtensionModel>
