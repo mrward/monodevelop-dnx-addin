@@ -35,6 +35,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using MonoDevelop.Core;
 using MonoDevelop.Core.Execution;
 using MonoDevelop.Projects;
+using MonoDevelop.Projects.MSBuild;
 using OmniSharp.Models;
 
 using DependenciesMessage = Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages.DependenciesMessage;
@@ -45,6 +46,7 @@ namespace MonoDevelop.Dnx
 	{
 		OmniSharp.Models.DnxProject project;
 		bool addingReferences;
+		bool loadingFiles;
 		Dictionary<string, DependenciesMessage> dependencies = new Dictionary<string, DependenciesMessage> ();
 		Dictionary<string, List<string>> savedFileReferences = new Dictionary<string, List<string>> ();
 		Dictionary<string, List<string>> savedProjectReferences = new Dictionary<string, List<string>> ();
@@ -98,9 +100,18 @@ namespace MonoDevelop.Dnx
 			get { return Project.ParentFolder; }
 		}
 
+		public Projects.MSBuild.MSBuildProject MSBuildProject {
+			get { return Project.MSBuildProject; }
+		}
+
 		protected override void OnEndLoad ()
 		{
-			LoadFiles ();
+			try {
+				loadingFiles = true;
+				LoadFiles ();
+			} finally {
+				loadingFiles = false;
+			}
 			base.OnEndLoad ();
 		}
 
@@ -108,10 +119,100 @@ namespace MonoDevelop.Dnx
 		{
 			foreach (string fileName in Directory.GetFiles (BaseDirectory, "*.*", SearchOption.AllDirectories)) {
 				if (IsSupportedProjectFileItem (fileName)) {
-					Items.Add (CreateFileProjectItem(fileName));
+					ProjectFile projectFile = CreateFileProjectItem (fileName);
+					Items.Add (projectFile);
+					AddProjectFileToMSBuildProject (projectFile);
 				}
 			}
 			AddConfigurations ();
+		}
+
+		void AddProjectFileToMSBuildProject (ProjectFile projectFile)
+		{
+			MSBuildProject.AddNewItem (projectFile.ItemName, projectFile.FilePath);
+		}
+
+		void RemoveProjectFileFromMSBuildProject (ProjectFile projectFile)
+		{
+			MSBuildItem matchedItem = FindMSBuildItem (projectFile);
+			if (matchedItem != null) {
+				MSBuildProject.RemoveItem (matchedItem);
+			} else {
+				LoggingService.LogWarning ("Unable to remove project file from MSBuildProject. '{0}'", projectFile.FilePath);
+			}
+		}
+
+		MSBuildItem FindMSBuildItem (ProjectFile projectFile)
+		{
+			return MSBuildProject
+				.GetAllItems ()
+				.ToArray ()
+				.FirstOrDefault (item => item.Include == projectFile.FilePath);
+		}
+
+		void RenameProjectFileInMSBuildProject (ProjectFile projectFile, FilePath oldFileName)
+		{
+			var oldProjectFile = new ProjectFile (oldFileName);
+			MSBuildItem matchedItem = FindMSBuildItem (oldProjectFile);
+			if (matchedItem != null) {
+				MSBuildProject.RemoveItem (matchedItem);
+				AddProjectFileToMSBuildProject (projectFile);
+			} else {
+				LoggingService.LogWarning ("Unable to rename project file from MSBuildProject. '{0}'", oldFileName);
+			}
+		}
+
+		protected override void OnFileAddedToProject (ProjectFileEventArgs e)
+		{
+			base.OnFileAddedToProject (e);
+			if (loadingFiles)
+				return;
+
+			foreach (ProjectFileEventInfo info in e) {
+				AddProjectFileToMSBuildProject (info.ProjectFile);
+			}
+		}
+
+		protected override void OnFileRemovedFromProject (ProjectFileEventArgs e)
+		{
+			base.OnFileRemovedFromProject (e);
+			if (loadingFiles)
+				return;
+
+			foreach (ProjectFileEventInfo info in e) {
+				RemoveProjectFileFromMSBuildProject (info.ProjectFile);
+			}
+		}
+
+		protected override void OnFileRenamedInProject (ProjectFileRenamedEventArgs e)
+		{
+			base.OnFileRenamedInProject (e);
+			if (loadingFiles)
+				return;
+
+			foreach (ProjectFileRenamedEventInfo info in e) {
+				RenameProjectFileInMSBuildProject (info.ProjectFile, info.OldName);
+			}
+		}
+
+		void UpdateMSBuildProjectFiles ()
+		{
+			if (loadingFiles)
+				return;
+
+			try {
+				loadingFiles = true;
+
+				ProjectFile[] files = Project.Files.ToArray ();
+				Project.Files.Clear ();
+
+				foreach (ProjectFile projectFile in Project.Files.ToArray ()) {
+					Items.Add (projectFile);
+					AddProjectFileToMSBuildProject (projectFile);
+				}
+			} finally {
+				loadingFiles = false;
+			}
 		}
 
 		bool IsSupportedProjectFileItem (string fileName)
@@ -614,6 +715,9 @@ namespace MonoDevelop.Dnx
 
 		protected override void OnWriteProject (ProgressMonitor monitor, MonoDevelop.Projects.MSBuild.MSBuildProject msproject)
 		{
+			if (loadingFiles)
+				return;
+
 			var projectBuilder = new DnxMSBuildProjectHandler (this);
 			projectBuilder.SaveProject (monitor, msproject);
 		}
