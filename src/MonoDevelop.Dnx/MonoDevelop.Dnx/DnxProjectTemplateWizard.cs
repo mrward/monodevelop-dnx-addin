@@ -154,7 +154,7 @@ namespace MonoDevelop.Dnx
 				.ContinueWith (t => {
 					Runtime.RunInMainThread (() => {
 						OpenProjectFile (project);
-						DnxServices.ProjectService.LoadDnxProjectSystem (solution);
+						DnxServices.ProjectService.OnSolutionLoaded (solution);
 					});
 			});
 		}

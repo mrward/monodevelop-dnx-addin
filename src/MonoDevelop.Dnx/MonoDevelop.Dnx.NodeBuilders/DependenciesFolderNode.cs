@@ -66,7 +66,7 @@ namespace MonoDevelop.Dnx.NodeBuilders
 
 		public TaskSeverity? GetStatusSeverity ()
 		{
-			if (!DnxServices.ProjectService.HasCurrentDnxRuntime)
+			if (DnxServices.ProjectService.HasCurrentRuntimeError)
 				return TaskSeverity.Error;
 
 			return null;
@@ -74,7 +74,7 @@ namespace MonoDevelop.Dnx.NodeBuilders
 
 		public string GetStatusMessage ()
 		{
-			if (!DnxServices.ProjectService.HasCurrentDnxRuntime)
+			if (DnxServices.ProjectService.HasCurrentRuntimeError)
 				return DnxServices.ProjectService.CurrentRuntimeError;
 
 			return null;
