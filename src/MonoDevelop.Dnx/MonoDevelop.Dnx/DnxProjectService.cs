@@ -79,18 +79,34 @@ namespace MonoDevelop.Dnx
 
 		void SolutionLoaded (object sender, SolutionEventArgs e)
 		{
+			OnSolutionLoaded (e.Solution);
+		}
+
+		internal void OnSolutionLoaded (Solution solution)
+		{
 			try {
-				if (e.Solution.HasDnxProjects ()) {
-					LoadDnxProjectSystem (e.Solution);
+				if (solution.HasDnxProjects ()) {
+					LoadDnxProjectSystem (solution);
 				}
 			} catch (Exception ex) {
 				LoggingService.LogError ("DNX project system initialize failed.", ex);
 				UnloadProjectSystem ();
 				initializeError = "Unable to initialize DNX project system. " + ex.Message;
+				OnProjectSystemFailed ();
 			}
 		}
 
-		internal void LoadDnxProjectSystem (Solution solution)
+		public event EventHandler ProjectSystemLoadFailed;
+
+		void OnProjectSystemFailed ()
+		{
+			var handler = ProjectSystemLoadFailed;
+			if (handler != null) {
+				handler (this, new EventArgs ());
+			}
+		}
+
+		void LoadDnxProjectSystem (Solution solution)
 		{
 			UnloadProjectSystem ();
 
@@ -151,6 +167,10 @@ namespace MonoDevelop.Dnx
 
 		public bool HasCurrentDnxRuntime {
 			get { return context != null; }
+		}
+
+		public bool HasCurrentRuntimeError {
+			get { return !String.IsNullOrEmpty (initializeError); }
 		}
 
 		public string CurrentRuntimeError {
@@ -259,7 +279,7 @@ namespace MonoDevelop.Dnx
 			if (!IsGlobalJsonFileChanged (e))
 				return;
 
-			LoadDnxProjectSystem (solution);
+			OnSolutionLoaded (solution);
 		}
 
 		static bool IsGlobalJsonFileChanged (FileEventArgs e)

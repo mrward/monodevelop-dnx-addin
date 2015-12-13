@@ -27,6 +27,7 @@
 
 using System;
 using MonoDevelop.Dnx.Commands;
+using MonoDevelop.Ide;
 using MonoDevelop.Ide.Gui.Components;
 using MonoDevelop.Projects;
 
@@ -92,6 +93,7 @@ namespace MonoDevelop.Dnx.NodeBuilders
 			project.DependenciesChanged += ProjectDependenciesChanged;
 			project.PackageRestoreStarted += PackageRestoreStarted;
 			project.PackageRestoreFinished += PackageRestoreFinished;
+			DnxServices.ProjectService.ProjectSystemLoadFailed += ProjectSystemLoadFailed;
 		}
 
 		public override void OnNodeRemoved (object dataObject)
@@ -103,11 +105,26 @@ namespace MonoDevelop.Dnx.NodeBuilders
 			project.DependenciesChanged -= ProjectDependenciesChanged;
 			project.PackageRestoreStarted -= PackageRestoreStarted;
 			project.PackageRestoreFinished -= PackageRestoreFinished;
+			DnxServices.ProjectService.ProjectSystemLoadFailed -= ProjectSystemLoadFailed;
 		}
 
 		void ProjectDependenciesChanged (object sender, EventArgs e)
 		{
 			RefreshNode (sender);
+		}
+
+		void ProjectSystemLoadFailed (object sender, EventArgs e)
+		{
+			RefreshAllDnxProjects ();
+		}
+
+		void RefreshAllDnxProjects ()
+		{
+			foreach (Solution solution in IdeApp.Workspace.GetAllSolutions ()) {
+				foreach (DnxProject project in solution.GetDnxProjects ()) {
+					RefreshNode (project);
+				}
+			}
 		}
 
 		void RefreshNode (object project)
