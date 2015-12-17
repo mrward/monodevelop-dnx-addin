@@ -19,7 +19,7 @@ From the src directory run NuGet restore.
 
     git clone git@github.com:mono/monodevelop.git
     cd monodevelop
-    git checkout roslyn
+    git checkout master
     git submodule update --init --recursive
     make
     rm -rf main/build/tests/
