@@ -27,10 +27,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ICSharpCode.PackageManagement;
 using MonoDevelop.Core;
 using MonoDevelop.Dnx;
-using MonoDevelop.Ide;
 using NuGet;
 using Xwt;
 using Xwt.Drawing;
@@ -407,7 +407,7 @@ namespace MonoDevelop.PackageManagement
 				// Workaround: Image loading is incorrectly being done on GUI thread
 				// since the wrong synchronization context seems to be used. So
 				// here we switch to a background thread and then back to the GUI thread.
-				DispatchService.BackgroundDispatch (() => LoadImage (packageViewModel.IconUrl, row));
+				Task.Run (() => LoadImage (packageViewModel.IconUrl, row));
 			}
 		}
 
@@ -415,7 +415,7 @@ namespace MonoDevelop.PackageManagement
 		{
 			// Put it back on the GUI thread so the correct synchronization context
 			// is used. The image loading will be done on a background thread.
-			DispatchService.GuiDispatch (() => imageLoader.LoadFrom (iconUrl, row));
+			Runtime.RunInMainThread (() => imageLoader.LoadFrom (iconUrl, row));
 		}
 
 		bool IsOddRow (int row)

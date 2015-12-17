@@ -136,7 +136,7 @@ namespace MonoDevelop.Dnx
 
 		public void OnReferencesUpdated (ProjectId projectId, FrameworkProject frameworkProject)
 		{
-			DispatchService.GuiDispatch (()  => {
+			Runtime.RunInMainThread (()  => {
 				var locator = new DnxProjectLocator (context);
 				DnxProject project = locator.FindProject (projectId);
 				if (project != null) {
@@ -147,7 +147,7 @@ namespace MonoDevelop.Dnx
 
 		public void OnProjectChanged (OmniSharp.Models.DnxProject project)
 		{
-			DispatchService.GuiDispatch (() => UpdateProject (project));
+			Runtime.RunInMainThread (() => UpdateProject (project));
 		}
 
 		void UpdateProject (OmniSharp.Models.DnxProject project)
@@ -181,7 +181,7 @@ namespace MonoDevelop.Dnx
 
 		public void DependenciesUpdated (OmniSharp.Dnx.Project project, DependenciesMessage message)
 		{
-			DispatchService.GuiDispatch (() => UpdateDependencies (project, message));
+			Runtime.RunInMainThread (() => UpdateDependencies (project, message));
 		}
 
 		static DnxProject FindProjectByProjectJsonFileName (string fileName)
@@ -209,7 +209,7 @@ namespace MonoDevelop.Dnx
 
 		public void PackageRestoreStarted (string projectJsonFileName)
 		{
-			DispatchService.GuiDispatch (() => OnPackageRestoreStarted (projectJsonFileName));
+			Runtime.RunInMainThread (() => OnPackageRestoreStarted (projectJsonFileName));
 		}
 
 		void OnPackageRestoreStarted (string projectJsonFileName)
@@ -222,7 +222,7 @@ namespace MonoDevelop.Dnx
 
 		public void PackageRestoreFinished (string projectJsonFileName)
 		{
-			DispatchService.GuiDispatch (() => OnPackageRestoreFinished(projectJsonFileName));
+			Runtime.RunInMainThread (() => OnPackageRestoreFinished(projectJsonFileName));
 		}
 
 		void OnPackageRestoreFinished(string projectJsonFileName)
@@ -268,7 +268,7 @@ namespace MonoDevelop.Dnx
 
 		public void OnCompilationOptionsChanged (ProjectId projectId, CSharpCompilationOptions compilationOptions, CSharpParseOptions parseOptions)
 		{
-			DispatchService.GuiDispatch (()  => {
+			Runtime.RunInMainThread (()  => {
 				var locator = new DnxProjectLocator (context);
 				DnxProject project = locator.FindProject (projectId);
 				if (project != null) {
