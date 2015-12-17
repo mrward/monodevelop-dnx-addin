@@ -27,11 +27,11 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using MonoDevelop.Core.ProgressMonitoring;
+using MonoDevelop.Core;
+using MonoDevelop.Core.StringParsing;
 using MonoDevelop.Ide;
 using MonoDevelop.Ide.Templates;
 using MonoDevelop.Projects;
-using MonoDevelop.Core;
 
 namespace MonoDevelop.Dnx
 {
@@ -54,7 +54,7 @@ namespace MonoDevelop.Dnx
 
 		public override void ConfigureWizard ()
 		{
-			createDnxProject = !Parameters.GetBoolean ("CreateSolution");
+			createDnxProject = !Parameters.GetBoolValue ("CreateSolution");
 			Parameters["CreateDnxProject"] = createDnxProject.ToString ();
 
 			bool shouldUseKestrel = !Platform.IsWindows;
@@ -142,7 +142,7 @@ namespace MonoDevelop.Dnx
 
 			project.CreateProjectDirectory ();
 
-			if (Parameters.GetBoolean ("CreateWebRoot")) {
+			if (Parameters.GetBoolValue ("CreateWebRoot")) {
 				project.CreateWebRootDirectory ();
 			}
 
