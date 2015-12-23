@@ -32,7 +32,18 @@ namespace OmniSharp.Dnx
             _paths = paths;
             _lock = new object();
             _projectLocks = new Dictionary<string, object>();
-            _semaphore = new SemaphoreSlim(Environment.ProcessorCount / 2);
+            _semaphore = new SemaphoreSlim(GetNumConcurrentRestores());
+        }
+
+        static int GetNumConcurrentRestores()
+        {
+            int concurrentRestores = Environment.ProcessorCount / 2;
+            if (concurrentRestores > 0)
+            {
+                return concurrentRestores;
+            }
+
+            return 1;
         }
 
         public void Run(Project project)
