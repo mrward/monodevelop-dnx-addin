@@ -40,6 +40,7 @@ namespace MonoDevelop.Dnx.Omnisharp
 			options = new OmniSharpOptions ();
 			options.Dnx.Projects = "**/project.json";
 			options.Dnx.EnablePackageRestore = true;
+			options.Dnx.PackageRestoreTimeout = 180;
 		}
 
 		public OmniSharpOptions GetNamedOptions (string name)
