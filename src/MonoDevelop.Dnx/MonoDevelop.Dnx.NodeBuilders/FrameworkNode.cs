@@ -60,7 +60,7 @@ namespace MonoDevelop.Dnx.NodeBuilders
 
 		public IconId GetIconId ()
 		{
-			return Stock.NameSpace;
+			return new IconId ("md-dnx-framework");
 		}
 
 		public bool HasDependencies ()
