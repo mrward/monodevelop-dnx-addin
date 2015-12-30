@@ -26,9 +26,10 @@
 //
 
 using System;
+using System.Reflection;
+using System.Xml;
 using MonoDevelop.Core;
 using MonoDevelop.Projects.Formats.MSBuild;
-using System.Xml;
 
 namespace MonoDevelop.Dnx
 {
@@ -90,11 +91,21 @@ namespace MonoDevelop.Dnx
 		static bool SupportsMSBuild14 ()
 		{
 			Version ideVersion = null;
-			if (Version.TryParse (BuildInfo.Version, out ideVersion)) {
+			if (Version.TryParse (GetBuildInfoVersion (), out ideVersion)) {
 				var version510 = new Version (5, 10);
 				return ideVersion >= version510;
 			}
 			return false;
+		}
+
+		static string GetBuildInfoVersion ()
+		{
+			Type type = typeof (BuildInfo);
+			FieldInfo field = type.GetField ("Version");
+			if (field != null)
+				return (string)field.GetValue (null);
+
+			return BuildInfo.Version;
 		}
 
 		void AddVisualStudioProperties()
