@@ -114,6 +114,7 @@
 
 	<Extension path="/MonoDevelop/Core/StockIcons">
 		<StockIcon stockid="md-dnx-nuget-package" resource="nuget-16.png" />
+		<StockIcon stockid="md-dnx-framework" resource="framework-16.png" />
 	</Extension>
 
 	<Extension path="/MonoDevelop/Ide/ProjectTemplateCategories/other/aspnet">

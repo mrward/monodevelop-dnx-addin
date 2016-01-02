@@ -237,6 +237,12 @@
     <EmbeddedResource Include="Icons\reference-48%402x.png">
       <LogicalName>reference-48@2x.png</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="Icons\framework-16.png">
+      <LogicalName>framework-16.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Icons\framework-16%402x.png">
+      <LogicalName>framework-16@2x.png</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Licenses\Apache-2.0-LICENSE.txt">
