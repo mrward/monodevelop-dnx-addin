@@ -147,7 +147,7 @@
 					<Panel
 						id="DnxRuntimeOptionsPanel"
 						_label="DNX Runtime"
-						class="MonoDevelop.Dnx.OptionsPanels.DnxRuntimeOptionsPanel" />
+						class="MonoDevelop.Dnx.Gui.DnxRuntimeOptionsPanel" />
 			</Section>
 		</Condition>
 	</Extension>

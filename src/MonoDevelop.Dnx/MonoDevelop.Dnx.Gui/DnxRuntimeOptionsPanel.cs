@@ -30,7 +30,7 @@ using System.Linq;
 using MonoDevelop.Core;
 using MonoDevelop.Ide.Gui.Dialogs;
 
-namespace MonoDevelop.Dnx.OptionsPanels
+namespace MonoDevelop.Dnx.Gui
 {
 	public class DnxRuntimeOptionsPanel : OptionsPanel
 	{

@@ -210,7 +210,6 @@
     <Compile Include="MonoDevelop.Dnx\DnxRuntime.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxExecutionTarget.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxFrameworkExtensions.cs" />
-    <Compile Include="MonoDevelop.Dnx.OptionsPanels\DnxRuntimeOptionsPanel.cs" />
     <Compile Include="MonoDevelop.Dnx\GlobalJsonFile.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxConfigurationParameters.cs" />
     <Compile Include="Omnisharp\Microsoft\Roslyn\CSharpParseOptions.cs" />
@@ -281,6 +280,7 @@
     <Compile Include="MonoDevelop.Dnx.Commands\DependenciesFolderNodeCommandHandler.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxWindowsDebuggerEngine.cs" />
     <Compile Include="MonoDevelop.Dnx.Commands\SelectActiveRuntimeCommandHandler.cs" />
+    <Compile Include="MonoDevelop.Dnx.Gui\DnxRuntimeOptionsPanel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -383,7 +383,6 @@
   </ItemGroup>
   <Import Project="PostBuild.proj" />
   <ItemGroup>
-    <Folder Include="MonoDevelop.Dnx.OptionsPanels\" />
     <Folder Include="Templates\Projects\EmptyKestrelWeb\" />
     <Folder Include="MonoDevelop.Dnx.Commands\" />
     <Folder Include="MonoDevelop.Dnx.Gui\" />
