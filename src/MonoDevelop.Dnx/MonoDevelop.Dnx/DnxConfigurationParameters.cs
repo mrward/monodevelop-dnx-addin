@@ -71,6 +71,7 @@ namespace MonoDevelop.Dnx
 
 			return new CSharpCompilationOptions (
 				OutputKind.ConsoleApplication,
+				false,
 				null,
 				null,
 				"Script",
