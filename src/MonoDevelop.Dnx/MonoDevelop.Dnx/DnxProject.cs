@@ -81,11 +81,17 @@ namespace MonoDevelop.Dnx
 
 		void LoadFiles ()
 		{
+			// Add directories first, to make sure to show empty ones.
+			foreach (string directoryName in Directory.GetDirectories (BaseDirectory, "*.*", SearchOption.AllDirectories)) {
+				Items.Add (CreateDirectoryProjectItem (directoryName));
+			}
+
 			foreach (string fileName in Directory.GetFiles (BaseDirectory, "*.*", SearchOption.AllDirectories)) {
 				if (IsSupportedProjectFileItem (fileName)) {
 					Items.Add (CreateFileProjectItem(fileName));
 				}
 			}
+
 			AddConfigurations ();
 		}
 
@@ -100,6 +106,13 @@ namespace MonoDevelop.Dnx
 				return false;
 			}
 			return true;
+		}
+
+		ProjectFile CreateDirectoryProjectItem (string directory)
+		{
+			return new ProjectFile (directory, BuildAction.None) {
+				Subtype = Subtype.Directory
+			};
 		}
 
 		ProjectFile CreateFileProjectItem (string fileName)
