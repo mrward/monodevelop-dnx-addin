@@ -81,11 +81,17 @@ namespace MonoDevelop.Dnx
 
 		void LoadFiles ()
 		{
+			// Add directories first, to make sure to show empty ones.
+			foreach (string directoryName in Directory.GetDirectories (BaseDirectory, "*.*", SearchOption.AllDirectories)) {
+				Items.Add (CreateFileProjectItem (directoryName));
+			}
+
 			foreach (string fileName in Directory.GetFiles (BaseDirectory, "*.*", SearchOption.AllDirectories)) {
 				if (IsSupportedProjectFileItem (fileName)) {
 					Items.Add (CreateFileProjectItem(fileName));
 				}
 			}
+
 			AddConfigurations ();
 		}
 
