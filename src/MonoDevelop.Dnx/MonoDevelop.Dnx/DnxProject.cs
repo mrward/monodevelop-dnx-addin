@@ -87,7 +87,7 @@ namespace MonoDevelop.Dnx
 			}
 
 			foreach (string fileName in Directory.GetFiles (BaseDirectory, "*.*", SearchOption.AllDirectories)) {
-				if (IsSupportedProjectFileItem (fileName)) {
+				if (IsSupportedProjectFileItem (fileName) && !IsBackupFile (fileName)) {
 					Items.Add (CreateFileProjectItem(fileName));
 				}
 			}
@@ -106,6 +106,14 @@ namespace MonoDevelop.Dnx
 				return false;
 			}
 			return true;
+		}
+
+		bool IsBackupFile (string fileName)
+		{
+			if (fileName.EndsWith ("~", StringComparison.Ordinal)) {
+				return true;
+			}
+			return false;
 		}
 
 		ProjectFile CreateDirectoryProjectItem (string directory)
