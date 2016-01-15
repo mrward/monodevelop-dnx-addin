@@ -95,17 +95,24 @@ namespace MonoDevelop.Dnx
 			AddConfigurations ();
 		}
 
-		bool IsSupportedProjectFileItem (string fileName)
+		static bool IsSupportedProjectFileItem (string fileName)
 		{
-			string extension = Path.GetExtension(fileName);
+			string extension = Path.GetExtension (fileName);
 			if (extension.EndsWith ("proj", StringComparison.OrdinalIgnoreCase)) {
 				return false;
 			} else if (extension.Equals (".sln", StringComparison.OrdinalIgnoreCase)) {
 				return false;
 			} else if (extension.Equals (".user", StringComparison.OrdinalIgnoreCase)) {
 				return false;
+			} else if (IsBackupFile (fileName)) {
+				return false;
 			}
 			return true;
+		}
+
+		static bool IsBackupFile (string fileName)
+		{
+			return fileName.EndsWith ("~", StringComparison.Ordinal);
 		}
 
 		ProjectFile CreateDirectoryProjectItem (string directory)
