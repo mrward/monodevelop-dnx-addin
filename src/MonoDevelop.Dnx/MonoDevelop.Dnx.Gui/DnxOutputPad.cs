@@ -26,6 +26,7 @@
 //
 
 using Gtk;
+using MonoDevelop.Components;
 using MonoDevelop.Ide.Gui;
 using MonoDevelop.Ide.Gui.Components;
 using MonoDevelop.Ide;
@@ -37,7 +38,7 @@ using MonoDevelop.Core;
 
 namespace MonoDevelop.Dnx
 {
-	public class DnxOutputPad : AbstractPadContent
+	public class DnxOutputPad : PadContent
 	{
 		static DnxOutputPad instance;
 		static readonly LogView logView = new LogView ();
@@ -51,19 +52,19 @@ namespace MonoDevelop.Dnx
 			get { return instance; }
 		}
 
-		public override void Initialize (IPadWindow container)
+		protected override void Initialize (IPadWindow window)
 		{
-			DockItemToolbar toolbar = container.GetToolbar (PositionType.Right);
+			DockItemToolbar toolbar = window.GetToolbar (DockPositionType.Right);
 
 			var clearButton = new Button (new Gtk.Image (Ide.Gui.Stock.Broom, IconSize.Menu));
 			clearButton.Clicked += ButtonClearClick;
 			clearButton.TooltipText = GettextCatalog.GetString ("Clear");
 			toolbar.Add (clearButton);
 			toolbar.ShowAll ();
-			Control.ShowAll ();
+			logView.ShowAll ();
 		}
 
-		public override Widget Control {
+		public override Control Control {
 			get { return logView; }
 		}
 

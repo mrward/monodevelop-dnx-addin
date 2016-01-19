@@ -27,6 +27,7 @@
 
 using System.Collections.Generic;
 using Microsoft.Framework.Logging;
+using MonoDevelop.Components;
 using MonoDevelop.Core;
 using MonoDevelop.Ide.Gui.Dialogs;
 
@@ -44,7 +45,7 @@ namespace MonoDevelop.Dnx.Gui
 			LogLevel.Critical
 		};
 
-		public override Gtk.Widget CreatePanelWidget()
+		public override Control CreatePanelWidget()
 		{
 			var vbox = new Gtk.VBox ();
 			var hbox = new Gtk.HBox ();

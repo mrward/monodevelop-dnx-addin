@@ -37,11 +37,6 @@ namespace MonoDevelop.Dnx
 			Init ();
 		}
 
-		public DnxProjectConfiguration ()
-		{
-			Init ();
-		}
-
 		void Init ()
 		{
 			ExternalConsole = true;

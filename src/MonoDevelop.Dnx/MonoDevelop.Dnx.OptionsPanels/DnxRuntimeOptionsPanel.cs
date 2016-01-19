@@ -27,6 +27,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using MonoDevelop.Components;
 using MonoDevelop.Core;
 using MonoDevelop.Ide.Gui.Dialogs;
 using MonoDevelop.Projects;
@@ -40,7 +41,7 @@ namespace MonoDevelop.Dnx.OptionsPanels
 		List<string> dnxRuntimeVersions;
 		string originalDnxRuntimeVersion;
 
-		public override Gtk.Widget CreatePanelWidget ()
+		public override Control CreatePanelWidget ()
 		{
 			var vbox = new Gtk.VBox ();
 			var hbox = new Gtk.HBox ();
