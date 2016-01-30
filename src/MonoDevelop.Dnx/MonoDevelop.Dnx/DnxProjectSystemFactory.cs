@@ -4,7 +4,7 @@
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
 //
-// Copyright (c) 2015 Matthew Ward
+// Copyright (c) 2015-2016 Matthew Ward
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -47,7 +47,7 @@ namespace MonoDevelop.Dnx
 			var loggerFactory = new LoggerFactory ();
 			var cache = new MetadataFileReferenceCache ();
 			var emitter = new EventEmitter ();
-			var watcher = new FileSystemWatcherWrapper (env);
+			var watcher = new FileSystemWatcherGroup (solution);
 
 			return new DnxProjectSystem (
 				workspace,
