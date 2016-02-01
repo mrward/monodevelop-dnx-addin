@@ -195,26 +195,6 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		void UpdateMSBuildProjectFiles ()
-		{
-			if (loadingFiles)
-				return;
-
-			try {
-				loadingFiles = true;
-
-				ProjectFile[] files = Project.Files.ToArray ();
-				Project.Files.Clear ();
-
-				foreach (ProjectFile projectFile in Project.Files.ToArray ()) {
-					Items.Add (projectFile);
-					AddProjectFileToMSBuildProject (projectFile);
-				}
-			} finally {
-				loadingFiles = false;
-			}
-		}
-
 		bool IsSupportedProjectFileItem (string fileName)
 		{
 			string extension = Path.GetExtension(fileName);
