@@ -134,8 +134,8 @@ namespace MonoDevelop.Dnx
 			project.AddConfigurations ();
 
 			if (newSolution) {
-				solution.GenerateDefaultDnxProjectConfigurations (project);
 				solution.StartupItem = project.Project;
+				solution.GenerateDefaultDnxProjectConfigurations (project);
 			} else {
 				solution.EnsureConfigurationHasBuildEnabled (project);
 			}
