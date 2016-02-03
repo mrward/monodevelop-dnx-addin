@@ -150,10 +150,11 @@ namespace MonoDevelop.Dnx
 
 			CreateFilesFromTemplate (project);
 
+			OpenProjectFile (project);
+
 			IdeApp.ProjectOperations.SaveAsync (solution)
 				.ContinueWith (t => {
 					Runtime.RunInMainThread (() => {
-						OpenProjectFile (project);
 						DnxServices.ProjectService.OnSolutionLoaded (solution);
 					});
 			});
