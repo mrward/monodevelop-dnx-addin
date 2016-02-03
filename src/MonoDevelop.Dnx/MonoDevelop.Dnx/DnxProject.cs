@@ -501,10 +501,21 @@ namespace MonoDevelop.Dnx
 			if (IsDirty) {
 				var xproject = (XProject)Project;
 				xproject.SetDefaultNamespace (FileName);
-				return base.OnSave (monitor);
+				return Save (monitor);
 			}
 			IsDirty = false;
 			return Task.FromResult (0);
+		}
+
+		Task Save (ProgressMonitor monitor)
+		{
+			if (loadingFiles)
+				return Task.FromResult (0);
+
+			var msproject = new Projects.MSBuild.MSBuildProject ();
+			var projectBuilder = new DnxMSBuildProjectHandler (this);
+			projectBuilder.SaveProject (monitor, msproject);
+			return msproject.SaveAsync (FileName);
 		}
 
 		public void GenerateNewProjectFileName (Solution solution, string projectName)
@@ -711,15 +722,6 @@ namespace MonoDevelop.Dnx
 			} else {
 				LoggingService.LogDebug ("Unable to find project.json '{0}'", jsonFile.Path);
 			}
-		}
-
-		protected override void OnWriteProject (ProgressMonitor monitor, MonoDevelop.Projects.MSBuild.MSBuildProject msproject)
-		{
-			if (loadingFiles)
-				return;
-
-			var projectBuilder = new DnxMSBuildProjectHandler (this);
-			projectBuilder.SaveProject (monitor, msproject);
 		}
 
 		protected override Task<List<string>> OnGetReferencedAssemblies (ConfigurationSelector configuration)
