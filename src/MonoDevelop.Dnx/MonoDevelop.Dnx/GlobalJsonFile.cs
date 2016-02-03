@@ -25,9 +25,12 @@
 // THE SOFTWARE.
 //
 
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using MonoDevelop.Core;
+using MonoDevelop.Projects;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -36,6 +39,7 @@ namespace MonoDevelop.Dnx
 	public class GlobalJsonFile : JsonFile
 	{
 		JObject sdkObject;
+		List<string> projectDirectories = new List<string> ();
 
 		GlobalJsonFile (FilePath filePath)
 			: base (filePath)
@@ -44,7 +48,12 @@ namespace MonoDevelop.Dnx
 
 		public static GlobalJsonFile Read (DnxProject project)
 		{
-			var jsonFile = new GlobalJsonFile (project.ParentSolution.BaseDirectory.Combine ("global.json"));
+			return Read (project.ParentSolution);
+		}
+
+		public static GlobalJsonFile Read (Solution solution)
+		{
+			var jsonFile = new GlobalJsonFile (solution.BaseDirectory.Combine ("global.json"));
 			jsonFile.Read ();
 			return jsonFile;
 		}
@@ -53,10 +62,11 @@ namespace MonoDevelop.Dnx
 
 		protected override void AfterRead ()
 		{
-			ReadPropertiesFromJsonObject ();
+			ReadSdkInformation ();
+			ReadProjectDirectories ();
 		}
 
-		void ReadPropertiesFromJsonObject ()
+		void ReadSdkInformation ()
 		{
 			JToken sdkToken;
 			if (!jsonObject.TryGetValue ("sdk", out sdkToken))
@@ -76,6 +86,27 @@ namespace MonoDevelop.Dnx
 		protected override void BeforeSave ()
 		{
 			sdkObject["version"] = new JValue (DnxRuntimeVersion);
+		}
+
+		void ReadProjectDirectories ()
+		{
+			JToken projectsToken;
+			if (!jsonObject.TryGetValue ("projects", out projectsToken)) {
+				if (!jsonObject.TryGetValue ("sources", out projectsToken)) {
+					return;
+				}
+			}
+
+			var projectsArray = projectsToken as JArray;
+			if (projectsArray == null)
+				return;
+
+			projectDirectories = projectsArray.Select (directory => directory.ToString ())
+				.ToList ();
+		}
+
+		public IEnumerable<string> ProjectDirectories {
+			get { return projectDirectories; }
 		}
 	}
 }
