@@ -42,6 +42,7 @@ namespace MonoDevelop.Dnx
 		protected override void OnInitialize ()
 		{
 			base.OnInitialize ();
+			SupportsRoslyn = true;
 			StockIcon = "md-csharp-project";
 		}
 
