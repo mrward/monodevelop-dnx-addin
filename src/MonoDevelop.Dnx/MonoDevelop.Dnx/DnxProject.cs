@@ -117,6 +117,11 @@ namespace MonoDevelop.Dnx
 
 		void LoadFiles ()
 		{
+			// Add directories first, to make sure to show empty ones.
+			foreach (string directoryName in Directory.GetDirectories (BaseDirectory, "*.*", SearchOption.AllDirectories)) {
+				Items.Add (CreateDirectoryProjectItem (directoryName));
+			}
+
 			foreach (string fileName in Directory.GetFiles (BaseDirectory, "*.*", SearchOption.AllDirectories)) {
 				if (IsSupportedProjectFileItem (fileName)) {
 					ProjectFile projectFile = CreateFileProjectItem (fileName);
@@ -124,6 +129,7 @@ namespace MonoDevelop.Dnx
 					AddProjectFileToMSBuildProject (projectFile);
 				}
 			}
+
 			AddConfigurations ();
 		}
 
@@ -195,17 +201,31 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		bool IsSupportedProjectFileItem (string fileName)
+		static bool IsSupportedProjectFileItem (string fileName)
 		{
-			string extension = Path.GetExtension(fileName);
+			string extension = Path.GetExtension (fileName);
 			if (extension.EndsWith ("proj", StringComparison.OrdinalIgnoreCase)) {
 				return false;
 			} else if (extension.Equals (".sln", StringComparison.OrdinalIgnoreCase)) {
 				return false;
 			} else if (extension.Equals (".user", StringComparison.OrdinalIgnoreCase)) {
 				return false;
+			} else if (IsBackupFile (fileName)) {
+				return false;
 			}
 			return true;
+		}
+
+		static bool IsBackupFile (string fileName)
+		{
+			return fileName.EndsWith ("~", StringComparison.Ordinal);
+		}
+
+		ProjectFile CreateDirectoryProjectItem (string directory)
+		{
+			return new ProjectFile (directory, BuildAction.None) {
+				Subtype = Subtype.Directory
+			};
 		}
 
 		ProjectFile CreateFileProjectItem (string fileName)

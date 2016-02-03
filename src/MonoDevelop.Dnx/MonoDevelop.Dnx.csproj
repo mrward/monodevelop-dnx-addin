@@ -150,7 +150,6 @@
     <Compile Include="MonoDevelop.Dnx\DnxRuntime.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxExecutionTarget.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxFrameworkExtensions.cs" />
-    <Compile Include="MonoDevelop.Dnx.OptionsPanels\DnxRuntimeOptionsPanel.cs" />
     <Compile Include="MonoDevelop.Dnx\GlobalJsonFile.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxConfigurationParameters.cs" />
     <Compile Include="Omnisharp\Dnx\IncomingMessages\ChangeConfiguration.cs" />
@@ -221,6 +220,7 @@
     <Compile Include="MonoDevelop.Dnx\CSharpCompilationAndParseOptions.cs" />
     <Compile Include="MonoDevelop.Dnx.Commands\DependenciesFolderNodeCommandHandler.cs" />
     <Compile Include="MonoDevelop.Dnx.Commands\SelectActiveRuntimeCommandHandler.cs" />
+    <Compile Include="MonoDevelop.Dnx.Gui\DnxRuntimeOptionsPanel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -324,7 +324,6 @@
   <Import Project="PostBuild.proj" />
   <Import Project="..\packages\MonoDevelop.Addins.0.3.0\build\net40\MonoDevelop.Addins.targets" Condition="Exists('..\packages\MonoDevelop.Addins.0.3.0\build\net40\MonoDevelop.Addins.targets')" />
   <ItemGroup>
-    <Folder Include="MonoDevelop.Dnx.OptionsPanels\" />
     <Folder Include="Templates\Projects\EmptyKestrelWeb\" />
     <Folder Include="MonoDevelop.Dnx.Commands\" />
     <Folder Include="MonoDevelop.Dnx.Gui\" />

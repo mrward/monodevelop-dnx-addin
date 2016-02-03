@@ -35,6 +35,9 @@ namespace MonoDevelop.Dnx.Gui
 {
 	public class DnxGlobalOptionsPanel : OptionsPanel
 	{
+		bool originalRestoreDependenciesSetting = DnxServices.ProjectService.RestoreDependencies;
+		Gtk.CheckButton restoreCheckBox;
+
 		Gtk.ComboBox logLevelsComboBox;
 		readonly List<LogLevel> logLevels = new List<LogLevel> {
 			LogLevel.Debug,
@@ -48,19 +51,43 @@ namespace MonoDevelop.Dnx.Gui
 		public override Control CreatePanelWidget()
 		{
 			var vbox = new Gtk.VBox ();
-			var hbox = new Gtk.HBox ();
-			var label = new Gtk.Label (GettextCatalog.GetString ("DNX Output Verbosity:"));
-			label.Xalign = 0;
-			hbox.PackStart (label, false, false, 5);
+			vbox.Spacing = 6;
+
+			var restoreSectionLabel = new Gtk.Label (GetBoldMarkup ("DNX Restore"));
+			restoreSectionLabel.UseMarkup = true;
+			restoreSectionLabel.Xalign = 0;
+			vbox.PackStart (restoreSectionLabel, false, false, 0);
+
+			restoreCheckBox = new Gtk.CheckButton (GettextCatalog.GetString ("Automatically restore dependencies."));
+			restoreCheckBox.Active = originalRestoreDependenciesSetting;
+			restoreCheckBox.BorderWidth = 10;
+			vbox.PackStart (restoreCheckBox, false, false, 0);
+
+			var outputSectionLabel = new Gtk.Label (GetBoldMarkup ("DNX Output"));
+			outputSectionLabel.UseMarkup = true;
+			outputSectionLabel.Xalign = 0;
+			vbox.PackStart (outputSectionLabel, false, false, 0);
+
+			var outputVerbosityHBox = new Gtk.HBox ();
+			outputVerbosityHBox.BorderWidth = 10;
+			outputVerbosityHBox.Spacing = 6;
+			var outputVerbosityLabel = new Gtk.Label (GettextCatalog.GetString ("Verbosity:"));
+			outputVerbosityLabel.Xalign = 0;
+			outputVerbosityHBox.PackStart (outputVerbosityLabel, false, false, 0);
 
 			logLevelsComboBox = Gtk.ComboBox.NewText ();
-			hbox.PackStart (logLevelsComboBox, true, true, 5);
+			outputVerbosityHBox.PackStart (logLevelsComboBox, true, true, 0);
 
 			AddLogLevelsToComboBox ();
 
-			vbox.PackStart (hbox, false, false, 0);
+			vbox.PackStart (outputVerbosityHBox, false, false, 0);
 			vbox.ShowAll ();
 			return vbox;
+		}
+
+		static string GetBoldMarkup (string phrase)
+		{
+			return "<b>" + GettextCatalog.GetString (phrase) + "</b>";
 		}
 
 		void AddLogLevelsToComboBox ()
@@ -74,6 +101,11 @@ namespace MonoDevelop.Dnx.Gui
 
 		public override void ApplyChanges()
 		{
+			bool restore = restoreCheckBox.Active;
+			if (restore != originalRestoreDependenciesSetting) {
+				DnxServices.ProjectService.RestoreDependencies = restore;
+			}
+
 			DnxLoggerService.LogLevel = logLevels [logLevelsComboBox.Active];
 		}
 	}

@@ -72,6 +72,10 @@ namespace OmniSharp.Dnx
             get { return _dnxPaths; }
         }
 
+        internal OmniSharpOptions Options {
+            get { return _options; }
+        }
+
         public void Initalize()
         {
             var runtimePath = _dnxPaths.RuntimePath;
