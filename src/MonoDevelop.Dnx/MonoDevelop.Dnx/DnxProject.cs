@@ -445,8 +445,7 @@ namespace MonoDevelop.Dnx
 		public void GenerateNewProjectFileName (Solution solution, string projectName)
 		{
 			FileName = solution.BaseDirectory
-				.Combine ("src", projectName, projectName)
-				.ChangeExtension (".xproj");
+				.Combine ("src", projectName, projectName + ".xproj");
 		}
 
 		public void CreateProjectDirectory ()
