@@ -309,6 +309,13 @@ namespace MonoDevelop.Dnx
 				projectSystem.Options.Dnx.EnablePackageRestore = value;
 			}
 		}
+
+		public void Restore (string projectPath)
+		{
+			if (projectSystem != null) {
+				projectSystem.Restore (projectPath);
+			}
+		}
 	}
 }
 

@@ -674,5 +674,18 @@ namespace OmniSharp.Dnx
                 _logger.LogError("Post failed", ex);
             }
         }
+
+        public void Restore (string projectPath)
+        {
+            var project = _context.GetProject(projectPath);
+            if (project != null)
+            {
+                _packagesRestoreTool.Run(project, force: true);
+            }
+            else
+            {
+                throw new InvalidOperationException (String.Format ("Unknown project '{0}'.", projectPath));
+            }
+        }
     }
 }

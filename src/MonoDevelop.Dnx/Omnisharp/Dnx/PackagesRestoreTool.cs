@@ -46,9 +46,9 @@ namespace OmniSharp.Dnx
             return 1;
         }
 
-        public void Run(Project project)
+		public void Run(Project project, bool force = false)
         {
-            if (!_options.Dnx.EnablePackageRestore)
+            if (!_options.Dnx.EnablePackageRestore && !force)
             {
                 return;
             }

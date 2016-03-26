@@ -47,6 +47,7 @@
 
 	<Extension path="/MonoDevelop/Dnx/ContextMenu/ProjectPad/DependenciesFolderNode">
 		<CommandItem id="MonoDevelop.Dnx.Commands.AddNuGetPackages" />
+		<CommandItem id="MonoDevelop.Dnx.Commands.DnxCommands.Restore" />
 	</Extension>
 
 	<Extension path="/MonoDevelop/ProjectModel/ProjectBindings">
@@ -64,7 +65,11 @@
 			type = "radio|array"
 			defaultHandler="MonoDevelop.Dnx.Commands.SelectActiveRuntimeCommandHandler"
 			_label="_Active DNX Framework" />
-	</Extension>>
+		<Command
+			id="MonoDevelop.Dnx.Commands.DnxCommands.Restore"
+			_description="Restore dependencies"
+			_label="_Restore" />
+	</Extension>
 
 	<Extension path = "/MonoDevelop/ProjectModel/MSBuildItemTypes">
 		<SolutionItem
