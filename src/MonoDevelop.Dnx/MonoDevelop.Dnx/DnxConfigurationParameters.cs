@@ -92,7 +92,7 @@ namespace MonoDevelop.Dnx
 			);
 		}
 
-		public override ParseOptions CreateParseOptions ()
+		public override ParseOptions CreateParseOptions (DotNetProjectConfiguration configuration)
 		{
 			if (parseOptions != null)
 				return parseOptions;
