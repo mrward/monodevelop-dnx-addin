@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.CodeAnalysis.CSharp;
@@ -344,6 +345,28 @@ namespace MonoDevelop.Dnx
 		{
 			var configuration = new DnxProjectConfiguration (name);
 			Configurations.Add (configuration);
+
+			EnsureConfigurationHasProjectInstance (configuration);
+		}
+
+		/// <summary>
+		/// HACK. The Configuration needs to have the ProjectInstance set otherwise the
+		/// Project's OnDispose method throws a NullReferenceException if a new DNX project
+		/// is created but not when it is loaded from disk. The DNX addin is 
+		/// bypassing the normal load and save methods used by the Project class so
+		/// the ProjectInstance is never set. Another problem is the ProjectInstance
+		/// is internal so the DNX addin has to resort to reflection to set this.
+		/// </summary>
+		void EnsureConfigurationHasProjectInstance (DnxProjectConfiguration configuration)
+		{
+			Type type = configuration.GetType ();
+			PropertyInfo property = type.GetProperty ("ProjectInstance", BindingFlags.Instance | BindingFlags.NonPublic);
+			if (property != null) {
+				object instance = property.GetValue (configuration);
+				if (instance == null) {
+					property.SetValue (configuration, MSBuildProject.CreateInstance ());
+				}
+			}
 		}
 
 		protected override ExecutionCommand OnCreateExecutionCommand (ConfigurationSelector configSel, DotNetProjectConfiguration configuration)
@@ -501,7 +524,7 @@ namespace MonoDevelop.Dnx
 			if (IsDirty) {
 				var xproject = (XProject)Project;
 				xproject.SetDefaultNamespace (FileName);
-				return Save (monitor);
+				return Save (monitor).ContinueWith (task => xproject.NeedsReload = false);
 			}
 			IsDirty = false;
 			return Task.FromResult (0);
