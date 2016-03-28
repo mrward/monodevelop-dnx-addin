@@ -26,7 +26,10 @@
 //
 
 using System;
+using MonoDevelop.Components.Commands;
+using MonoDevelop.Core;
 using MonoDevelop.Dnx.NodeBuilders;
+using MonoDevelop.Ide;
 using MonoDevelop.Ide.Gui.Components;
 
 namespace MonoDevelop.Dnx.Commands
@@ -38,6 +41,25 @@ namespace MonoDevelop.Dnx.Commands
 			var node = (DependenciesFolderNode)CurrentNode.DataItem;
 			var handler = new AddNuGetPackagesToSelectedProjectHandler ();
 			handler.AddPackages (node.Project);
+		}
+
+		[CommandUpdateHandler (DnxCommands.Restore)]
+		void OnUpdateRestore (CommandInfo info)
+		{
+			var node = (DependenciesFolderNode)CurrentNode.DataItem;
+			info.Enabled = !node.Project.IsRestoringPackages;
+		}
+
+		[CommandHandler (DnxCommands.Restore)]
+		void Restore ()
+		{
+			try {
+				var node = (DependenciesFolderNode)CurrentNode.DataItem;
+				DnxServices.ProjectService.Restore (node.Project.JsonPath);
+			} catch (Exception ex) {
+				LoggingService.LogError ("Restore failed", ex);
+				MessageService.ShowError ("Restore failed", ex);
+			}
 		}
 	}
 }

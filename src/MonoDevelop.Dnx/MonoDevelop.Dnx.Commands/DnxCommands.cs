@@ -1,5 +1,5 @@
 ﻿//
-// AssemblyInfo.cs
+// Commands.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -24,30 +24,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
-using System.Reflection;
-using System.Runtime.CompilerServices;
 
-// Information about this assembly is defined by the following attributes.
-// Change them to the values specific to your project.
+using System;
 
-[assembly: AssemblyTitle ("MonoDevelop.Dnx")]
-[assembly: AssemblyDescription ("Dnx support for MonoDevelop")]
-[assembly: AssemblyConfiguration ("")]
-[assembly: AssemblyCompany ("")]
-[assembly: AssemblyProduct ("MonoDevelop.Dnx")]
-[assembly: AssemblyCopyright ("Copyright (C) 2015 Matthew Ward")]
-[assembly: AssemblyTrademark ("")]
-[assembly: AssemblyCulture ("")]
-
-// The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
-// The form "{Major}.{Minor}.*" will automatically update the build and revision,
-// and "{Major}.{Minor}.{Build}.*" will update just the revision.
-
-[assembly: AssemblyVersion ("0.2")]
-
-// The following attributes are used to specify the signing key for the assembly,
-// if desired. See the Mono documentation for more information about signing.
-
-//[assembly: AssemblyDelaySign(false)]
-//[assembly: AssemblyKeyFile("")]
+namespace MonoDevelop.Dnx.Commands
+{
+	public enum DnxCommands
+	{
+		Restore
+	}
+}
 

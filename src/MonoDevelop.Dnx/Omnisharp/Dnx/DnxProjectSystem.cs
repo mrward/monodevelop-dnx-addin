@@ -423,11 +423,11 @@ namespace OmniSharp.Dnx
             _designTimeHostManager.Stop();
         }
 
-        private void TriggerDependeees(string path, string messageType)
+        private void TriggerDependeees(string path, string messageType, bool restore = true)
         {
             // temp: run [dnu|kpm] restore when project.json changed
             var project = _context.GetProject(path);
-            if (project != null)
+            if (project != null && restore)
             {
                 _packagesRestoreTool.Run(project);
             }
@@ -486,7 +486,7 @@ namespace OmniSharp.Dnx
             // When the project.lock.json file changes, refresh dependencies
             var lockFile = Path.ChangeExtension(projectFile, "lock.json");
 
-            _watcher.Watch(lockFile, _ => TriggerDependeees(projectFile, "RefreshDependencies"));
+            _watcher.Watch(lockFile, _ => TriggerDependeees(projectFile, "RefreshDependencies", false));
         }
 
         private void Initialize()
@@ -673,6 +673,19 @@ namespace OmniSharp.Dnx
             catch (IOException ex)
             {
                 _logger.LogError("Post failed", ex);
+            }
+        }
+
+        public void Restore (string projectPath)
+        {
+            var project = _context.GetProject(projectPath);
+            if (project != null)
+            {
+                _packagesRestoreTool.Run(project, force: true);
+            }
+            else
+            {
+                throw new InvalidOperationException (String.Format ("Unknown project '{0}'.", projectPath));
             }
         }
     }
