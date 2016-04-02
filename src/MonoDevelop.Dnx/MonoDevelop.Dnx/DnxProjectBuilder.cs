@@ -72,7 +72,11 @@ namespace MonoDevelop.Dnx
 			if (!DnxServices.ProjectService.HasCurrentDnxRuntime)
 				return CreateDnxRuntimeErrorBuildResult ();
 
-			DnxServices.ProjectService.GetDiagnostics (this);
+			if (project.JsonPath != null) {
+				DnxServices.ProjectService.GetDiagnostics (this);
+			} else {
+				return CreateDnxProjectNotInitializedBuildResult ();
+			}
 
 			waitEvent.Wait ();
 
@@ -86,6 +90,13 @@ namespace MonoDevelop.Dnx
 		{
 			var buildResult = new BuildResult ();
 			buildResult.AddError (DnxServices.ProjectService.CurrentRuntimeError);
+			return buildResult;
+		}
+
+		BuildResult CreateDnxProjectNotInitializedBuildResult ()
+		{
+			var buildResult = new BuildResult ();
+			buildResult.AddError (String.Format ("Project '{0}' has not been initialized by DNX host.", project.Name));
 			return buildResult;
 		}
 
