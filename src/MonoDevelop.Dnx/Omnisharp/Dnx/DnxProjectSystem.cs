@@ -415,7 +415,7 @@ namespace OmniSharp.Dnx
                 Initialize();
             });
 
-            wh.Wait();
+            //wh.Wait();
         }
 
         private void OnShutdown()

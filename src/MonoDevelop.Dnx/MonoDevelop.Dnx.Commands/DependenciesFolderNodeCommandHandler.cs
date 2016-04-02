@@ -47,7 +47,7 @@ namespace MonoDevelop.Dnx.Commands
 		void OnUpdateRestore (CommandInfo info)
 		{
 			var node = (DependenciesFolderNode)CurrentNode.DataItem;
-			info.Enabled = !node.Project.IsRestoringPackages;
+			info.Enabled = !node.Project.IsRestoringPackages && node.Project.JsonPath != null;
 		}
 
 		[CommandHandler (DnxCommands.Restore)]
