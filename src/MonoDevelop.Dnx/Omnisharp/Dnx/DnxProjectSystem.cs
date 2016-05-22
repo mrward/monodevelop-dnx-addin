@@ -379,7 +379,7 @@ namespace OmniSharp.Dnx
                             _logger.LogError(val.Message);
                         }
                     }
-                    else if (m.MessageType == "Diagnostics")
+                    else if (m.MessageType == "DependencyDiagnostics")
                     {
                         var val = m.Payload.ToObject<DiagnosticsListMessage>();
                         _workspace.ReportDiagnostics(project, val);

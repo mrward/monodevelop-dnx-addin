@@ -110,7 +110,7 @@ namespace MonoDevelop.Dnx
 		{
 			foreach (DiagnosticsListMessage message in messages) {
 				if (project.CurrentFramework == message.Framework.FrameworkName) {
-					return message.ToBuildResult ();
+					return message.ToBuildResult (project);
 				}
 			}
 			return new BuildResult ();

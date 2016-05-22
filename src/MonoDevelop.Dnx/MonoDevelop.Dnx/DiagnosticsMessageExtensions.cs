@@ -38,18 +38,19 @@ namespace MonoDevelop.Dnx
 	{
 		delegate void AddError (string file, int line, int col, string errorNum, string text);
 
-		public static BuildResult ToBuildResult (this DiagnosticsListMessage message)
+		public static BuildResult ToBuildResult (this DiagnosticsListMessage message, DnxProject project)
 		{
 			var result = new BuildResult ();
-			AddErrors (result.AddWarning, message.Warnings);
-			AddErrors (result.AddError, message.Errors);
+			AddErrors (result.AddWarning, message.Warnings, project);
+			AddErrors (result.AddError, message.Errors, project);
 			return result;
 		}
 
-		static void AddErrors (AddError addError, IEnumerable<DiagnosticMessageView> messages)
+		static void AddErrors (AddError addError, IEnumerable<DiagnosticMessageView> messages, DnxProject project)
 		{
 			foreach (DiagnosticMessageView message in messages) {
 				BuildError error = CreateBuildError (message);
+				error.SourceTarget = project;
 				addError (error.FileName, error.Line, error.Column, error.ErrorNumber, error.ErrorText);
 			}
 		}
@@ -61,7 +62,7 @@ namespace MonoDevelop.Dnx
 				Line =  message.StartLine,
 				Column = message.StartColumn,
 				ErrorNumber = message.ErrorCode,
-				ErrorText = message.FormattedMessage
+				ErrorText = message.Message
 			};
 		}
 	}

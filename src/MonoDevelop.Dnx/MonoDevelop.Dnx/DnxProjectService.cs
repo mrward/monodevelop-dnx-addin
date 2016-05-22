@@ -26,11 +26,13 @@
 //
 
 using System;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.DotNet.ProjectModel.Server.Models;
 using MonoDevelop.Dnx.Omnisharp;
 using MonoDevelop.Core;
 using MonoDevelop.Ide;
+using MonoDevelop.Ide.Tasks;
 using MonoDevelop.Projects;
 using OmniSharp.Dnx;
 using OmniSharp.Models;
@@ -246,10 +248,16 @@ namespace MonoDevelop.Dnx
 
 		public void ReportDiagnostics (OmniSharp.Dnx.Project project, DiagnosticsListMessage message)
 		{
-			//if (builder != null) {
-			//	builder.OnDiagnostics (message);
-			//	builder = null;
-			//}
+			DispatchService.GuiDispatch (()  => {
+				DnxProject matchedProject = FindProjectByProjectJsonFileName (project.Path);
+				if (matchedProject != null) {
+					if (message.Framework != null && message.Framework.FrameworkName == matchedProject.CurrentFramework) {
+						TaskService.Errors.ClearByOwner (matchedProject);
+						var result = message.ToBuildResult (matchedProject);
+						TaskService.Errors.AddRange (result.Errors.Select (error => new Task (error, matchedProject)));
+					}
+				}
+			});
 		}
 
 		void FileChanged (object sender, FileEventArgs e)
