@@ -11,9 +11,7 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 //using Microsoft.CodeAnalysis.Text;
-using Microsoft.Framework.DesignTimeHost.Models;
-using Microsoft.Framework.DesignTimeHost.Models.IncomingMessages;
-using Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages;
+using Microsoft.DotNet.ProjectModel.Server.Models;
 #if DNX451
 //using Microsoft.Framework.FileSystemGlobbing;
 #endif
@@ -33,7 +31,6 @@ namespace OmniSharp.Dnx
         private readonly IOmnisharpEnvironment _env;
         private readonly ILogger _logger;
         private readonly IMetadataFileReferenceCache _metadataFileReferenceCache;
-        private readonly DnxPaths _dnxPaths;
         private readonly DesignTimeHostManager _designTimeHostManager;
         private readonly PackagesRestoreTool _packagesRestoreTool;
         private readonly DnxContext _context;
@@ -57,9 +54,8 @@ namespace OmniSharp.Dnx
             _logger = loggerFactory.CreateLogger<DnxProjectSystem>();
             _metadataFileReferenceCache = metadataFileReferenceCache;
             _options = optionsAccessor.Options;
-            _dnxPaths = new DnxPaths(env, _options, loggerFactory);
-            _designTimeHostManager = new DesignTimeHostManager(loggerFactory, _dnxPaths);
-            _packagesRestoreTool = new PackagesRestoreTool(_options, loggerFactory, emitter, context, _dnxPaths);
+            _designTimeHostManager = new DesignTimeHostManager(loggerFactory);
+            _packagesRestoreTool = new PackagesRestoreTool(_options, loggerFactory, emitter, context);
             _context = context;
             _watcher = watcher;
             _emitter = emitter;
@@ -68,31 +64,16 @@ namespace OmniSharp.Dnx
             lifetime.ApplicationStopping.Register(OnShutdown);
         }
 
-        internal DnxPaths DnxPaths {
-            get { return _dnxPaths; }
-        }
-
         internal OmniSharpOptions Options {
             get { return _options; }
         }
 
         public void Initalize()
         {
-            var runtimePath = _dnxPaths.RuntimePath;
-            _context.RuntimePath = runtimePath.Value;
-
             if (!ScanForProjects())
             {
                 // No DNX projects found so do nothing
                 _logger.LogInformation("No project.json based projects found");
-                return;
-            }
-
-            if (_context.RuntimePath == null)
-            {
-                // There is no default dnx found so do nothing
-                _logger.LogInformation("No default runtime found");
-                _emitter.Emit(EventTypes.Error, runtimePath.Error);
                 return;
             }
 
@@ -117,7 +98,7 @@ namespace OmniSharp.Dnx
 
                     if (m.MessageType == "ProjectInformation")
                     {
-                        var val = m.Payload.ToObject<ProjectMessage>();
+                        var val = m.Payload.ToObject<ProjectInformationMessage>();
 
                         project.Name = val.Name;
                         project.GlobalJsonPath = val.GlobalJsonPath;
@@ -342,7 +323,7 @@ namespace OmniSharp.Dnx
 //                            );
 
                         var parseOptions = new CSharpParseOptions(//val.CompilationOptions.LanguageVersion,
-                                                                  preprocessorSymbols: val.CompilationOptions.Defines);
+                                                                  preprocessorSymbols: val.Options.Defines);
 
 //                        _workspace.SetCompilationOptions(projectId, csharpOptions);
                         _workspace.SetParseOptions(projectId, parseOptions);
@@ -392,12 +373,15 @@ namespace OmniSharp.Dnx
                     }
                     else if (m.MessageType == "Error")
                     {
-                        var val = m.Payload.ToObject<Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages.ErrorMessage>();
-                        _logger.LogError(val.Message);
+                        var val = m.Payload.ToObject<Microsoft.DotNet.ProjectModel.Server.Models.ErrorMessage>();
+                        if (val.Message != null)
+                        {
+                            _logger.LogError(val.Message);
+                        }
                     }
-                    else if (m.MessageType == "AllDiagnostics")
+                    else if (m.MessageType == "Diagnostics")
                     {
-                        var val = m.Payload.ToObject<DiagnosticsMessage[]>();
+                        var val = m.Payload.ToObject<DiagnosticsListMessage>();
                         _workspace.ReportDiagnostics(project, val);
                     }
 

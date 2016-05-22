@@ -27,7 +27,7 @@
 
 using System;
 using System.Threading;
-using Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages;
+using Microsoft.DotNet.ProjectModel.Server.Models;
 using MonoDevelop.Core;
 using MonoDevelop.Projects;
 
@@ -39,7 +39,7 @@ namespace MonoDevelop.Dnx
 		IProgressMonitor monitor;
 		ManualResetEventSlim waitEvent = new ManualResetEventSlim ();
 		bool cancelled;
-		DiagnosticsMessage[] messages;
+		DiagnosticsListMessage[] messages;
 
 		public DnxProjectBuilder (DnxProject project, IProgressMonitor monitor)
 		{
@@ -96,11 +96,11 @@ namespace MonoDevelop.Dnx
 		BuildResult CreateDnxProjectNotInitializedBuildResult ()
 		{
 			var buildResult = new BuildResult ();
-			buildResult.AddError (String.Format ("Project '{0}' has not been initialized by DNX host.", project.Name));
+			buildResult.AddError (String.Format ("Project '{0}' has not been initialized by .NET Core host.", project.Name));
 			return buildResult;
 		}
 
-		public void OnDiagnostics (DiagnosticsMessage[] messages)
+		public void OnDiagnostics (DiagnosticsListMessage[] messages)
 		{
 			this.messages = messages;
 			waitEvent.Set ();
@@ -108,7 +108,7 @@ namespace MonoDevelop.Dnx
 
 		BuildResult CreateBuildResult ()
 		{
-			foreach (DiagnosticsMessage message in messages) {
+			foreach (DiagnosticsListMessage message in messages) {
 				if (project.CurrentFramework == message.Framework.FrameworkName) {
 					return message.ToBuildResult ();
 				}

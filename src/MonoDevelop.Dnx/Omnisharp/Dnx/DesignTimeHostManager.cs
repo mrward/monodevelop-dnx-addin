@@ -11,15 +11,13 @@ namespace OmniSharp.Dnx
     public class DesignTimeHostManager
     {
         private readonly ILogger _logger;
-        private readonly DnxPaths _paths;
         private readonly object _processLock = new object();
         private Process _designTimeHostProcess;
         private bool _stopped;
 
-        public DesignTimeHostManager(ILoggerFactory loggerFactory, DnxPaths paths)
+        public DesignTimeHostManager(ILoggerFactory loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<DesignTimeHostManager>();
-            _paths = paths;
         }
 
         public TimeSpan DelayBeforeRestart { get; set; }
@@ -35,31 +33,17 @@ namespace OmniSharp.Dnx
 
                 int port = GetFreePort();
 
-                var dthPath = Path.Combine(_paths.RuntimePath.Value, "bin", "lib", "Microsoft.Dnx.DesignTimeHost", "Microsoft.Dnx.DesignTimeHost.dll");
-                // TODO: This is for backcompat. Once the dust settles, and MS.Framework.DTH goes away, remove this.
-                if (!File.Exists(dthPath))
-                  dthPath = Path.Combine(_paths.RuntimePath.Value, "bin", "lib", "Microsoft.Framework.DesignTimeHost", "Microsoft.Framework.DesignTimeHost.dll");
-
                 var psi = new ProcessStartInfo
                 {
-                    FileName = _paths.Dnx ?? _paths.Klr,
+                    FileName = "dotnet",
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardError = true,
-                    Arguments = string.Format(@"""{0}"" {1} {2} {3}",
-                                              dthPath,
+                    Arguments = string.Format(@"projectmodel-server --port {0} --host-pid {1} --host-name {2}",
                                               port,
                                               Process.GetCurrentProcess().Id,
                                               hostId),
                 };
-
-#if DNX451
-                psi.EnvironmentVariables["KRE_APPBASE"] = Directory.GetCurrentDirectory();
-                psi.EnvironmentVariables["DNX_APPBASE"] = Directory.GetCurrentDirectory();
-#else
-                psi.Environment["KRE_APPBASE"] = Directory.GetCurrentDirectory();
-                psi.Environment["DNX_APPBASE"] = Directory.GetCurrentDirectory();
-#endif
 
                 _logger.LogVerbose(psi.FileName + " " + psi.Arguments);
 

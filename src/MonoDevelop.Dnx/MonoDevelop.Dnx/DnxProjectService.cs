@@ -27,7 +27,7 @@
 
 using System;
 using Microsoft.CodeAnalysis;
-using Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages;
+using Microsoft.DotNet.ProjectModel.Server.Models;
 using MonoDevelop.Dnx.Omnisharp;
 using MonoDevelop.Core;
 using MonoDevelop.Ide;
@@ -89,9 +89,9 @@ namespace MonoDevelop.Dnx
 					LoadDnxProjectSystem (solution);
 				}
 			} catch (Exception ex) {
-				LoggingService.LogError ("DNX project system initialize failed.", ex);
+				LoggingService.LogError (".NET Core project system initialize failed.", ex);
 				UnloadProjectSystem ();
-				initializeError = "Unable to initialize DNX project system. " + ex.Message;
+				initializeError = "Unable to initialize .NET Core project system. " + ex.Message;
 				OnProjectSystemFailed ();
 			}
 		}
@@ -115,21 +115,6 @@ namespace MonoDevelop.Dnx
 			var factory = new DnxProjectSystemFactory ();
 			projectSystem = factory.CreateProjectSystem (solution, applicationLifetime, context);
 			projectSystem.Initalize ();
-
-			if (context.RuntimePath == null) {
-				string error = GetRuntimeError (projectSystem);
-				throw new ApplicationException (error);
-			}
-		}
-
-		static string GetRuntimeError (DnxProjectSystem projectSystem)
-		{
-			if (projectSystem.DnxPaths != null &&
-				projectSystem.DnxPaths.RuntimePath != null &&
-				projectSystem.DnxPaths.RuntimePath.Error != null) {
-				return projectSystem.DnxPaths.RuntimePath.Error.Text;
-			}
-			return "Unable to find DNX runtime.";
 		}
 
 		public void OnReferencesUpdated (ProjectId projectId, FrameworkProject frameworkProject)
@@ -259,12 +244,12 @@ namespace MonoDevelop.Dnx
 			projectSystem.GetDiagnostics (builder.ProjectPath);
 		}
 
-		public void ReportDiagnostics (OmniSharp.Dnx.Project project, DiagnosticsMessage[] messages)
+		public void ReportDiagnostics (OmniSharp.Dnx.Project project, DiagnosticsListMessage message)
 		{
-			if (builder != null) {
-				builder.OnDiagnostics (messages);
-				builder = null;
-			}
+			//if (builder != null) {
+			//	builder.OnDiagnostics (message);
+			//	builder = null;
+			//}
 		}
 
 		void FileChanged (object sender, FileEventArgs e)

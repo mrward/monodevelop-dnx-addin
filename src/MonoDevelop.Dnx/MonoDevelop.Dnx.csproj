@@ -105,27 +105,10 @@
     <Compile Include="MonoDevelop.Dnx\DnxProjectBinding.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxMSBuildProjectHandler.cs" />
     <Compile Include="Omnisharp\Dnx\DnxContext.cs" />
-    <Compile Include="Omnisharp\Dnx\DnxPaths.cs" />
     <Compile Include="Omnisharp\Dnx\DnxProjectSystem.cs" />
-    <Compile Include="Omnisharp\Dnx\DnxRuntimePathResult.cs" />
     <Compile Include="Omnisharp\Dnx\DesignTimeHostManager.cs" />
     <Compile Include="Omnisharp\Dnx\FrameworkProject.cs" />
-    <Compile Include="Omnisharp\Dnx\Message.cs" />
     <Compile Include="Omnisharp\Dnx\Project.cs" />
-    <Compile Include="Omnisharp\Dnx\IncomingMessages\InitializeMessage.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\CompilationOptionsMessage.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\CompilationSettings.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\DependenciesMessage.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\DependencyDescription.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\DependencyItem.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\DiagnosticsMessage.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\ErrorMessage.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\FrameworkData.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\OutputsMessage.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\ProjectMessage.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\ProjectReference.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\ReferencesMessage.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\SourcesMessage.cs" />
     <Compile Include="Omnisharp\Microsoft\AspNet\Hosting\IApplicationLifetime.cs" />
     <Compile Include="Omnisharp\Microsoft\AspNet\Logging\FormattedLogValues.cs" />
     <Compile Include="Omnisharp\Microsoft\AspNet\Logging\ILogger.cs" />
@@ -214,7 +197,6 @@
     <Compile Include="MonoDevelop.Dnx\DnxConfigurationParameters.cs" />
     <Compile Include="Omnisharp\Microsoft\Roslyn\CSharpParseOptions.cs" />
     <Compile Include="Omnisharp\Microsoft\Roslyn\ParseOptions.cs" />
-    <Compile Include="Omnisharp\Dnx\IncomingMessages\ChangeConfiguration.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectSystemFactory.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectLocator.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectBuilder.cs" />
@@ -283,6 +265,23 @@
     <Compile Include="MonoDevelop.Dnx.Gui\DnxRuntimeOptionsPanel.cs" />
     <Compile Include="MonoDevelop.Dnx\FileSystemWatcherGroup.cs" />
     <Compile Include="MonoDevelop.Dnx.Commands\DnxCommands.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\ChangeConfiguration.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\CommonCompilerOptions.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\CompilationOptionsMessage.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\DependenciesMessage.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\DependencyDescription.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\DependencyItem.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\DiagnosticMessageSeverity.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\DiagnosticMessageView.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\DiagnosticsListMessage.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\ErrorMessage.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\FrameworkData.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\InitializeMessage.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\Message.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\ProjectInformationMessage.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\ProjectReferenceDescription.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\ReferencesMessage.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\SourcesMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -388,5 +387,6 @@
     <Folder Include="Templates\Projects\EmptyKestrelWeb\" />
     <Folder Include="MonoDevelop.Dnx.Commands\" />
     <Folder Include="MonoDevelop.Dnx.Gui\" />
+    <Folder Include="Microsoft.DotNet.ProjectModel.Server.Models\" />
   </ItemGroup>
 </Project>

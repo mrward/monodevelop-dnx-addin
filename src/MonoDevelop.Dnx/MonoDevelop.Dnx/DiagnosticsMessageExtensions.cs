@@ -28,7 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages;
+using Microsoft.DotNet.ProjectModel.Server.Models;
 using MonoDevelop.Core;
 using MonoDevelop.Projects;
 
@@ -38,7 +38,7 @@ namespace MonoDevelop.Dnx
 	{
 		delegate void AddError (string file, int line, int col, string errorNum, string text);
 
-		public static BuildResult ToBuildResult (this DiagnosticsMessage message)
+		public static BuildResult ToBuildResult (this DiagnosticsListMessage message)
 		{
 			var result = new BuildResult ();
 			AddErrors (result.AddWarning, message.Warnings);
@@ -46,50 +46,23 @@ namespace MonoDevelop.Dnx
 			return result;
 		}
 
-		static void AddErrors (AddError addError, IEnumerable<string> messages)
+		static void AddErrors (AddError addError, IEnumerable<DiagnosticMessageView> messages)
 		{
-			foreach (string message in messages) {
+			foreach (DiagnosticMessageView message in messages) {
 				BuildError error = CreateBuildError (message);
 				addError (error.FileName, error.Line, error.Column, error.ErrorNumber, error.ErrorText);
 			}
 		}
 
-		/// <summary>
-		/// Error format:
-		/// 
-		/// D:\projects\app\src\app\Program.cs(11,26): DNXCore,Version=v5.0 error CS1061: Message
-		/// </summary>
-		/// <returns>The build error.</returns>
-		/// <param name="message">Message.</param>
-		static BuildError CreateBuildError (string message)
+		static BuildError CreateBuildError (DiagnosticMessageView message)
 		{
-			Match match = MatchMessage (message);
-			if (match.Success) {
-				try {
-					return new BuildError {
-						FileName =  match.Groups[1].Value,
-						Line =  Convert.ToInt32 (match.Groups[2].Value),
-						Column = Convert.ToInt32 (match.Groups[3].Value),
-						ErrorNumber = match.Groups[4].Value,
-						ErrorText = match.Groups[5].Value.Trim ()
-					};
-				} catch (FormatException) {
-				} catch (OverflowException) {
-					// Ignore.
-				}
-			}
-
 			return new BuildError {
-				ErrorText = message
+				FileName = message.SourceFilePath,
+				Line =  message.StartLine,
+				Column = message.StartColumn,
+				ErrorNumber = message.ErrorCode,
+				ErrorText = message.FormattedMessage
 			};
-		}
-
-		static Match MatchMessage (string message)
-		{
-			if (Platform.IsWindows)
-				return Regex.Match (message, @"\b(\w:[/\\].*?)\((\d+),(\d+)\):.*?(CS\d+):(.*)");
-
-			return Regex.Match (message, @"(/.*?)\((\d+),(\d+)\):.*?(CS\d+):(.*)");
 		}
 	}
 }
