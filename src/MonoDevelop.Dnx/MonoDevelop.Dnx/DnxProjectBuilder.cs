@@ -30,6 +30,8 @@ using System.Threading;
 using Microsoft.DotNet.ProjectModel.Server.Models;
 using MonoDevelop.Core;
 using MonoDevelop.Projects;
+using MonoDevelop.Core.Execution;
+using MonoDevelop.Core.ProgressMonitoring;
 
 namespace MonoDevelop.Dnx
 {
@@ -37,83 +39,51 @@ namespace MonoDevelop.Dnx
 	{
 		DnxProject project;
 		IProgressMonitor monitor;
-		ManualResetEventSlim waitEvent = new ManualResetEventSlim ();
-		bool cancelled;
-		DiagnosticsListMessage[] messages;
 
 		public DnxProjectBuilder (DnxProject project, IProgressMonitor monitor)
 		{
 			this.project = project;
 			this.monitor = monitor;
-			this.monitor.CancelRequested += CancelRequested;
-		}
-
-		public string ProjectPath {
-			get { return project.JsonPath; }
-		}
-
-		void CancelRequested (IProgressMonitor monitor)
-		{
-			cancelled = true;
-			waitEvent.Set ();
 		}
 
 		public void Dispose ()
 		{
-			IProgressMonitor currentMonitor = monitor;
-			if (currentMonitor != null) {
-				currentMonitor.CancelRequested -= CancelRequested;
-				monitor = null;
-			}
 		}
 
-		public BuildResult Build ()
+		public BuildResult Build (DotNetProjectConfiguration config)
 		{
-			if (!DnxServices.ProjectService.HasCurrentDnxRuntime)
-				return CreateDnxRuntimeErrorBuildResult ();
-
-			if (project.JsonPath != null) {
-				DnxServices.ProjectService.GetDiagnostics (this);
-			} else {
-				return CreateDnxProjectNotInitializedBuildResult ();
-			}
-
-			waitEvent.Wait ();
-
-			if (cancelled || messages == null) {
-				return new BuildResult ();
-			}
-			return CreateBuildResult ();
+			IProcessAsyncOperation operation = Runtime.ProcessService.StartConsoleProcess (
+				"dotnet",
+				String.Format ("build --configuration {0} --no-dependencies", config.Name),
+				project.BaseDirectory,
+				GetConsole (),
+				(sender, e) => { }
+			);
+			operation.WaitForCompleted ();
+			return CreateBuildResult (operation);
 		}
 
-		BuildResult CreateDnxRuntimeErrorBuildResult ()
+		IConsole GetConsole ()
 		{
-			var buildResult = new BuildResult ();
-			buildResult.AddError (DnxServices.ProjectService.CurrentRuntimeError);
-			return buildResult;
-		}
-
-		BuildResult CreateDnxProjectNotInitializedBuildResult ()
-		{
-			var buildResult = new BuildResult ();
-			buildResult.AddError (String.Format ("Project '{0}' has not been initialized by .NET Core host.", project.Name));
-			return buildResult;
-		}
-
-		public void OnDiagnostics (DiagnosticsListMessage[] messages)
-		{
-			this.messages = messages;
-			waitEvent.Set ();
-		}
-
-		BuildResult CreateBuildResult ()
-		{
-			foreach (DiagnosticsListMessage message in messages) {
-				if (project.CurrentFramework == message.Framework.FrameworkName) {
-					return message.ToBuildResult (project);
+			var aggregatedMonitor = monitor as AggregatedProgressMonitor;
+			if (aggregatedMonitor != null) {
+				var console = aggregatedMonitor.MasterMonitor as IConsole;
+				if (console != null) {
+					return new ConsoleWrapper (console);
 				}
 			}
-			return new BuildResult ();
+			return null;
+		}
+
+		BuildResult CreateBuildResult (IProcessAsyncOperation operation)
+		{
+			var result = new BuildResult ();
+
+			if (!operation.Success || operation.ExitCode != 0) {
+				result.AddError (GettextCatalog.GetString ("Build failed. Please see the Build Output for more details."));
+			}
+
+			return result;
 		}
 	}
 }

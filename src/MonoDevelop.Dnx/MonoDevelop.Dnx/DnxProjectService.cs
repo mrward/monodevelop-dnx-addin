@@ -35,7 +35,6 @@ using MonoDevelop.Ide;
 using MonoDevelop.Ide.Tasks;
 using MonoDevelop.Projects;
 using OmniSharp.Dnx;
-using OmniSharp.Models;
 
 namespace MonoDevelop.Dnx
 {
@@ -44,7 +43,6 @@ namespace MonoDevelop.Dnx
 		DnxContext context;
 		DnxProjectSystem projectSystem;
 		MonoDevelopApplicationLifetime applicationLifetime;
-		DnxProjectBuilder builder;
 		string initializeError = String.Empty;
 
 		public DnxProjectService ()
@@ -152,10 +150,6 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		public bool HasCurrentDnxRuntime {
-			get { return context != null; }
-		}
-
 		public bool HasCurrentRuntimeError {
 			get { return !String.IsNullOrEmpty (initializeError); }
 		}
@@ -238,12 +232,6 @@ namespace MonoDevelop.Dnx
 			if (config != null) {
 				projectSystem.ChangeConfiguration (config);
 			}
-		}
-
-		public void GetDiagnostics (DnxProjectBuilder builder)
-		{
-			this.builder = builder;
-			projectSystem.GetDiagnostics (builder.ProjectPath);
 		}
 
 		public void ReportDiagnostics (OmniSharp.Dnx.Project project, DiagnosticsListMessage message)

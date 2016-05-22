@@ -282,6 +282,7 @@
     <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\ProjectReferenceDescription.cs" />
     <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\ReferencesMessage.cs" />
     <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\SourcesMessage.cs" />
+    <Compile Include="MonoDevelop.Dnx\ConsoleWrapper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

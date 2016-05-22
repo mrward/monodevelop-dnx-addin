@@ -258,8 +258,9 @@ namespace MonoDevelop.Dnx
 		protected override BuildResult OnRunTarget (IProgressMonitor monitor, string target, ConfigurationSelector configuration)
 		{
 			if (target == ProjectService.BuildTarget) {
+				var config = GetConfiguration (configuration) as DotNetProjectConfiguration;
 				using (var builder = new DnxProjectBuilder (this, monitor)) {
-					return builder.Build ();
+					return builder.Build (config);
 				}
 			}
 			return new BuildResult ();
