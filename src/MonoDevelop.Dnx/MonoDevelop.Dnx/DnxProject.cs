@@ -240,6 +240,13 @@ namespace MonoDevelop.Dnx
 			);
 		}
 
+		ExecutionCommand CreateDotNetCoreExecutionCommand (ConfigurationSelector configSel, DotNetProjectConfiguration configuration)
+		{
+			return new DotNetCoreExecutionCommand (
+				BaseDirectory
+			);
+		}
+
 		protected override bool OnGetSupportsTarget (string target)
 		{
 			return true;
@@ -268,10 +275,10 @@ namespace MonoDevelop.Dnx
 
 		protected override void DoExecute (IProgressMonitor monitor, ExecutionContext context, ConfigurationSelector configuration)
 		{
-			if (!CurrentExecutionTargetIsCoreClr (context.ExecutionTarget)) {
-				base.DoExecute (monitor, context, configuration);
-				return;
-			}
+//			if (!CurrentExecutionTargetIsCoreClr (context.ExecutionTarget)) {
+//				base.DoExecute (monitor, context, configuration);
+//				return;
+//			}
 
 			var config = GetConfiguration (configuration) as DotNetProjectConfiguration;
 			monitor.Log.WriteLine (GettextCatalog.GetString ("Running {0} ...", Name));
@@ -281,7 +288,7 @@ namespace MonoDevelop.Dnx
 
 			try {
 				try {
-					ExecutionCommand executionCommand = CreateExecutionCommand (configuration, config);
+					ExecutionCommand executionCommand = CreateDotNetCoreExecutionCommand (configuration, config);
 					if (context.ExecutionTarget != null)
 						executionCommand.Target = context.ExecutionTarget;
 
@@ -309,11 +316,11 @@ namespace MonoDevelop.Dnx
 
 		IProcessAsyncOperation Execute (ExecutionCommand command, IConsole console)
 		{
-			var dnxCommand = (DnxProjectExecutionCommand)command;
+			var dotNetCoreCommand = (DotNetCoreExecutionCommand)command;
 			return Runtime.ProcessService.StartConsoleProcess (
-				dnxCommand.GetCommand (),
-				dnxCommand.GetArguments (),
-				dnxCommand.WorkingDirectory,
+				dotNetCoreCommand.GetCommand (),
+				dotNetCoreCommand.GetArguments (),
+				dotNetCoreCommand.WorkingDirectory,
 				console,
 				null);
 		}
