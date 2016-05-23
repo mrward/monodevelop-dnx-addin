@@ -476,6 +476,7 @@ namespace MonoDevelop.Dnx
 		{
 			FilePath webRootDirectory = BaseDirectory.Combine ("wwwroot");
 			CreateDirectory (webRootDirectory);
+			IsWebProject = true;
 		}
 
 		protected override IEnumerable<ExecutionTarget> OnGetExecutionTargets (ConfigurationSelector configuration)
@@ -706,6 +707,8 @@ namespace MonoDevelop.Dnx
 				}
 			}
 		}
+
+		public bool IsWebProject { get; set; }
 	}
 }
 

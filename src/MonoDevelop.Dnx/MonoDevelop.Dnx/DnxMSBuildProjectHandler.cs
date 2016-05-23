@@ -72,10 +72,10 @@ namespace MonoDevelop.Dnx
 			string rootNamespace = dnxProject.DefaultNamespace;
 
 			AddVisualStudioProperties ();
-			AddDnxProps ();
+			AddDotNetCoreProps ();
 			AddGlobalsProperties (projectGuid, rootNamespace);
 			AddSchemaVersion ();
-			AddDnxTargets ();
+			AddDotNetTargets ();
 
 			return msbuildProject;
 		}
@@ -137,9 +137,9 @@ namespace MonoDevelop.Dnx
 			return property;
 		}
 
-		void AddDnxProps ()
+		void AddDotNetCoreProps ()
 		{
-			AddImport (@"$(VSToolsPath)\DNX\Microsoft.DNX.Props", "'$(VSToolsPath)' != ''");
+			AddImport (@"$(VSToolsPath)\DotNet\Microsoft.DotNet.Props", "'$(VSToolsPath)' != ''");
 		}
 
 		void AddImport (string name, string condition)
@@ -156,9 +156,13 @@ namespace MonoDevelop.Dnx
 			AddProperty (propertyGroup, "SchemaVersion", "2.0");
 		}
 
-		void AddDnxTargets()
+		void AddDotNetTargets()
 		{
-			AddImport (@"$(VSToolsPath)\DNX\Microsoft.DNX.targets", "'$(VSToolsPath)' != ''");
+			if (dnxProject.IsWebProject) {
+				AddImport (@"$(VSToolsPath)\DotNet.Web\Microsoft.DotNet.Web.targets", "'$(VSToolsPath)' != ''");
+			} else {
+				AddImport (@"$(VSToolsPath)\DotNet\Microsoft.DotNet.targets", "'$(VSToolsPath)' != ''");
+			}
 		}
 
 		void AddGlobalsProperties (string projectGuid, string rootNamespace)
@@ -168,8 +172,9 @@ namespace MonoDevelop.Dnx
 
 			AddProperty (propertyGroup, "ProjectGuid", projectGuid);
 			AddProperty (propertyGroup, "RootNamespace", rootNamespace);
-			AddPropertyWithNotEmptyCondition (propertyGroup, "BaseIntermediateOutputPath", @"..\..\artifacts\obj\$(MSBuildProjectName)");
-			AddPropertyWithNotEmptyCondition (propertyGroup, "OutputPath", @"..\..\artifacts\bin\$(MSBuildProjectName)\");
+			AddPropertyWithNotEmptyCondition (propertyGroup, "BaseIntermediateOutputPath", @".\obj");
+			AddPropertyWithNotEmptyCondition (propertyGroup, "OutputPath", @".\bin\");
+			AddProperty (propertyGroup, "TargetFrameworkVersion", "v4.5");
 		}
 
 		static string GetProjectGuid (string projectGuid)
