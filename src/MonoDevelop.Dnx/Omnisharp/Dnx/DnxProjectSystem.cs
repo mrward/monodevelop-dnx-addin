@@ -285,7 +285,7 @@ namespace OmniSharp.Dnx
                     {
                         var val = m.Payload.ToObject<DependenciesMessage>();
                         var unresolvedDependencies = val.Dependencies.Values
-                            .Where(dep => dep.Type == "Unresolved");
+                            .Where(dep => !dep.Resolved);
 
                         if (unresolvedDependencies.Any())
                         {
