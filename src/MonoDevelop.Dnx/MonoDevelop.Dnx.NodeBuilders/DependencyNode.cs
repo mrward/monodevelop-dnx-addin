@@ -123,7 +123,7 @@ namespace MonoDevelop.Dnx.NodeBuilders
 		}
 
 		public bool Unresolved {
-			get { return dependency.Type == "Unresolved"; }
+			get { return !dependency.Resolved; }
 		}
 
 		public bool IsProject {
