@@ -383,6 +383,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="Templates\Projects\EmptyWeb\EmptyWebProject.Program.cs.xft.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\Projects\EmptyWeb\EmptyWebProject.Program.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\Projects\EmptyKestrelWeb\EmptyKestrelWebProject.Program.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\Projects\EmptyKestrelWeb\EmptyKestrelWebProject.Program.cs.xft.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="PostBuild.proj" />
   <ItemGroup>

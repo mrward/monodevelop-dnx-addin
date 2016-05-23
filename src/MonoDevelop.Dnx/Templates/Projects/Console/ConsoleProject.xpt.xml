@@ -6,11 +6,11 @@
 
 	<TemplateConfiguration>
 		<_Name>Console App</_Name>
-		<Category>other/aspnet/aspnet5</Category>
+		<Category>other/netcore/general</Category>
 		<Icon>md-project-console</Icon>
 		<Image id="md-console-project" />
 		<LanguageName>C#</LanguageName>
-		<_Description>Creates a new ASP.NET 5 console project.</_Description>
+		<_Description>Creates a new .NET Core console project.</_Description>
 		<DefaultFilename>ConsoleProject</DefaultFilename>
 		<FileExtension>.xproj</FileExtension>
 		<Wizard>MonoDevelop.Dnx.ProjectTemplateWizard</Wizard>

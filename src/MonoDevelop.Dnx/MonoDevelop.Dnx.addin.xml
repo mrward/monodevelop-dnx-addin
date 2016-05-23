@@ -14,12 +14,16 @@
 		<Import file="Templates/Projects/Console/ConsoleProject.project.json.xft.xml" />
 		<Import file="Templates/Projects/Console/ConsoleProject.xpt.xml" />
 
+		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.Program.cs" />
+		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.Program.cs.xft.xml" />
 		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.Startup.cs" />
 		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.Startup.cs.xft.xml" />
 		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.project.json" />
 		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.project.json.xft.xml" />
 		<Import file="Templates/Projects/EmptyWeb/EmptyWebProject.xpt.xml" />
 
+		<Import file="Templates/Projects/EmptyKestrelWeb/EmptyKestrelWebProject.Program.cs" />
+		<Import file="Templates/Projects/EmptyKestrelWeb/EmptyKestrelWebProject.Program.cs.xft.xml" />
 		<Import file="Templates/Projects/EmptyKestrelWeb/EmptyKestrelWebProject.Startup.cs" />
 		<Import file="Templates/Projects/EmptyKestrelWeb/EmptyKestrelWebProject.Startup.cs.xft.xml" />
 		<Import file="Templates/Projects/EmptyKestrelWeb/EmptyKestrelWebProject.project.json" />
@@ -117,8 +121,10 @@
 		<StockIcon stockid="md-dnx-framework" resource="framework-16.png" />
 	</Extension>
 
-	<Extension path="/MonoDevelop/Ide/ProjectTemplateCategories/other/aspnet">
-		<Category id="aspnet5" name="ASP.NET 5" />
+	<Extension path="/MonoDevelop/Ide/ProjectTemplateCategories/other">
+		<Category id="netcore" name=".NET Core" insertafter="net" insertbefore="aspnet">
+			<Category id="general" name="General" />
+		</Category>
 	</Extension>
 
 	<Extension path="/MonoDevelop/Ide/ProjectTemplates">
