@@ -68,7 +68,7 @@
 			id="MonoDevelop.Dnx.Commands.SelectActiveFramework"
 			type = "radio|array"
 			defaultHandler="MonoDevelop.Dnx.Commands.SelectActiveRuntimeCommandHandler"
-			_label="_Active DNX Framework" />
+			_label="_Active Framework" />
 		<Command
 			id="MonoDevelop.Dnx.Commands.DnxCommands.Restore"
 			_description="Restore dependencies"
@@ -150,6 +150,7 @@
 		<Class id="MonoDevelop.Dnx.ProjectTemplateWizard" class="MonoDevelop.Dnx.DnxProjectTemplateWizard" />
 	</Extension>
 
+	<!---
 	<Extension path="/MonoDevelop/ProjectModel/Gui/ItemOptionPanels/Build">
 		<Condition id="ItemType" value="MonoDevelop.Dnx.DnxProject">
 			<Section
@@ -162,6 +163,7 @@
 			</Section>
 		</Condition>
 	</Extension>
+	-->
 
 	<Extension path="/MonoDevelop/Ide/Pads">
 		<Pad
@@ -171,11 +173,11 @@
 			defaultStatus="AutoHide"
 			icon="md-console"
 			class="MonoDevelop.Dnx.DnxOutputPad"
-			_label="DNX Output" />
+			_label=".NET Core Output" />
 	</Extension>
 
 	<Extension path="/MonoDevelop/Ide/GlobalOptionsDialog">
-		<Section id="MonoDevelop.Dnx" _label="DNX" insertafter="VersionControl">
+		<Section id="MonoDevelop.Dnx" _label=".NET Core" insertafter="VersionControl">
 			<Section id="General" _label="General" fill="true" class="MonoDevelop.Dnx.Gui.DnxGlobalOptionsPanel" />
 		</Section>
 	</Extension>

@@ -52,7 +52,7 @@ namespace MonoDevelop.Dnx.Gui
 			var vbox = new Gtk.VBox ();
 			vbox.Spacing = 6;
 
-			var restoreSectionLabel = new Gtk.Label (GetBoldMarkup ("DNX Restore"));
+			var restoreSectionLabel = new Gtk.Label (GetBoldMarkup (".NET Core Restore"));
 			restoreSectionLabel.UseMarkup = true;
 			restoreSectionLabel.Xalign = 0;
 			vbox.PackStart (restoreSectionLabel, false, false, 0);
@@ -62,7 +62,7 @@ namespace MonoDevelop.Dnx.Gui
 			restoreCheckBox.BorderWidth = 10;
 			vbox.PackStart (restoreCheckBox, false, false, 0);
 
-			var outputSectionLabel = new Gtk.Label (GetBoldMarkup ("DNX Output"));
+			var outputSectionLabel = new Gtk.Label (GetBoldMarkup (".NET Core Output"));
 			outputSectionLabel.UseMarkup = true;
 			outputSectionLabel.Xalign = 0;
 			vbox.PackStart (outputSectionLabel, false, false, 0);
