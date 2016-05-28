@@ -1,5 +1,5 @@
 ﻿//
-// DotNetCoreExecutionCommand.cs
+// DotNetProjectBuildOutputPathResolver.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -25,35 +25,41 @@
 // THE SOFTWARE.
 //
 
-using MonoDevelop.Core.Execution;
+using System.IO;
+using System.Linq;
+using Microsoft.DotNet.ProjectModel;
+using Microsoft.DotNet.InternalAbstractions;
 
-namespace MonoDevelop.Dnx
+namespace MonoDevelop.DotNet.ProjectModel
 {
-	public class DotNetCoreExecutionCommand : ExecutionCommand
+	public class DotNetProjectBuildOutputPathResolver
 	{
-		public DotNetCoreExecutionCommand (string directory, string executable)
+		readonly string projectDirectory;
+
+		public DotNetProjectBuildOutputPathResolver (string projectDirectory)
 		{
-			WorkingDirectory = directory;
-			Executable = executable;
+			this.projectDirectory = projectDirectory;
 		}
 
-		public string WorkingDirectory { get; private set; }
-		public string Executable { get; private set; }
-
-		public string GetCommand ()
+		public string ResolveExecutablePath (string configuration = "Debug")
 		{
-			if (Executable != null)
-				return Executable;
+			var workspace = new BuildWorkspace (ProjectReaderSettings.ReadFromEnvironment ());
+			var contextCollection =  workspace.GetProjectContextCollection (projectDirectory);
+			if (contextCollection == null)
+				return null;
 
-			return "dotnet";
-		}
+			var frameworkContexts = contextCollection.FrameworkOnlyContexts.ToList ();
 
-		public string GetArguments ()
-		{
-			if (Executable != null)
-				return string.Empty;
+			var rids = RuntimeEnvironmentRidExtensions.GetAllCandidateRuntimeIdentifiers ().ToList ();
 
-			return "run";
+			foreach (ProjectContext frameworkContext in frameworkContexts.ToList ()) {
+				var runtimeContext = workspace.GetRuntimeContext (frameworkContext, rids);
+
+				OutputPaths paths = runtimeContext.GetOutputPaths (configuration);
+				return paths.RuntimeFiles.Executable;
+			}
+
+			return null;
 		}
 	}
 }

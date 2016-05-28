@@ -1,5 +1,5 @@
 ﻿//
-// DotNetCoreExecutionCommand.cs
+// AssemblyInfo.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -24,37 +24,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
-using MonoDevelop.Core.Execution;
+// Information about this assembly is defined by the following attributes.
+// Change them to the values specific to your project.
 
-namespace MonoDevelop.Dnx
-{
-	public class DotNetCoreExecutionCommand : ExecutionCommand
-	{
-		public DotNetCoreExecutionCommand (string directory, string executable)
-		{
-			WorkingDirectory = directory;
-			Executable = executable;
-		}
+[assembly: AssemblyTitle ("MonoDevelop.DotNet.ProjectModel")]
+[assembly: AssemblyDescription ("")]
+[assembly: AssemblyConfiguration ("")]
+[assembly: AssemblyCompany ("")]
+[assembly: AssemblyProduct ("")]
+[assembly: AssemblyCopyright ("Copyright (C) 2016 Matthew Ward")]
+[assembly: AssemblyTrademark ("")]
+[assembly: AssemblyCulture ("")]
 
-		public string WorkingDirectory { get; private set; }
-		public string Executable { get; private set; }
+// The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
+// The form "{Major}.{Minor}.*" will automatically update the build and revision,
+// and "{Major}.{Minor}.{Build}.*" will update just the revision.
 
-		public string GetCommand ()
-		{
-			if (Executable != null)
-				return Executable;
+[assembly: AssemblyVersion ("0.2")]
 
-			return "dotnet";
-		}
+// The following attributes are used to specify the signing key for the assembly,
+// if desired. See the Mono documentation for more information about signing.
 
-		public string GetArguments ()
-		{
-			if (Executable != null)
-				return string.Empty;
-
-			return "run";
-		}
-	}
-}
+//[assembly: AssemblyDelaySign(false)]
+//[assembly: AssemblyKeyFile("")]
 

@@ -1,6 +1,7 @@
 ﻿<ExtensionModel>
 	<Runtime>
 		<Import assembly="MonoDevelop.Dnx.dll" />
+		<Import assembly="MonoDevelop.DotNet.ProjectModel.dll" />
 
 		<Import file="Licenses/Apache-2.0-LICENSE.txt" />
 		<Import file="Licenses/Microsoft-AspNet-LICENSE.txt" />
