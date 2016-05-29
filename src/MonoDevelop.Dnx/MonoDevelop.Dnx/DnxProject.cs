@@ -80,17 +80,44 @@ namespace MonoDevelop.Dnx
 		void LoadFiles ()
 		{
 			// Add directories first, to make sure to show empty ones.
+			var excludedDirectories = new List<FilePath> ();
 			foreach (string directoryName in Directory.GetDirectories (BaseDirectory, "*.*", SearchOption.AllDirectories)) {
-				Items.Add (CreateDirectoryProjectItem (directoryName));
+				if (!IsExcludedDirectory (directoryName, excludedDirectories)) {
+					Items.Add (CreateDirectoryProjectItem (directoryName));
+				}
 			}
 
 			foreach (string fileName in Directory.GetFiles (BaseDirectory, "*.*", SearchOption.AllDirectories)) {
-				if (IsSupportedProjectFileItem (fileName)) {
+				if (IsSupportedProjectFileItem (fileName) &&
+					!IsPathExcluded (fileName, excludedDirectories)) {
 					Items.Add (CreateFileProjectItem(fileName));
 				}
 			}
 
 			AddConfigurations ();
+		}
+
+		static string[] excludedDirectoryNames = new string[] { "bin", "obj" };
+
+		bool IsExcludedDirectory (string directory, List<FilePath> excludedDirectories)
+		{
+			var info = new DirectoryInfo (directory);
+			bool excluded = excludedDirectoryNames.Any (name => name.Equals (info.Name, StringComparison.OrdinalIgnoreCase));
+			if (!excluded) {
+				excluded = IsPathExcluded (directory, excludedDirectories);
+			}
+
+			if (excluded) {
+				excludedDirectories.Add (new FilePath (directory));
+			}
+
+			return excluded;
+		}
+
+		static bool IsPathExcluded (string path, List<FilePath> excludedDirectories)
+		{
+			var filePath = new FilePath (path);
+			return excludedDirectories.Any (filePath.IsChildPathOf);
 		}
 
 		static bool IsSupportedProjectFileItem (string fileName)
