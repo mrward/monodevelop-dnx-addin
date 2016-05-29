@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 //
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -53,7 +54,14 @@ namespace MonoDevelop.DotNet.ProjectModel
 
 			var runtimeIds = RuntimeEnvironmentRidExtensions.GetAllCandidateRuntimeIdentifiers ().ToList ();
 
-			return ResolveOutputPath (frameworkContexts, workspace, configuration, runtimeIds);
+			string outputPath = ResolveOutputPath (frameworkContexts, workspace, configuration, runtimeIds);
+			if (outputPath == null && RuntimeEnvironment.OperatingSystemPlatform != Platform.Windows) {
+				// Try alternative architecture.
+				runtimeIds = runtimeIds.Select (runtimeId => ConvertArchitecture (runtimeId)).ToList ();
+				return ResolveOutputPath (frameworkContexts, workspace, configuration, runtimeIds);
+			}
+
+			return outputPath;
 		}
 
 		string ResolveOutputPath (
@@ -72,6 +80,23 @@ namespace MonoDevelop.DotNet.ProjectModel
 			}
 
 			return null;
+		}
+
+		static string ConvertArchitecture (string runtimeId)
+		{
+			string currentArchitecture = RuntimeEnvironment.RuntimeArchitecture;
+			string otherArchitecture = GetAlternativeArch ();
+			return runtimeId.Replace (currentArchitecture, otherArchitecture);
+		}
+
+		/// <summary>
+		/// Returns the alternative architecture to the current architecture.
+		/// So if the current architecture is x86 then this method returns x64 and
+		/// vice versa.
+		/// </summary>
+		static string GetAlternativeArch ()
+		{
+			return Environment.Is64BitProcess ? "x86" : "x64";
 		}
 	}
 }
