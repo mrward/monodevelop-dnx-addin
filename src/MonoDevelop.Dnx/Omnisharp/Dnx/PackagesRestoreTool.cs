@@ -18,16 +18,18 @@ namespace OmniSharp.Dnx
         private readonly ILogger _logger;
         private readonly IEventEmitter _emitter;
         private readonly DnxContext _context;
+        private readonly DotNetCorePaths _paths;
         private readonly object _lock;
         private readonly IDictionary<string, object> _projectLocks;
         private readonly SemaphoreSlim _semaphore;
 
-        public PackagesRestoreTool(OmniSharpOptions options, ILoggerFactory logger, IEventEmitter emitter, DnxContext context)
+        public PackagesRestoreTool(OmniSharpOptions options, ILoggerFactory logger, IEventEmitter emitter, DnxContext context, DotNetCorePaths paths)
         {
             _options = options;
             _logger = logger.CreateLogger<PackagesRestoreTool>();
             _emitter = emitter;
             _context = context;
+            _paths = paths;
             _lock = new object();
             _projectLocks = new Dictionary<string, object>();
             _semaphore = new SemaphoreSlim(GetNumConcurrentRestores());
@@ -101,7 +103,7 @@ namespace OmniSharp.Dnx
         {
             var psi = new ProcessStartInfo()
             {
-                FileName = "dotnet",
+                FileName = _paths.DotNet,
                 WorkingDirectory = Path.GetDirectoryName(project.Path),
                 CreateNoWindow = true,
                 UseShellExecute = false,

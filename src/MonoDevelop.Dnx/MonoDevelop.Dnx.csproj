@@ -296,6 +296,7 @@
     <Compile Include="MonoDevelop.Dnx\DotNetCoreExecutionCommand.cs" />
     <Compile Include="MonoDevelop.Dnx\DotNetCoreExecutionHandler.cs" />
     <Compile Include="MonoDevelop.Dnx\DotNetCoreWindowsDebuggerEngine.cs" />
+    <Compile Include="Omnisharp\Dnx\DotNetCorePaths.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

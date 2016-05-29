@@ -31,6 +31,7 @@ namespace OmniSharp.Dnx
         private readonly IOmnisharpEnvironment _env;
         private readonly ILogger _logger;
         private readonly IMetadataFileReferenceCache _metadataFileReferenceCache;
+        private readonly DotNetCorePaths _dotNetCorePaths;
         private readonly DesignTimeHostManager _designTimeHostManager;
         private readonly PackagesRestoreTool _packagesRestoreTool;
         private readonly DnxContext _context;
@@ -54,8 +55,9 @@ namespace OmniSharp.Dnx
             _logger = loggerFactory.CreateLogger<DnxProjectSystem>();
             _metadataFileReferenceCache = metadataFileReferenceCache;
             _options = optionsAccessor.Options;
-            _designTimeHostManager = new DesignTimeHostManager(loggerFactory);
-            _packagesRestoreTool = new PackagesRestoreTool(_options, loggerFactory, emitter, context);
+            _dotNetCorePaths = new DotNetCorePaths();
+            _designTimeHostManager = new DesignTimeHostManager(loggerFactory, _dotNetCorePaths);
+            _packagesRestoreTool = new PackagesRestoreTool(_options, loggerFactory, emitter, context, _dotNetCorePaths);
             _context = context;
             _watcher = watcher;
             _emitter = emitter;
@@ -70,6 +72,8 @@ namespace OmniSharp.Dnx
 
         public void Initalize()
         {
+            _context.RuntimePath = _dotNetCorePaths.DotNet;
+
             if (!ScanForProjects())
             {
                 // No DNX projects found so do nothing

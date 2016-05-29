@@ -141,12 +141,12 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		public DnxRuntime CurrentDnxRuntime {
+		public string CurrentDotNetRuntimePath {
 			get {
 				if (context != null) {
-					return new DnxRuntime (context.RuntimePath);
+					return context.RuntimePath;
 				}
-				return null;
+				return "dotnet";
 			}
 		}
 

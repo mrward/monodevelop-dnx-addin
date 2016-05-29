@@ -53,7 +53,7 @@ namespace MonoDevelop.Dnx
 		public BuildResult Build (DotNetProjectConfiguration config)
 		{
 			IProcessAsyncOperation operation = Runtime.ProcessService.StartConsoleProcess (
-				"dotnet",
+				DnxServices.ProjectService.CurrentDotNetRuntimePath,
 				String.Format ("build --configuration {0} --no-dependencies", config.Name),
 				project.BaseDirectory,
 				GetConsole (),

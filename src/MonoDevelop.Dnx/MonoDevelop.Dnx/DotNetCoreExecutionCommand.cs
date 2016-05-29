@@ -33,10 +33,13 @@ namespace MonoDevelop.Dnx
 {
 	public class DotNetCoreExecutionCommand : ExecutionCommand
 	{
-		public DotNetCoreExecutionCommand (string directory, string outputPath)
+		string dotNetRuntimePath;
+
+		public DotNetCoreExecutionCommand (string directory, string outputPath, string dotNetRuntimePath)
 		{
 			WorkingDirectory = directory;
 			OutputPath = outputPath;
+			this.dotNetRuntimePath = dotNetRuntimePath;
 
 			Init ();
 		}
@@ -54,10 +57,10 @@ namespace MonoDevelop.Dnx
 				Command = OutputPath;
 				IsExecutable = true;
 			} else if (extension == ".dll") {
-				Command = "dotnet";
+				Command = dotNetRuntimePath;
 				Arguments = String.Format ("\"{0}\"", OutputPath);
 			} else {
-				Command = "dotnet";
+				Command = dotNetRuntimePath;
 				Arguments = "run";
 			}
 		}

@@ -243,7 +243,8 @@ namespace MonoDevelop.Dnx
 			string outputPath = resolver.ResolveOutputPath (configuration.Name);
 			return new DotNetCoreExecutionCommand (
 				BaseDirectory,
-				outputPath
+				outputPath,
+				DnxServices.ProjectService.CurrentDotNetRuntimePath
 			);
 		}
 

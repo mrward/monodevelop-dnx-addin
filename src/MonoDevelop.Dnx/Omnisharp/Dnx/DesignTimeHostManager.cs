@@ -11,13 +11,15 @@ namespace OmniSharp.Dnx
     public class DesignTimeHostManager
     {
         private readonly ILogger _logger;
+        private readonly DotNetCorePaths _paths;
         private readonly object _processLock = new object();
         private Process _designTimeHostProcess;
         private bool _stopped;
 
-        public DesignTimeHostManager(ILoggerFactory loggerFactory)
+        public DesignTimeHostManager(ILoggerFactory loggerFactory, DotNetCorePaths paths)
         {
             _logger = loggerFactory.CreateLogger<DesignTimeHostManager>();
+            _paths = paths;
         }
 
         public TimeSpan DelayBeforeRestart { get; set; }
@@ -35,7 +37,7 @@ namespace OmniSharp.Dnx
 
                 var psi = new ProcessStartInfo
                 {
-                    FileName = "dotnet",
+                    FileName = _paths.DotNet,
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardError = true,
