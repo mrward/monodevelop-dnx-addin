@@ -242,12 +242,11 @@ namespace MonoDevelop.Dnx
 
 		ExecutionCommand CreateDotNetCoreExecutionCommand (ConfigurationSelector configSel, DotNetProjectConfiguration configuration)
 		{
-			//var resolver = new MonoDevelop.DotNet.ProjectModel.DotNetProjectBuildOutputPathResolver (BaseDirectory);
-			//string executable = resolver.ResolveExecutablePath (configuration.Name);
-			string executable = null;
+			var resolver = new MonoDevelop.DotNet.ProjectModel.DotNetProjectBuildOutputAssemblyResolver (BaseDirectory);
+			string outputPath = resolver.ResolveOutputPath (configuration.Name);
 			return new DotNetCoreExecutionCommand (
 				BaseDirectory,
-				executable
+				outputPath
 			);
 		}
 

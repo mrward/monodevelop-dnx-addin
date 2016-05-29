@@ -76,7 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="MonoDevelop.DotNet.ProjectModel\DotNetProjectBuildOutputPathResolver.cs" />
+    <Compile Include="MonoDevelop.DotNet.ProjectModel\DotNetProjectBuildOutputAssemblyResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

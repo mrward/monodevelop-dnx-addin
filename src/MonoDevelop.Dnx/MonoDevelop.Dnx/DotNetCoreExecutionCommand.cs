@@ -25,35 +25,58 @@
 // THE SOFTWARE.
 //
 
+using System;
+using System.IO;
 using MonoDevelop.Core.Execution;
 
 namespace MonoDevelop.Dnx
 {
 	public class DotNetCoreExecutionCommand : ExecutionCommand
 	{
-		public DotNetCoreExecutionCommand (string directory, string executable)
+		public DotNetCoreExecutionCommand (string directory, string outputPath)
 		{
 			WorkingDirectory = directory;
-			Executable = executable;
+			OutputPath = outputPath;
+
+			Init ();
 		}
 
 		public string WorkingDirectory { get; private set; }
-		public string Executable { get; private set; }
+		public string OutputPath { get; private set; }
+		public string Command { get; private set; }
+		public string Arguments { get; private set; }
+
+		void Init ()
+		{
+			string extension = GetOutputPathFileExtension ();
+			if (extension == ".exe") {
+				Command = OutputPath;
+			} else if (extension == ".dll") {
+				Command = "dotnet";
+				Arguments = String.Format ("\"{0}\"", OutputPath);
+			} else {
+				Command = "dotnet";
+				Arguments = "run";
+			}
+		}
+
+		string GetOutputPathFileExtension ()
+		{
+			if (!String.IsNullOrEmpty (OutputPath)) {
+				return Path.GetExtension (OutputPath);
+			}
+
+			return null;
+		}
 
 		public string GetCommand ()
 		{
-			if (Executable != null)
-				return Executable;
-
-			return "dotnet";
+			return Command;
 		}
 
 		public string GetArguments ()
 		{
-			if (Executable != null)
-				return string.Empty;
-
-			return "run";
+			return Arguments;
 		}
 	}
 }

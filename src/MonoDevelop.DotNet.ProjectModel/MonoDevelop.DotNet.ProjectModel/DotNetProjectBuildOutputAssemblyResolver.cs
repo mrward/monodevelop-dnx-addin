@@ -25,6 +25,8 @@
 // THE SOFTWARE.
 //
 
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.DotNet.ProjectModel;
@@ -32,16 +34,16 @@ using Microsoft.DotNet.InternalAbstractions;
 
 namespace MonoDevelop.DotNet.ProjectModel
 {
-	public class DotNetProjectBuildOutputPathResolver
+	public class DotNetProjectBuildOutputAssemblyResolver
 	{
 		readonly string projectDirectory;
 
-		public DotNetProjectBuildOutputPathResolver (string projectDirectory)
+		public DotNetProjectBuildOutputAssemblyResolver (string projectDirectory)
 		{
 			this.projectDirectory = projectDirectory;
 		}
 
-		public string ResolveExecutablePath (string configuration = "Debug")
+		public string ResolveOutputPath (string configuration = "Debug")
 		{
 			var workspace = new BuildWorkspace (ProjectReaderSettings.ReadFromEnvironment ());
 			var contextCollection =  workspace.GetProjectContextCollection (projectDirectory);
@@ -50,16 +52,51 @@ namespace MonoDevelop.DotNet.ProjectModel
 
 			var frameworkContexts = contextCollection.FrameworkOnlyContexts.ToList ();
 
-			var rids = RuntimeEnvironmentRidExtensions.GetAllCandidateRuntimeIdentifiers ().ToList ();
+			var runtimeIds = RuntimeEnvironmentRidExtensions.GetAllCandidateRuntimeIdentifiers ().ToList ();
 
-			foreach (ProjectContext frameworkContext in frameworkContexts.ToList ()) {
-				var runtimeContext = workspace.GetRuntimeContext (frameworkContext, rids);
+			string outputPath = ResolveOutputPath (frameworkContexts, workspace, configuration, runtimeIds);
+			if (outputPath == null) {
+				// Try alternative architecture.
+				runtimeIds = runtimeIds.Select (runtimeId => ConvertArchitecture (runtimeId)).ToList ();
+				return ResolveOutputPath (frameworkContexts, workspace, configuration, runtimeIds);
+			}
+
+			return outputPath;
+		}
+
+		string ResolveOutputPath (
+			IEnumerable<ProjectContext> frameworkContexts,
+			BuildWorkspace workspace,
+			string configuration,
+			IEnumerable<string> rids)
+		{
+			foreach (ProjectContext frameworkContext in frameworkContexts) {
+				ProjectContext runtimeContext = workspace.GetRuntimeContext (frameworkContext, rids);
 
 				OutputPaths paths = runtimeContext.GetOutputPaths (configuration);
-				return paths.RuntimeFiles.Executable;
+				if (File.Exists (paths.RuntimeFiles.Executable)) {
+					return paths.RuntimeFiles.Executable;
+				}
 			}
 
 			return null;
+		}
+
+		static string ConvertArchitecture (string runtimeId)
+		{
+			string currentArchitecture = RuntimeEnvironment.RuntimeArchitecture;
+			string otherArchitecture = GetAlternativeArch ();
+			return runtimeId.Replace (currentArchitecture, otherArchitecture);
+		}
+
+		/// <summary>
+		/// Returns the alternative architecture to the current architecture.
+		/// So if the current architecture is x86 then this method returns x64 and
+		/// vice versa.
+		/// </summary>
+		static string GetAlternativeArch ()
+		{
+			return Environment.Is64BitProcess ? "x86" : "x64";
 		}
 	}
 }
