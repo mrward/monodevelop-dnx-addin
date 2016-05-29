@@ -11,7 +11,21 @@
   <ItemGroup>
     <LicenseItem Include="Licenses\*.txt" />
     <TemplateItem Include="Templates\**\*.*" />
-    <ProjectModelItem Include="$(OutputPath)MonoDevelop.DotNet.ProjectModel.*" />
+    <ProjectModelItem Include="$(OutputPath)MonoDevelop.DotNet.ProjectModel.dll" />
+  </ItemGroup>
+  <ItemGroup  Condition=" '$(OS)' != 'Windows_NT'">
+    <ProjectModelItem Include="$(OutputPath)Microsoft.DotNet.InternalAbstractions.dll" />
+    <ProjectModelItem Include="$(OutputPath)Microsoft.DotNet.ProjectModel.dll" />
+    <ProjectModelItem Include="$(OutputPath)Microsoft.Extensions.DependencyModel.dll" />
+    <ProjectModelItem Include="$(OutputPath)NuGet.Common.dll" />
+    <ProjectModelItem Include="$(OutputPath)NuGet.Frameworks.dll" />
+    <ProjectModelItem Include="$(OutputPath)NuGet.Packaging.dll" />
+    <ProjectModelItem Include="$(OutputPath)NuGet.Packaging.Core.dll" />
+    <ProjectModelItem Include="$(OutputPath)NuGet.Packaging.Core.Types.dll" />
+    <ProjectModelItem Include="$(OutputPath)NuGet.RuntimeModel.dll" />
+    <ProjectModelItem Include="$(OutputPath)NuGet.Versioning.dll" />
+    <ProjectModelItem Include="$(OutputPath)System.Collections.Immutable.dll" />
+    <ProjectModelItem Include="$(OutputPath)System.Reflection.Metadata.dll" />
   </ItemGroup>
   <Target Name="MyPostBuildTarget">
     <Copy SourceFiles="@(LicenseItem)" DestinationFolder="$(OutputPath)merged\Licenses" />

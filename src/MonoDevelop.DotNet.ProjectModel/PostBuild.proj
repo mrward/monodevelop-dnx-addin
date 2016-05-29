@@ -8,7 +8,24 @@
     <MonoPath Condition=" '$(MonoPath)' == '' ">mono</MonoPath>
     <ILRepackCommand Condition=" '$(OS)' != 'Windows_NT' ">$(MonoPath) --runtime=v4.0.30319 "$(ILRepackExePath)"</ILRepackCommand>
   </PropertyGroup>
+  <ItemGroup  Condition=" '$(OS)' != 'Windows_NT'">
+    <ProjectModelItem Include="$(OutputPath)MonoDevelop.DotNet.ProjectModel.dll" />
+    <ProjectModelItem Include="$(OutputPath)MonoDevelop.DotNet.ProjectModel.dll.mdb" />
+    <ProjectModelItem Include="$(OutputPath)Microsoft.DotNet.InternalAbstractions.dll" />
+    <ProjectModelItem Include="$(OutputPath)Microsoft.DotNet.ProjectModel.dll" />
+    <ProjectModelItem Include="$(OutputPath)Microsoft.Extensions.DependencyModel.dll" />
+    <ProjectModelItem Include="$(OutputPath)NuGet.Common.dll" />
+    <ProjectModelItem Include="$(OutputPath)NuGet.Frameworks.dll" />
+    <ProjectModelItem Include="$(OutputPath)NuGet.Packaging.dll" />
+    <ProjectModelItem Include="$(OutputPath)NuGet.Packaging.Core.dll" />
+    <ProjectModelItem Include="$(OutputPath)NuGet.Packaging.Core.Types.dll" />
+    <ProjectModelItem Include="$(OutputPath)NuGet.RuntimeModel.dll" />
+    <ProjectModelItem Include="$(OutputPath)NuGet.Versioning.dll" />
+    <ProjectModelItem Include="$(OutputPath)System.Collections.Immutable.dll" />
+    <ProjectModelItem Include="$(OutputPath)System.Reflection.Metadata.dll" />
+  </ItemGroup>
   <Target Name="MyPostBuildTarget">
-    <Exec Command="$(ILRepackCommand) /allowdup:System.Collections.Generic.CollectionExtensions /internalize /targetPlatform:v4 /out:&quot;merged\$(AssemblyName).dll&quot; $(AssemblyName).dll MonoDevelop.DotNet.ProjectModel.dll  Microsoft.DotNet.InternalAbstractions.dll Microsoft.DotNet.ProjectModel.dll Microsoft.Extensions.DependencyModel.dll Newtonsoft.Json.dll NuGet.Common.dll NuGet.Frameworks.dll NuGet.Packaging.dll NuGet.Packaging.Core.dll NuGet.Packaging.Core.Types.dll NuGet.RuntimeModel.dll NuGet.Versioning.dll System.Collections.Immutable.dll System.Reflection.Metadata.dll " WorkingDirectory="$(OutputPath)" />
+    <Copy Condition=" '$(OS)' != 'Windows_NT'" SourceFiles="@(ProjectModelItem)" DestinationFolder="$(OutputPath)merged" />
+    <Exec  Condition=" '$(OS)' == 'Windows_NT'" Command="$(ILRepackCommand) /allowdup:System.Collections.Generic.CollectionExtensions /internalize /targetPlatform:v4 /out:&quot;merged\$(AssemblyName).dll&quot; $(AssemblyName).dll MonoDevelop.DotNet.ProjectModel.dll  Microsoft.DotNet.InternalAbstractions.dll Microsoft.DotNet.ProjectModel.dll Microsoft.Extensions.DependencyModel.dll Newtonsoft.Json.dll NuGet.Common.dll NuGet.Frameworks.dll NuGet.Packaging.dll NuGet.Packaging.Core.dll NuGet.Packaging.Core.Types.dll NuGet.RuntimeModel.dll NuGet.Versioning.dll System.Collections.Immutable.dll System.Reflection.Metadata.dll " WorkingDirectory="$(OutputPath)" />
   </Target>
 </Project>
