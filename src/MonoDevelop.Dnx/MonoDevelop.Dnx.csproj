@@ -215,7 +215,6 @@
     <Compile Include="MonoDevelop.Dnx\JsonFile.cs" />
     <Compile Include="MonoDevelop.Dnx\ProjectJsonFile.cs" />
     <Compile Include="MonoDevelop.Dnx.Commands\DependencyNodeCommandHandler.cs" />
-    <Compile Include="MonoDevelop.Dnx\DnxDebuggerEngine.cs" />
     <Compile Include="MonoDevelop.PackageManagement\AggregateExceptionErrorMessage.cs" />
     <Compile Include="MonoDevelop.PackageManagement\AvailablePackagesViewModel.cs" />
     <Compile Include="MonoDevelop.PackageManagement\DelegateCommand.cs" />
@@ -297,6 +296,7 @@
     <Compile Include="MonoDevelop.Dnx\DotNetCoreExecutionHandler.cs" />
     <Compile Include="MonoDevelop.Dnx\DotNetCoreWindowsDebuggerEngine.cs" />
     <Compile Include="Omnisharp\Dnx\DotNetCorePaths.cs" />
+    <Compile Include="MonoDevelop.Dnx\DotNetCoreDebuggerEngine.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

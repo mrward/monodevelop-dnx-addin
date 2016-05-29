@@ -90,16 +90,15 @@
 	</Extension>
 
 	<Extension path="/MonoDevelop/Core/ExecutionHandlers">
-		<ExecutionHandler id="Dnx" class ="MonoDevelop.Dnx.DnxExecutionHandler" />
 		<ExecutionHandler id="DotNetCore" class ="MonoDevelop.Dnx.DotNetCoreExecutionHandler" />
 	</Extension>
 
 	<Extension path="/MonoDevelop/Debugging/DebuggerEngines">
 		<DebuggerEngine
 			id="MonoDevelop.Dnx.DnxDebuggerEngine"
-			name="Mono Soft Debugger for Dnx"
+			name="Mono Soft Debugger for .NET Core"
 			features="Breakpoints, Pause, Stepping, DebugFile, ConditionalBreakpoints, Tracepoints, Catchpoints, Disassembly"
-			type="MonoDevelop.Dnx.DnxDebuggerEngine" />
+			type="MonoDevelop.Dnx.DotNetCoreDebuggerEngine" />
 		<DebuggerEngine
 			id="MonoDevelop.Dnx.DnxWindowsDebuggerEngine"
 			name="Microsoft .NET Debugger for .NET Core"
