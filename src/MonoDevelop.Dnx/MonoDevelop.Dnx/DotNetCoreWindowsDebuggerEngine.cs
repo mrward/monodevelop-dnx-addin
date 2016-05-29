@@ -1,5 +1,5 @@
 ﻿//
-// DnxWindowsDebuggerEngine.cs
+// DotNetCoreWindowsDebuggerEngine.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -34,7 +34,7 @@ using MonoDevelop.Debugger;
 
 namespace MonoDevelop.Dnx
 {
-	public class DnxWindowsDebuggerEngine : DebuggerEngineBackend
+	public class DotNetCoreWindowsDebuggerEngine : DebuggerEngineBackend
 	{
 		DebuggerEngine engine;
 
@@ -49,12 +49,12 @@ namespace MonoDevelop.Dnx
 
 		public override bool CanDebugCommand (ExecutionCommand cmd)
 		{
-			return cmd is DnxProjectExecutionCommand && Platform.IsWindows && DebuggerEngine != null;
+			return cmd is DotNetCoreExecutionCommand && Platform.IsWindows && DebuggerEngine != null;
 		}
 
 		public override DebuggerStartInfo CreateDebuggerStartInfo (ExecutionCommand cmd)
 		{
-			var dotNetCommand = DnxExecutionHandler.ConvertCommand ((DnxProjectExecutionCommand)cmd);
+			var dotNetCommand = DotNetCoreExecutionHandler.ConvertCommand ((DotNetCoreExecutionCommand)cmd);
 			return DebuggerEngine.CreateDebuggerStartInfo (dotNetCommand);
 		}
 

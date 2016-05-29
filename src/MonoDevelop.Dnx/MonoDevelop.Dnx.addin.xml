@@ -91,6 +91,7 @@
 
 	<Extension path="/MonoDevelop/Core/ExecutionHandlers">
 		<ExecutionHandler id="Dnx" class ="MonoDevelop.Dnx.DnxExecutionHandler" />
+		<ExecutionHandler id="DotNetCore" class ="MonoDevelop.Dnx.DotNetCoreExecutionHandler" />
 	</Extension>
 
 	<Extension path="/MonoDevelop/Debugging/DebuggerEngines">
@@ -101,9 +102,9 @@
 			type="MonoDevelop.Dnx.DnxDebuggerEngine" />
 		<DebuggerEngine
 			id="MonoDevelop.Dnx.DnxWindowsDebuggerEngine"
-			name="Microsoft .NET Debugger for Dnx"
+			name="Microsoft .NET Debugger for .NET Core"
 			features="Tracepoints, Catchpoints, DebugFile, Stepping, Pause, Breakpoints, ConditionalBreakpoints"
-			type="MonoDevelop.Dnx.DnxWindowsDebuggerEngine" />
+			type="MonoDevelop.Dnx.DotNetCoreWindowsDebuggerEngine" />
 	</Extension>
 
 	<Extension path="/MonoDevelop/Ide/Pads/ProjectPad">

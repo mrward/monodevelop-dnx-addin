@@ -234,13 +234,10 @@ namespace MonoDevelop.Dnx
 
 		protected override ExecutionCommand CreateExecutionCommand (ConfigurationSelector configSel, DotNetProjectConfiguration configuration)
 		{
-			return new DnxProjectExecutionCommand (
-				BaseDirectory,
-				DnxServices.ProjectService.CurrentDnxRuntime
-			);
+			return CreateDotNetCoreExecutionCommand (configSel, configuration);
 		}
 
-		ExecutionCommand CreateDotNetCoreExecutionCommand (ConfigurationSelector configSel, DotNetProjectConfiguration configuration)
+		DotNetCoreExecutionCommand CreateDotNetCoreExecutionCommand (ConfigurationSelector configSel, DotNetProjectConfiguration configuration)
 		{
 			var resolver = new MonoDevelop.DotNet.ProjectModel.DotNetProjectBuildOutputAssemblyResolver (BaseDirectory);
 			string outputPath = resolver.ResolveOutputPath (configuration.Name);
@@ -278,12 +275,14 @@ namespace MonoDevelop.Dnx
 
 		protected override void DoExecute (IProgressMonitor monitor, ExecutionContext context, ConfigurationSelector configuration)
 		{
-//			if (!CurrentExecutionTargetIsCoreClr (context.ExecutionTarget)) {
-//				base.DoExecute (monitor, context, configuration);
-//				return;
-//			}
-
 			var config = GetConfiguration (configuration) as DotNetProjectConfiguration;
+
+			DotNetCoreExecutionCommand executionCommand = CreateDotNetCoreExecutionCommand (configuration, config);
+			if (executionCommand.IsExecutable) {
+				base.DoExecute (monitor, context, configuration);
+				return;
+			}
+
 			monitor.Log.WriteLine (GettextCatalog.GetString ("Running {0} ...", Name));
 
 			IConsole console = CreateConsole (config, context);
@@ -291,7 +290,6 @@ namespace MonoDevelop.Dnx
 
 			try {
 				try {
-					ExecutionCommand executionCommand = CreateDotNetCoreExecutionCommand (configuration, config);
 					if (context.ExecutionTarget != null)
 						executionCommand.Target = context.ExecutionTarget;
 

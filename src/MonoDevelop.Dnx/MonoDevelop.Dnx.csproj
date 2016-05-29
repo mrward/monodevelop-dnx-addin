@@ -267,7 +267,6 @@
     <Compile Include="MonoDevelop.Dnx\DnxLoggerService.cs" />
     <Compile Include="MonoDevelop.Dnx.Gui\DnxGlobalOptionsPanel.cs" />
     <Compile Include="MonoDevelop.Dnx.Commands\DependenciesFolderNodeCommandHandler.cs" />
-    <Compile Include="MonoDevelop.Dnx\DnxWindowsDebuggerEngine.cs" />
     <Compile Include="MonoDevelop.Dnx.Commands\SelectActiveRuntimeCommandHandler.cs" />
     <Compile Include="MonoDevelop.Dnx.Gui\DnxRuntimeOptionsPanel.cs" />
     <Compile Include="MonoDevelop.Dnx\FileSystemWatcherGroup.cs" />
@@ -291,6 +290,8 @@
     <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\SourcesMessage.cs" />
     <Compile Include="MonoDevelop.Dnx\ConsoleWrapper.cs" />
     <Compile Include="MonoDevelop.Dnx\DotNetCoreExecutionCommand.cs" />
+    <Compile Include="MonoDevelop.Dnx\DotNetCoreExecutionHandler.cs" />
+    <Compile Include="MonoDevelop.Dnx\DotNetCoreWindowsDebuggerEngine.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

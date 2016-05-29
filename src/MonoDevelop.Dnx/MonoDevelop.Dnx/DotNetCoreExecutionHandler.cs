@@ -1,5 +1,5 @@
 ﻿//
-// DotNetCoreExecutionCommand.cs
+// DotNetCoreExecutionHandler.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -25,60 +25,34 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.IO;
+using System.Collections.Generic;
 using MonoDevelop.Core.Execution;
+using MonoDevelop.Core;
 
 namespace MonoDevelop.Dnx
 {
-	public class DotNetCoreExecutionCommand : ExecutionCommand
+	public class DotNetCoreExecutionHandler : IExecutionHandler
 	{
-		public DotNetCoreExecutionCommand (string directory, string outputPath)
+		public bool CanExecute (ExecutionCommand command)
 		{
-			WorkingDirectory = directory;
-			OutputPath = outputPath;
-
-			Init ();
+			return command is DotNetCoreExecutionCommand;
 		}
 
-		public string WorkingDirectory { get; private set; }
-		public string OutputPath { get; private set; }
-		public string Command { get; private set; }
-		public string Arguments { get; private set; }
-		public bool IsExecutable { get; private set; }
-
-		void Init ()
+		public static DotNetExecutionCommand ConvertCommand (DotNetCoreExecutionCommand dnxCommand)
 		{
-			string extension = GetOutputPathFileExtension ();
-			if (extension == ".exe") {
-				Command = OutputPath;
-				IsExecutable = true;
-			} else if (extension == ".dll") {
-				Command = "dotnet";
-				Arguments = String.Format ("\"{0}\"", OutputPath);
-			} else {
-				Command = "dotnet";
-				Arguments = "run";
-			}
+			return new DotNetExecutionCommand (
+				dnxCommand.GetCommand (),
+				dnxCommand.GetArguments (),
+				dnxCommand.WorkingDirectory
+			) {
+				UserAssemblyPaths = new List<string> ()
+			};
 		}
 
-		string GetOutputPathFileExtension ()
+		public IProcessAsyncOperation Execute (ExecutionCommand command, IConsole console)
 		{
-			if (!String.IsNullOrEmpty (OutputPath)) {
-				return Path.GetExtension (OutputPath);
-			}
-
-			return null;
-		}
-
-		public string GetCommand ()
-		{
-			return Command;
-		}
-
-		public string GetArguments ()
-		{
-			return Arguments;
+			var dotNetCommand = ConvertCommand ((DotNetCoreExecutionCommand)command);
+			return Runtime.SystemAssemblyService.DefaultRuntime.GetExecutionHandler ().Execute (dotNetCommand, console);
 		}
 	}
 }
