@@ -38,12 +38,14 @@ namespace MonoDevelop.Dnx
 			return command is DotNetCoreExecutionCommand;
 		}
 
-		public static DotNetExecutionCommand ConvertCommand (DotNetCoreExecutionCommand dnxCommand)
+		public static DotNetExecutionCommand ConvertCommand (DotNetCoreExecutionCommand command)
 		{
+			command.Initialize ();
+
 			return new DotNetExecutionCommand (
-				dnxCommand.GetCommand (),
-				dnxCommand.GetArguments (),
-				dnxCommand.WorkingDirectory
+				command.GetCommand (),
+				command.GetArguments (),
+				command.WorkingDirectory
 			) {
 				UserAssemblyPaths = new List<string> ()
 			};

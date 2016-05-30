@@ -180,8 +180,6 @@
     <Compile Include="MonoDevelop.Dnx\SolutionExtensions.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxStartupHandler.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectConfiguration.cs" />
-    <Compile Include="MonoDevelop.Dnx\DnxProjectExecutionCommand.cs" />
-    <Compile Include="MonoDevelop.Dnx\DnxExecutionHandler.cs" />
     <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependenciesNodeBuilderExtension.cs" />
     <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependenciesFolderNodeBuilder.cs" />
     <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependenciesFolderNode.cs" />
@@ -202,7 +200,6 @@
     <Compile Include="Omnisharp\Utilities\DirectoryEnumerator.cs" />
     <Compile Include="Omnisharp\MSBuild\ProjectFile\ProjectFileInfo.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxRuntime.cs" />
-    <Compile Include="MonoDevelop.Dnx\DnxExecutionTarget.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxFrameworkExtensions.cs" />
     <Compile Include="MonoDevelop.Dnx\GlobalJsonFile.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxConfigurationParameters.cs" />
@@ -297,6 +294,7 @@
     <Compile Include="MonoDevelop.Dnx\DotNetCoreWindowsDebuggerEngine.cs" />
     <Compile Include="Omnisharp\Dnx\DotNetCorePaths.cs" />
     <Compile Include="MonoDevelop.Dnx\DotNetCoreDebuggerEngine.cs" />
+    <Compile Include="MonoDevelop.Dnx\DotNetCoreExecutionTarget.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

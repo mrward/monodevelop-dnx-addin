@@ -31,6 +31,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.DotNet.ProjectModel;
 using Microsoft.DotNet.InternalAbstractions;
+using NuGet.Frameworks;
 
 namespace MonoDevelop.DotNet.ProjectModel
 {
@@ -43,7 +44,7 @@ namespace MonoDevelop.DotNet.ProjectModel
 			this.projectDirectory = projectDirectory;
 		}
 
-		public string ResolveOutputPath (string configuration = "Debug")
+		public string ResolveOutputPath (string framework, string configuration = "Debug")
 		{
 			var workspace = new BuildWorkspace (ProjectReaderSettings.ReadFromEnvironment ());
 			var contextCollection =  workspace.GetProjectContextCollection (projectDirectory);
@@ -51,6 +52,10 @@ namespace MonoDevelop.DotNet.ProjectModel
 				return null;
 
 			var frameworkContexts = contextCollection.FrameworkOnlyContexts.ToList ();
+
+			if (framework != null) {
+				frameworkContexts = FilterFrameworks (framework, frameworkContexts).ToList ();
+			}
 
 			var runtimeIds = RuntimeEnvironmentRidExtensions.GetAllCandidateRuntimeIdentifiers ().ToList ();
 
@@ -62,6 +67,15 @@ namespace MonoDevelop.DotNet.ProjectModel
 			}
 
 			return outputPath;
+		}
+
+		IEnumerable<ProjectContext> FilterFrameworks (string framework, IEnumerable<ProjectContext> frameworkContexts)
+		{
+			var frameworkContext = frameworkContexts.FirstOrDefault (c => Equals (c.TargetFramework, NuGetFramework.Parse (framework)));
+			if (frameworkContext != null) {
+				return new [] { frameworkContext };
+			}
+			return frameworkContexts;
 		}
 
 		string ResolveOutputPath (

@@ -34,14 +34,13 @@ namespace MonoDevelop.Dnx
 	public class DotNetCoreExecutionCommand : ExecutionCommand
 	{
 		string dotNetRuntimePath;
+		string configuration;
 
-		public DotNetCoreExecutionCommand (string directory, string outputPath, string dotNetRuntimePath)
+		public DotNetCoreExecutionCommand (string directory, string configuration, string dotNetRuntimePath)
 		{
 			WorkingDirectory = directory;
-			OutputPath = outputPath;
+			this.configuration = configuration;
 			this.dotNetRuntimePath = dotNetRuntimePath;
-
-			Init ();
 		}
 
 		public string WorkingDirectory { get; private set; }
@@ -50,8 +49,16 @@ namespace MonoDevelop.Dnx
 		public string Arguments { get; private set; }
 		public bool IsExecutable { get; private set; }
 
-		void Init ()
+		public DotNetCoreExecutionTarget DotNetCoreExecutionTarget {
+			get { return Target as DotNetCoreExecutionTarget; }
+		}
+
+		public void Initialize ()
 		{
+			var resolver = new MonoDevelop.DotNet.ProjectModel.DotNetProjectBuildOutputAssemblyResolver (WorkingDirectory);
+			string framework = GetFramework ();
+			OutputPath = resolver.ResolveOutputPath (framework, configuration);
+
 			string extension = GetOutputPathFileExtension ();
 			if (extension == ".exe") {
 				Command = OutputPath;
@@ -63,6 +70,16 @@ namespace MonoDevelop.Dnx
 				Command = dotNetRuntimePath;
 				Arguments = "run";
 			}
+		}
+
+		string GetFramework ()
+		{
+			var target = DotNetCoreExecutionTarget;
+			if (target != null && !target.IsDefaultProfile && target.Framework != null) {
+				return target.Framework.ShortName;
+			}
+
+			return null;
 		}
 
 		string GetOutputPathFileExtension ()

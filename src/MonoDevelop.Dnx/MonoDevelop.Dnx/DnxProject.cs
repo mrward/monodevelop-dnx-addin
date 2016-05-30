@@ -266,11 +266,9 @@ namespace MonoDevelop.Dnx
 
 		DotNetCoreExecutionCommand CreateDotNetCoreExecutionCommand (ConfigurationSelector configSel, DotNetProjectConfiguration configuration)
 		{
-			var resolver = new MonoDevelop.DotNet.ProjectModel.DotNetProjectBuildOutputAssemblyResolver (BaseDirectory);
-			string outputPath = resolver.ResolveOutputPath (configuration.Name);
 			return new DotNetCoreExecutionCommand (
 				BaseDirectory,
-				outputPath,
+				configuration.Name,
 				DnxServices.ProjectService.CurrentDotNetRuntimePath
 			);
 		}
@@ -306,6 +304,11 @@ namespace MonoDevelop.Dnx
 			var config = GetConfiguration (configuration) as DotNetProjectConfiguration;
 
 			DotNetCoreExecutionCommand executionCommand = CreateDotNetCoreExecutionCommand (configuration, config);
+			if (context.ExecutionTarget != null)
+				executionCommand.Target = context.ExecutionTarget;
+
+			executionCommand.Initialize ();
+
 			if (executionCommand.IsExecutable) {
 				base.DoExecute (monitor, context, configuration);
 				return;
@@ -318,9 +321,6 @@ namespace MonoDevelop.Dnx
 
 			try {
 				try {
-					if (context.ExecutionTarget != null)
-						executionCommand.Target = context.ExecutionTarget;
-
 					IProcessAsyncOperation asyncOp = Execute (executionCommand, console);
 					aggregatedOperationMonitor.AddOperation (asyncOp);
 					asyncOp.WaitForCompleted ();
@@ -352,15 +352,6 @@ namespace MonoDevelop.Dnx
 				dotNetCoreCommand.WorkingDirectory,
 				console,
 				null);
-		}
-
-		bool CurrentExecutionTargetIsCoreClr (ExecutionTarget executionTarget)
-		{
-			var dnxExecutionTarget = executionTarget as DnxExecutionTarget;
-			if (dnxExecutionTarget != null) {
-				return dnxExecutionTarget.IsCoreClr ();
-			}
-			return false;
 		}
 
 		public override FilePath GetOutputFileName (ConfigurationSelector configuration)
@@ -513,24 +504,22 @@ namespace MonoDevelop.Dnx
 			if (project == null)
 				return Enumerable.Empty<ExecutionTarget> ();
 
-			return GetDnxExecutionTargets ();
+			return GetDotNetCoreExecutionTargets ();
 		}
 
-		IEnumerable<ExecutionTarget> GetDnxExecutionTargets ()
+		IEnumerable<ExecutionTarget> GetDotNetCoreExecutionTargets ()
 		{
-			foreach (string command in project.Commands.Keys) {
-				foreach (DnxExecutionTarget target in GetDnxExecutionTargets (command, project.Frameworks)) {
-					yield return target;
-				}
+			foreach (DotNetCoreExecutionTarget target in GetDotNetCoreExecutionTargets (project.Frameworks)) {
+				yield return target;
 			}
 		}
 
-		static IEnumerable<DnxExecutionTarget> GetDnxExecutionTargets (string command, IEnumerable<DnxFramework> frameworks)
+		static IEnumerable<DotNetCoreExecutionTarget> GetDotNetCoreExecutionTargets (IEnumerable<DnxFramework> frameworks)
 		{
-			yield return DnxExecutionTarget.CreateDefaultTarget (command);
+			yield return DotNetCoreExecutionTarget.CreateDefaultTarget ();
 
 			foreach (DnxFramework framework in frameworks) {
-				yield return new DnxExecutionTarget (command, framework);
+				yield return new DotNetCoreExecutionTarget (framework);
 			}
 		}
 
