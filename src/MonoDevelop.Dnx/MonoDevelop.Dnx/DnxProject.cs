@@ -773,17 +773,17 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		protected override Task<List<string>> OnGetReferencedAssemblies (ConfigurationSelector configuration)
+		protected override Task<List<AssemblyReference>> OnGetReferencedAssemblies (ConfigurationSelector configuration)
 		{
-			var references = new List<string> ();
+			var references = new List<AssemblyReference> ();
 
 			foreach (ProjectReference reference in Project.References.Where (r => r.ReferenceType != ReferenceType.Project)) {
 				foreach (string assembly in reference.GetReferencedFileNames (configuration)) {
-					references.Add (assembly);
+					references.Add (new AssemblyReference (assembly));
 				}
 			}
 
-			return Task.FromResult<List<string>> (references);
+			return Task.FromResult<List<AssemblyReference>> (references);
 		}
 
 		protected override IEnumerable<SolutionItem> OnGetReferencedItems (ConfigurationSelector configuration)
