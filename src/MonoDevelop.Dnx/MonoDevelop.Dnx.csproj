@@ -4,7 +4,6 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{CE9C300F-2791-4FBA-9B7F-51F5431F21EC}</ProjectGuid>
-    <ProjectTypeGuids>{86F6BF2A-E449-4B3E-813B-9ACC37E5545F};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <RootNamespace>MonoDevelop.Dnx</RootNamespace>
     <AssemblyName>MonoDevelop.Dnx</AssemblyName>
@@ -358,7 +357,7 @@
     </None>
   </ItemGroup>
   <Import Project="PostBuild.proj" />
-  <Import Project="..\packages\MonoDevelop.Addins.0.3.0\build\net40\MonoDevelop.Addins.targets" Condition="Exists('..\packages\MonoDevelop.Addins.0.3.0\build\net40\MonoDevelop.Addins.targets')" />
+  <Import Project="MonoDevelop.References.proj" />
   <ItemGroup>
     <Folder Include="Templates\Projects\EmptyKestrelWeb\" />
     <Folder Include="MonoDevelop.Dnx.Commands\" />
