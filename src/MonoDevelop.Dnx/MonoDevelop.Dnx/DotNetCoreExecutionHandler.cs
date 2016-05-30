@@ -1,10 +1,10 @@
 ﻿//
-// DnxWindowsDebuggerEngine.cs
+// DotNetCoreExecutionHandler.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
 //
-// Copyright (c) 2015 Matthew Ward
+// Copyright (c) 2016 Matthew Ward
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,42 +25,36 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.Linq;
-using Mono.Debugging.Client;
-using MonoDevelop.Core;
+using System.Collections.Generic;
 using MonoDevelop.Core.Execution;
-using MonoDevelop.Debugger;
+using MonoDevelop.Core;
 
 namespace MonoDevelop.Dnx
 {
-	public class DnxWindowsDebuggerEngine : DebuggerEngineBackend
+	public class DotNetCoreExecutionHandler : IExecutionHandler
 	{
-		DebuggerEngine engine;
-
-		DebuggerEngine DebuggerEngine {
-			get {
-				if (engine == null) {
-					engine = DebuggingService.GetDebuggerEngines ().FirstOrDefault (e => e.Id == "MonoDevelop.Debugger.Win32");
-				}
-				return engine;
-			}
+		public bool CanExecute (ExecutionCommand command)
+		{
+			return command is DotNetCoreExecutionCommand;
 		}
 
-		public override bool CanDebugCommand (ExecutionCommand cmd)
+		public static DotNetExecutionCommand ConvertCommand (DotNetCoreExecutionCommand command)
 		{
-			return cmd is DnxProjectExecutionCommand && Platform.IsWindows && DebuggerEngine != null;
+			command.Initialize ();
+
+			return new DotNetExecutionCommand (
+				command.GetCommand (),
+				command.GetArguments (),
+				command.WorkingDirectory
+			) {
+				UserAssemblyPaths = new List<string> ()
+			};
 		}
 
-		public override DebuggerStartInfo CreateDebuggerStartInfo (ExecutionCommand cmd)
+		public ProcessAsyncOperation Execute (ExecutionCommand command, OperationConsole console)
 		{
-			var dotNetCommand = DnxExecutionHandler.ConvertCommand ((DnxProjectExecutionCommand)cmd);
-			return DebuggerEngine.CreateDebuggerStartInfo (dotNetCommand);
-		}
-
-		public override DebuggerSession CreateSession ()
-		{
-			return DebuggerEngine.CreateSession ();
+			var dotNetCommand = ConvertCommand ((DotNetCoreExecutionCommand)command);
+			return Runtime.SystemAssemblyService.DefaultRuntime.GetExecutionHandler ().Execute (dotNetCommand, console);
 		}
 	}
 }

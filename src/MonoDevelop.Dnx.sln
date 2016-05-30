@@ -3,12 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoDevelop.Dnx", "MonoDevelop.Dnx\MonoDevelop.Dnx.csproj", "{CE9C300F-2791-4FBA-9B7F-51F5431F21EC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoDevelop.DotNet.ProjectModel", "MonoDevelop.DotNet.ProjectModel\MonoDevelop.DotNet.ProjectModel.csproj", "{A18F5B58-8D1E-4F8F-9FB2-5797D70EAADC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A18F5B58-8D1E-4F8F-9FB2-5797D70EAADC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A18F5B58-8D1E-4F8F-9FB2-5797D70EAADC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A18F5B58-8D1E-4F8F-9FB2-5797D70EAADC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A18F5B58-8D1E-4F8F-9FB2-5797D70EAADC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CE9C300F-2791-4FBA-9B7F-51F5431F21EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CE9C300F-2791-4FBA-9B7F-51F5431F21EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE9C300F-2791-4FBA-9B7F-51F5431F21EC}.Release|Any CPU.ActiveCfg = Release|Any CPU

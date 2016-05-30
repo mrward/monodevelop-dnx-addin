@@ -33,13 +33,12 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.DotNet.ProjectModel.Server.Models;
 using MonoDevelop.Core;
 using MonoDevelop.Core.Execution;
 using MonoDevelop.Projects;
 using MonoDevelop.Projects.MSBuild;
 using OmniSharp.Models;
-
-using DependenciesMessage = Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages.DependenciesMessage;
 
 namespace MonoDevelop.Dnx
 {
@@ -119,12 +118,16 @@ namespace MonoDevelop.Dnx
 		void LoadFiles ()
 		{
 			// Add directories first, to make sure to show empty ones.
+			var excludedDirectories = new List<FilePath> ();
 			foreach (string directoryName in Directory.GetDirectories (BaseDirectory, "*.*", SearchOption.AllDirectories)) {
-				Items.Add (CreateDirectoryProjectItem (directoryName));
+				if (!IsExcludedDirectory (directoryName, excludedDirectories)) {
+					Items.Add (CreateDirectoryProjectItem (directoryName));
+				}
 			}
 
 			foreach (string fileName in Directory.GetFiles (BaseDirectory, "*.*", SearchOption.AllDirectories)) {
-				if (IsSupportedProjectFileItem (fileName)) {
+				if (IsSupportedProjectFileItem (fileName) &&
+					!IsPathExcluded (fileName, excludedDirectories)) {
 					ProjectFile projectFile = CreateFileProjectItem (fileName);
 					Items.Add (projectFile);
 					AddProjectFileToMSBuildProject (projectFile);
@@ -132,6 +135,29 @@ namespace MonoDevelop.Dnx
 			}
 
 			AddConfigurations ();
+		}
+
+		static string[] excludedDirectoryNames = new string[] { "bin", "obj" };
+
+		bool IsExcludedDirectory (string directory, List<FilePath> excludedDirectories)
+		{
+			var info = new DirectoryInfo (directory);
+			bool excluded = excludedDirectoryNames.Any (name => name.Equals (info.Name, StringComparison.OrdinalIgnoreCase));
+			if (!excluded) {
+				excluded = IsPathExcluded (directory, excludedDirectories);
+			}
+
+			if (excluded) {
+				excludedDirectories.Add (new FilePath (directory));
+			}
+
+			return excluded;
+		}
+
+		static bool IsPathExcluded (string path, List<FilePath> excludedDirectories)
+		{
+			var filePath = new FilePath (path);
+			return excludedDirectories.Any (filePath.IsChildPathOf);
 		}
 
 		void AddProjectFileToMSBuildProject (ProjectFile projectFile)
@@ -326,6 +352,7 @@ namespace MonoDevelop.Dnx
 		public void Update (OmniSharp.Models.DnxProject project)
 		{
 			this.project = project;
+			UpdateCachedProjectInformation ();
 			base.OnExecutionTargetsChanged ();
 		}
 
@@ -371,9 +398,15 @@ namespace MonoDevelop.Dnx
 
 		protected override ExecutionCommand OnCreateExecutionCommand (ConfigurationSelector configSel, DotNetProjectConfiguration configuration)
 		{
-			return new DnxProjectExecutionCommand (
+			return CreateDotNetCoreExecutionCommand (configSel, configuration);
+		}
+
+		DotNetCoreExecutionCommand CreateDotNetCoreExecutionCommand (ConfigurationSelector configSel, DotNetProjectConfiguration configuration)
+		{
+			return new DotNetCoreExecutionCommand (
 				BaseDirectory,
-				DnxServices.ProjectService.CurrentDnxRuntime
+				configuration.Name,
+				DnxServices.ProjectService.CurrentDotNetRuntimePath
 			);
 		}
 
@@ -390,8 +423,9 @@ namespace MonoDevelop.Dnx
 		protected async override Task<TargetEvaluationResult> OnRunTarget (ProgressMonitor monitor, string target, ConfigurationSelector configuration, TargetEvaluationContext context)
 		{
 			if (target == ProjectService.BuildTarget) {
+				var config = GetConfiguration (configuration) as DotNetProjectConfiguration;
 				using (var builder = new DnxProjectBuilder (this, monitor)) {
-					BuildResult result = await builder.BuildAsnc ();
+					BuildResult result = await builder.BuildAsnc (config);
 					return new TargetEvaluationResult (result);
 				}
 			}
@@ -405,22 +439,25 @@ namespace MonoDevelop.Dnx
 		
 		protected async override Task OnExecute (ProgressMonitor monitor, ExecutionContext context, ConfigurationSelector configuration)
 		{
-			if (!CurrentExecutionTargetIsCoreClr (context.ExecutionTarget)) {
+			var config = GetConfiguration (configuration) as DotNetProjectConfiguration;
+
+			DotNetCoreExecutionCommand executionCommand = CreateDotNetCoreExecutionCommand (configuration, config);
+			if (context.ExecutionTarget != null)
+				executionCommand.Target = context.ExecutionTarget;
+
+			executionCommand.Initialize ();
+
+			if (executionCommand.IsExecutable) {
 				await base.OnExecute (monitor, context, configuration);
 				return;
 			}
 
-			var config = GetConfiguration (configuration) as DotNetProjectConfiguration;
 			monitor.Log.WriteLine (GettextCatalog.GetString ("Running {0} ...", Name));
 
 			OperationConsole console = CreateConsole (config, context, monitor);
 
 			try {
 				try {
-					ExecutionCommand executionCommand = OnCreateExecutionCommand (configuration, config);
-					if (context.ExecutionTarget != null)
-						executionCommand.Target = context.ExecutionTarget;
-
 					ProcessAsyncOperation asyncOp = Execute (executionCommand, console);
 					await asyncOp.Task;
 
@@ -443,22 +480,13 @@ namespace MonoDevelop.Dnx
 
 		ProcessAsyncOperation Execute (ExecutionCommand command, OperationConsole console)
 		{
-			var dnxCommand = (DnxProjectExecutionCommand)command;
+			var dotNetCoreCommand = (DotNetCoreExecutionCommand)command;
 			return Runtime.ProcessService.StartConsoleProcess (
-				dnxCommand.GetCommand (),
-				dnxCommand.GetArguments (),
-				dnxCommand.WorkingDirectory,
+				dotNetCoreCommand.GetCommand (),
+				dotNetCoreCommand.GetArguments (),
+				dotNetCoreCommand.WorkingDirectory,
 				console,
 				null);
-		}
-
-		bool CurrentExecutionTargetIsCoreClr (ExecutionTarget executionTarget)
-		{
-			var dnxExecutionTarget = executionTarget as DnxExecutionTarget;
-			if (dnxExecutionTarget != null) {
-				return dnxExecutionTarget.IsCoreClr ();
-			}
-			return false;
 		}
 
 		protected override FilePath OnGetOutputFileName (ConfigurationSelector configuration)
@@ -569,6 +597,7 @@ namespace MonoDevelop.Dnx
 		{
 			FilePath webRootDirectory = Project.BaseDirectory.Combine ("wwwroot");
 			CreateDirectory (webRootDirectory);
+			IsWebProject = true;
 		}
 
 		protected override IEnumerable<ExecutionTarget> OnGetExecutionTargets (ConfigurationSelector configuration)
@@ -576,24 +605,22 @@ namespace MonoDevelop.Dnx
 			if (project == null)
 				return Enumerable.Empty<ExecutionTarget> ();
 
-			return GetDnxExecutionTargets ();
+			return GetDotNetCoreExecutionTargets ();
 		}
 
-		IEnumerable<ExecutionTarget> GetDnxExecutionTargets ()
+		IEnumerable<ExecutionTarget> GetDotNetCoreExecutionTargets ()
 		{
-			foreach (string command in project.Commands.Keys) {
-				foreach (DnxExecutionTarget target in GetDnxExecutionTargets (command, project.Frameworks)) {
-					yield return target;
-				}
+			foreach (DotNetCoreExecutionTarget target in GetDotNetCoreExecutionTargets (project.Frameworks)) {
+				yield return target;
 			}
 		}
 
-		static IEnumerable<DnxExecutionTarget> GetDnxExecutionTargets (string command, IEnumerable<DnxFramework> frameworks)
+		static IEnumerable<DotNetCoreExecutionTarget> GetDotNetCoreExecutionTargets (IEnumerable<DnxFramework> frameworks)
 		{
-			yield return DnxExecutionTarget.CreateDefaultTarget (command);
+			yield return DotNetCoreExecutionTarget.CreateDefaultTarget ();
 
 			foreach (DnxFramework framework in frameworks) {
-				yield return new DnxExecutionTarget (command, framework);
+				yield return new DotNetCoreExecutionTarget (framework);
 			}
 		}
 
@@ -817,6 +844,32 @@ namespace MonoDevelop.Dnx
 				foreach (DnxFramework framework in project.Frameworks) {
 					yield return framework;
 				}
+			}
+		}
+
+		public bool IsWebProject { get; set; }
+
+		void UpdateCachedProjectInformation ()
+		{
+			string[] frameworkNames = project.Frameworks.Select (framework => framework.Name).ToArray ();
+
+			RemoveMissingKeys (dependencies, frameworkNames);
+			RemoveMissingKeys (savedFileReferences, frameworkNames);
+			RemoveMissingKeys (savedProjectReferences, frameworkNames);
+			RemoveMissingKeys (savedCompilationOptions, frameworkNames);
+
+			if (CurrentFramework != null) {
+				if (!frameworkNames.Contains (CurrentFramework)) {
+					CurrentFramework = null;
+				}
+			}
+		}
+
+		void RemoveMissingKeys<TKey, TValue>(IDictionary<TKey, TValue> items, TKey[] keys)
+		{
+			TKey[] missingKeys = items.Keys.Where (key => !keys.Contains (key)).ToArray ();
+			foreach (TKey key in missingKeys) {
+				items.Remove (key);
 			}
 		}
 	}

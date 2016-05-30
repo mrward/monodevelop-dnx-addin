@@ -28,7 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages;
+using Microsoft.DotNet.ProjectModel.Server.Models;
 using MonoDevelop.Core;
 using MonoDevelop.Ide.Gui;
 using MonoDevelop.Ide.Tasks;
@@ -123,7 +123,7 @@ namespace MonoDevelop.Dnx.NodeBuilders
 		}
 
 		public bool Unresolved {
-			get { return dependency.Type == "Unresolved"; }
+			get { return !dependency.Resolved; }
 		}
 
 		public bool IsProject {

@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Framework.DesignTimeHost.Models;
+using Microsoft.DotNet.ProjectModel.Server.Models;
 using Microsoft.Framework.Logging;
 using OmniSharp.Models;
 using OmniSharp.Options;
@@ -18,12 +18,12 @@ namespace OmniSharp.Dnx
         private readonly ILogger _logger;
         private readonly IEventEmitter _emitter;
         private readonly DnxContext _context;
-        private readonly DnxPaths _paths;
+        private readonly DotNetCorePaths _paths;
         private readonly object _lock;
         private readonly IDictionary<string, object> _projectLocks;
         private readonly SemaphoreSlim _semaphore;
 
-        public PackagesRestoreTool(OmniSharpOptions options, ILoggerFactory logger, IEventEmitter emitter, DnxContext context, DnxPaths paths)
+        public PackagesRestoreTool(OmniSharpOptions options, ILoggerFactory logger, IEventEmitter emitter, DnxContext context, DotNetCorePaths paths)
         {
             _options = options;
             _logger = logger.CreateLogger<PackagesRestoreTool>();
@@ -103,7 +103,7 @@ namespace OmniSharp.Dnx
         {
             var psi = new ProcessStartInfo()
             {
-                FileName = _paths.Dnu ?? _paths.Kpm,
+                FileName = _paths.DotNet,
                 WorkingDirectory = Path.GetDirectoryName(project.Path),
                 CreateNoWindow = true,
                 UseShellExecute = false,

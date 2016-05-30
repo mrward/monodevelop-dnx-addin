@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>MonoDevelop.Dnx</RootNamespace>
     <AssemblyName>MonoDevelop.Dnx</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <MDProfileVersion>6.0</MDProfileVersion>
     <MDBinDir>..\..\..\monodevelop\main\build\bin</MDBinDir>
   </PropertyGroup>
@@ -56,6 +56,17 @@
     </Reference>
     <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <Reference Include="Mono.Cairo, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
+    <Reference Include="MonoDevelop.DotNet.ProjectModel">
+      <HintPath>..\MonoDevelop.DotNet.ProjectModel\bin\merged\MonoDevelop.DotNet.ProjectModel.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MonoDevelop.DotNet.ProjectModel\MonoDevelop.DotNet.ProjectModel.csproj">
+      <Project>{A18F5B58-8D1E-4F8F-9FB2-5797D70EAADC}</Project>
+      <Name>MonoDevelop.DotNet.ProjectModel</Name>
+      <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,27 +74,10 @@
     <Compile Include="MonoDevelop.Dnx\DnxProject.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxMSBuildProjectHandler.cs" />
     <Compile Include="Omnisharp\Dnx\DnxContext.cs" />
-    <Compile Include="Omnisharp\Dnx\DnxPaths.cs" />
     <Compile Include="Omnisharp\Dnx\DnxProjectSystem.cs" />
-    <Compile Include="Omnisharp\Dnx\DnxRuntimePathResult.cs" />
     <Compile Include="Omnisharp\Dnx\DesignTimeHostManager.cs" />
     <Compile Include="Omnisharp\Dnx\FrameworkProject.cs" />
-    <Compile Include="Omnisharp\Dnx\Message.cs" />
     <Compile Include="Omnisharp\Dnx\Project.cs" />
-    <Compile Include="Omnisharp\Dnx\IncomingMessages\InitializeMessage.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\CompilationOptionsMessage.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\CompilationSettings.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\DependenciesMessage.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\DependencyDescription.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\DependencyItem.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\DiagnosticsMessage.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\ErrorMessage.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\FrameworkData.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\OutputsMessage.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\ProjectMessage.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\ProjectReference.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\ReferencesMessage.cs" />
-    <Compile Include="Omnisharp\Dnx\OutgoingMessages\SourcesMessage.cs" />
     <Compile Include="Omnisharp\Microsoft\AspNet\Hosting\IApplicationLifetime.cs" />
     <Compile Include="Omnisharp\Microsoft\AspNet\Logging\FormattedLogValues.cs" />
     <Compile Include="Omnisharp\Microsoft\AspNet\Logging\ILogger.cs" />
@@ -137,8 +131,6 @@
     <Compile Include="MonoDevelop.Dnx\SolutionExtensions.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxStartupHandler.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectConfiguration.cs" />
-    <Compile Include="MonoDevelop.Dnx\DnxProjectExecutionCommand.cs" />
-    <Compile Include="MonoDevelop.Dnx\DnxExecutionHandler.cs" />
     <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependenciesNodeBuilderExtension.cs" />
     <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependenciesFolderNodeBuilder.cs" />
     <Compile Include="MonoDevelop.Dnx.NodeBuilders\DependenciesFolderNode.cs" />
@@ -157,11 +149,9 @@
     <Compile Include="Omnisharp\Utilities\DirectoryEnumerator.cs" />
     <Compile Include="Omnisharp\MSBuild\ProjectFile\ProjectFileInfo.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxRuntime.cs" />
-    <Compile Include="MonoDevelop.Dnx\DnxExecutionTarget.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxFrameworkExtensions.cs" />
     <Compile Include="MonoDevelop.Dnx\GlobalJsonFile.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxConfigurationParameters.cs" />
-    <Compile Include="Omnisharp\Dnx\IncomingMessages\ChangeConfiguration.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectSystemFactory.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectLocator.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxProjectBuilder.cs" />
@@ -169,7 +159,6 @@
     <Compile Include="MonoDevelop.Dnx\JsonFile.cs" />
     <Compile Include="MonoDevelop.Dnx\ProjectJsonFile.cs" />
     <Compile Include="MonoDevelop.Dnx.Commands\DependencyNodeCommandHandler.cs" />
-    <Compile Include="MonoDevelop.Dnx\DnxDebuggerEngine.cs" />
     <Compile Include="MonoDevelop.PackageManagement\AggregateExceptionErrorMessage.cs" />
     <Compile Include="MonoDevelop.PackageManagement\AvailablePackagesViewModel.cs" />
     <Compile Include="MonoDevelop.PackageManagement\DelegateCommand.cs" />
@@ -225,13 +214,37 @@
     <Compile Include="MonoDevelop.Dnx\DnxLoggerService.cs" />
     <Compile Include="MonoDevelop.Dnx.Gui\DnxGlobalOptionsPanel.cs" />
     <Compile Include="MonoDevelop.Dnx\XProject.cs" />
-    <Compile Include="MonoDevelop.Dnx\DnxWindowsDebuggerEngine.cs" />
     <Compile Include="MonoDevelop.Dnx\CSharpCompilationAndParseOptions.cs" />
     <Compile Include="MonoDevelop.Dnx.Commands\DependenciesFolderNodeCommandHandler.cs" />
     <Compile Include="MonoDevelop.Dnx.Commands\SelectActiveRuntimeCommandHandler.cs" />
     <Compile Include="MonoDevelop.Dnx.Gui\DnxRuntimeOptionsPanel.cs" />
     <Compile Include="MonoDevelop.Dnx\FileSystemWatcherGroup.cs" />
     <Compile Include="MonoDevelop.Dnx.Commands\DnxCommands.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\ChangeConfiguration.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\CommonCompilerOptions.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\CompilationOptionsMessage.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\DependenciesMessage.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\DependencyDescription.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\DependencyItem.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\DiagnosticMessageSeverity.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\DiagnosticMessageView.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\DiagnosticsListMessage.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\ErrorMessage.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\FrameworkData.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\InitializeMessage.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\Message.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\ProjectInformationMessage.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\ProjectReferenceDescription.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\ReferencesMessage.cs" />
+    <Compile Include="Microsoft.DotNet.ProjectModel.Server.Models\SourcesMessage.cs" />
+    <Compile Include="MonoDevelop.Dnx\ConsoleWrapper.cs" />
+    <Compile Include="MonoDevelop.Dnx\DotNetCoreExecutionCommand.cs" />
+    <Compile Include="MonoDevelop.Dnx\DotNetCoreExecutionHandler.cs" />
+    <Compile Include="MonoDevelop.Dnx\DotNetCoreWindowsDebuggerEngine.cs" />
+    <Compile Include="Omnisharp\Dnx\DotNetCorePaths.cs" />
+    <Compile Include="MonoDevelop.Dnx\DotNetCoreDebuggerEngine.cs" />
+    <Compile Include="MonoDevelop.Dnx\DotNetCoreExecutionTarget.cs" />
+    <Compile Include="Omnisharp\Dnx\CompilerOptionsConverter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -331,6 +344,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="Templates\Projects\EmptyWeb\EmptyWebProject.Program.cs.xft.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\Projects\EmptyWeb\EmptyWebProject.Program.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\Projects\EmptyKestrelWeb\EmptyKestrelWebProject.Program.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\Projects\EmptyKestrelWeb\EmptyKestrelWebProject.Program.cs.xft.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="PostBuild.proj" />
   <Import Project="..\packages\MonoDevelop.Addins.0.3.0\build\net40\MonoDevelop.Addins.targets" Condition="Exists('..\packages\MonoDevelop.Addins.0.3.0\build\net40\MonoDevelop.Addins.targets')" />
@@ -338,6 +363,7 @@
     <Folder Include="Templates\Projects\EmptyKestrelWeb\" />
     <Folder Include="MonoDevelop.Dnx.Commands\" />
     <Folder Include="MonoDevelop.Dnx.Gui\" />
+    <Folder Include="Microsoft.DotNet.ProjectModel.Server.Models\" />
   </ItemGroup>
   <ItemGroup>
     <AddinReference Include="MonoDevelop.DesignerSupport" />

@@ -74,8 +74,8 @@ namespace MonoDevelop.Dnx
 			AddVisualStudioProperties ();
 			MSBuildPropertyGroup globals = AddGlobalsProperties (projectGuid, rootNamespace);
 			AddSchemaVersion ();
-			AddDnxTargets ();
-			AddDnxProps (globals);
+			AddDotNetTargets ();
+			AddDotNetCoreProps (globals);
 		}
 
 		static string GetToolsVersion ()
@@ -130,9 +130,9 @@ namespace MonoDevelop.Dnx
 			return propertyGroup.GetProperty (name);
 		}
 
-		void AddDnxProps (MSBuildPropertyGroup globals)
+		void AddDotNetCoreProps (MSBuildPropertyGroup globals)
 		{
-			AddImport (@"$(VSToolsPath)\DNX\Microsoft.DNX.Props", "'$(VSToolsPath)' != ''", globals);
+			AddImport (@"$(VSToolsPath)\DotNet\Microsoft.DotNet.Props", "'$(VSToolsPath)' != ''", globals);
 		}
 
 		void AddImport (string name, string condition, MSBuildObject before = null)
@@ -146,9 +146,13 @@ namespace MonoDevelop.Dnx
 			AddProperty (propertyGroup, "SchemaVersion", "2.0");
 		}
 
-		void AddDnxTargets()
+		void AddDotNetTargets ()
 		{
-			AddImport (@"$(VSToolsPath)\DNX\Microsoft.DNX.targets", "'$(VSToolsPath)' != ''");
+			if (dnxProject.IsWebProject) {
+				AddImport (@"$(VSToolsPath)\DotNet.Web\Microsoft.DotNet.Web.targets", "'$(VSToolsPath)' != ''");
+			} else {
+				AddImport (@"$(VSToolsPath)\DotNet\Microsoft.DotNet.targets", "'$(VSToolsPath)' != ''");
+			}
 		}
 
 		MSBuildPropertyGroup AddGlobalsProperties (string projectGuid, string rootNamespace)
@@ -158,8 +162,9 @@ namespace MonoDevelop.Dnx
 
 			AddProperty (propertyGroup, "ProjectGuid", projectGuid);
 			AddProperty (propertyGroup, "RootNamespace", rootNamespace);
-			AddPropertyWithNotEmptyCondition (propertyGroup, "BaseIntermediateOutputPath", @"..\..\artifacts\obj\$(MSBuildProjectName)");
-			AddPropertyWithNotEmptyCondition (propertyGroup, "OutputPath", @"..\..\artifacts\bin\$(MSBuildProjectName)\");
+			AddPropertyWithNotEmptyCondition (propertyGroup, "BaseIntermediateOutputPath", @".\obj");
+			AddPropertyWithNotEmptyCondition (propertyGroup, "OutputPath", @".\bin\");
+			AddProperty (propertyGroup, "TargetFrameworkVersion", "v4.5");
 
 			return propertyGroup;
 		}

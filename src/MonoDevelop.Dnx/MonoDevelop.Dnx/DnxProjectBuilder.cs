@@ -28,9 +28,11 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages;
+using Microsoft.DotNet.ProjectModel.Server.Models;
 using MonoDevelop.Core;
 using MonoDevelop.Projects;
+using MonoDevelop.Core.Execution;
+using MonoDevelop.Core.ProgressMonitoring;
 
 namespace MonoDevelop.Dnx
 {
@@ -38,92 +40,46 @@ namespace MonoDevelop.Dnx
 	{
 		DnxProject project;
 		ProgressMonitor monitor;
-		ManualResetEventSlim waitEvent = new ManualResetEventSlim ();
-		CancellationTokenRegistration cancelRegistration;
-		bool cancelled;
-		DiagnosticsMessage[] messages;
 
 		public DnxProjectBuilder (DnxProject project, ProgressMonitor monitor)
 		{
 			this.project = project;
 			this.monitor = monitor;
-			cancelRegistration = this.monitor.CancellationToken.Register (CancelRequested);
-		}
-
-		public string ProjectPath {
-			get { return project.JsonPath; }
-		}
-
-		void CancelRequested ()
-		{
-			cancelled = true;
-			waitEvent.Set ();
 		}
 
 		public void Dispose ()
 		{
-			ProgressMonitor currentMonitor = monitor;
-			if (currentMonitor != null) {
-				if (ProjectPath != null) {
-					DnxServices.ProjectService.RemoveBuilder (this);
-				}
-				cancelRegistration.Dispose ();
-				monitor = null;
+		}
+		
+		public Task<BuildResult> BuildAsnc (DotNetProjectConfiguration config)
+		{
+			ProcessAsyncOperation operation = Runtime.ProcessService.StartConsoleProcess (
+				DnxServices.ProjectService.CurrentDotNetRuntimePath,
+				String.Format ("build --configuration {0} --no-dependencies", config.Name),
+				project.BaseDirectory,
+				GetConsole (),
+				null,
+				(sender, e) => { }
+			);
+			return operation.Task.ContinueWith (t => {
+				return CreateBuildResult (operation);
+			});
+		}
+
+		OperationConsole GetConsole ()
+		{
+			return new ConsoleWrapper (monitor);
+		}
+
+		BuildResult CreateBuildResult (ProcessAsyncOperation operation)
+		{
+			var result = new BuildResult ();
+
+			if (operation.Task.IsFaulted || operation.ExitCode != 0) {
+				result.AddError (GettextCatalog.GetString ("Build failed. Please see the Build Output for more details."));
 			}
-		}
 
-		public Task<BuildResult> BuildAsnc ()
-		{
-			return Task.Run (() => Build ());
-		}
-
-		public BuildResult Build ()
-		{
-			if (!DnxServices.ProjectService.HasCurrentDnxRuntime)
-				return CreateDnxRuntimeErrorBuildResult ();
-
-			if (project.JsonPath != null) {
-				DnxServices.ProjectService.GetDiagnostics (this);
-			} else {
-				return CreateDnxProjectNotInitializedBuildResult ();
-			}
-
-			waitEvent.Wait ();
-
-			if (cancelled || messages == null) {
-				return BuildResult.CreateCancelled ();
-			}
-			return CreateBuildResult ();
-		}
-
-		BuildResult CreateDnxRuntimeErrorBuildResult ()
-		{
-			var buildResult = new BuildResult ();
-			buildResult.AddError (DnxServices.ProjectService.CurrentRuntimeError);
-			return buildResult;
-		}
-
-		BuildResult CreateDnxProjectNotInitializedBuildResult ()
-		{
-			var buildResult = new BuildResult ();
-			buildResult.AddError (String.Format ("Project '{0}' has not been initialized by DNX host.", project.Name));
-			return buildResult;
-		}
-
-		public void OnDiagnostics (DiagnosticsMessage[] messages)
-		{
-			this.messages = messages;
-			waitEvent.Set ();
-		}
-
-		BuildResult CreateBuildResult ()
-		{
-			foreach (DiagnosticsMessage message in messages) {
-				if (project.CurrentFramework == message.Framework.FrameworkName) {
-					return message.ToBuildResult ();
-				}
-			}
-			return new BuildResult ();
+			return result;
 		}
 	}
 }

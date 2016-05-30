@@ -6,11 +6,11 @@
 
 	<TemplateConfiguration>
 		<_Name>Library</_Name>
-		<Category>other/aspnet/aspnet5</Category>
+		<Category>other/netcore/general</Category>
 		<Icon>md-project-library</Icon>
 		<Image id="md-library-project" />
 		<LanguageName>C#</LanguageName>
-		<_Description>Creates a new ASP.NET 5 class library project.</_Description>
+		<_Description>Creates a new .NET Core class library project.</_Description>
 		<DefaultFilename>ClassLibrary</DefaultFilename>
 		<FileExtension>.xproj</FileExtension>
 		<Wizard>MonoDevelop.Dnx.ProjectTemplateWizard</Wizard>

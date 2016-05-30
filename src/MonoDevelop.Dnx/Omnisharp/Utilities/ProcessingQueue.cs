@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using Microsoft.Framework.DesignTimeHost.Models;
+using Microsoft.DotNet.ProjectModel.Server.Models;
 using Microsoft.Framework.Logging;
 using Newtonsoft.Json;
 

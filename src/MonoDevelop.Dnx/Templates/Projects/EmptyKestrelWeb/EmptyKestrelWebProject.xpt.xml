@@ -6,14 +6,14 @@
 
 	<TemplateConfiguration>
 		<_Name>Web App</_Name>
-		<Category>other/aspnet/aspnet5</Category>
+		<Category>other/netcore/general</Category>
 		<Icon>md-project-web</Icon>
 		<LanguageName>C#</LanguageName>
-		<_Description>Creates a new ASP.NET 5 web project.</_Description>
+		<_Description>Creates a new ASP.NET Core web project.</_Description>
 		<DefaultFilename>WebApp</DefaultFilename>
 		<FileExtension>.xproj</FileExtension>
 		<Wizard>MonoDevelop.Dnx.ProjectTemplateWizard</Wizard>
-		<DefaultParameters>Template=EmptyKestrelWebProject;CreateWebRoot=true;OpenFile=Startup.cs;Files=Startup.cs</DefaultParameters>
+		<DefaultParameters>Template=EmptyKestrelWebProject;CreateWebRoot=true;OpenFile=Startup.cs;Files=Startup.cs|Program.cs</DefaultParameters>
 	</TemplateConfiguration>
 
 	<Combine name="${ProjectName}" directory=".">

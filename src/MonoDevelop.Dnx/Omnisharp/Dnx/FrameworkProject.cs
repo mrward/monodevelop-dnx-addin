@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-using Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages;
+using Microsoft.DotNet.ProjectModel.Server.Models;
 
 namespace OmniSharp.Dnx
 {

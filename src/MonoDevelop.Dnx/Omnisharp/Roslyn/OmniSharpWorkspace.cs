@@ -5,8 +5,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Host.Mef;
 //using Microsoft.CodeAnalysis.Text;
 //using OmniSharp.Roslyn;
-using DependenciesMessage = Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages.DependenciesMessage;
-using DiagnosticsMessage = Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages.DiagnosticsMessage;
+using Microsoft.DotNet.ProjectModel.Server.Models;
 using MonoDevelop.Dnx;
 using OmniSharp.Dnx;
 
@@ -113,9 +112,9 @@ namespace OmniSharp
             DnxServices.ProjectService.DependenciesUpdated(project, message);
         }
 
-        public void ReportDiagnostics(OmniSharp.Dnx.Project project, DiagnosticsMessage[] messages)
+        public void ReportDiagnostics(OmniSharp.Dnx.Project project, DiagnosticsListMessage message)
         {
-            DnxServices.ProjectService.ReportDiagnostics(project, messages);
+            DnxServices.ProjectService.ReportDiagnostics(project, message);
         }
 
         public void ReferencesUpdated (ProjectId projectId, FrameworkProject frameworkProject)

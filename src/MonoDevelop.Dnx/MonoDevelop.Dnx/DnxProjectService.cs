@@ -26,12 +26,14 @@
 //
 
 using System;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.Framework.DesignTimeHost.Models.OutgoingMessages;
+using Microsoft.DotNet.ProjectModel.Server.Models;
 using MonoDevelop.Dnx.Omnisharp;
 using MonoDevelop.Core;
 using MonoDevelop.Ide;
+using MonoDevelop.Ide.Tasks;
 using MonoDevelop.Projects;
 using OmniSharp.Dnx;
 using Solution = MonoDevelop.Projects.Solution;
@@ -91,9 +93,9 @@ namespace MonoDevelop.Dnx
 					LoadDnxProjectSystem (solution);
 				}
 			} catch (Exception ex) {
-				LoggingService.LogError ("DNX project system initialize failed.", ex);
+				LoggingService.LogError (".NET Core project system initialize failed.", ex);
 				UnloadProjectSystem ();
-				initializeError = "Unable to initialize DNX project system. " + ex.Message;
+				initializeError = "Unable to initialize .NET Core project system. " + ex.Message;
 				OnProjectSystemFailed ();
 			}
 		}
@@ -117,21 +119,6 @@ namespace MonoDevelop.Dnx
 			var factory = new DnxProjectSystemFactory ();
 			projectSystem = factory.CreateProjectSystem (solution, applicationLifetime, context);
 			projectSystem.Initalize ();
-
-			if (context.RuntimePath == null) {
-				string error = GetRuntimeError (projectSystem);
-				throw new ApplicationException (error);
-			}
-		}
-
-		static string GetRuntimeError (DnxProjectSystem projectSystem)
-		{
-			if (projectSystem.DnxPaths != null &&
-				projectSystem.DnxPaths.RuntimePath != null &&
-				projectSystem.DnxPaths.RuntimePath.Error != null) {
-				return projectSystem.DnxPaths.RuntimePath.Error.Text;
-			}
-			return "Unable to find DNX runtime.";
 		}
 
 		public void OnReferencesUpdated (ProjectId projectId, FrameworkProject frameworkProject)
@@ -158,17 +145,13 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		public DnxRuntime CurrentDnxRuntime {
+		public string CurrentDotNetRuntimePath {
 			get {
 				if (context != null) {
-					return new DnxRuntime (context.RuntimePath);
+					return context.RuntimePath;
 				}
-				return null;
+				return "dotnet";
 			}
-		}
-
-		public bool HasCurrentDnxRuntime {
-			get { return context != null; }
 		}
 
 		public bool HasCurrentRuntimeError {
@@ -244,26 +227,18 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		public void GetDiagnostics (DnxProjectBuilder builder)
+		public void ReportDiagnostics (OmniSharp.Dnx.Project project, DiagnosticsListMessage message)
 		{
-			builders.AddOrUpdate (builder.ProjectPath, _ => builder, (a, b) => builder);
-			projectSystem.GetDiagnostics (builder.ProjectPath);
-		}
-
-		public void ReportDiagnostics (OmniSharp.Dnx.Project project, DiagnosticsMessage[] messages)
-		{
-			DnxProjectBuilder builder;
-			if (builders.TryGetValue (project.Path, out builder)) {
-				builder.OnDiagnostics (messages);
-			} else {
-				LoggingService.LogWarning ("Unable to find builder by json file. '{0}'", project.Path);
-			}
-		}
-
-		public void RemoveBuilder (DnxProjectBuilder builder)
-		{
-			DnxProjectBuilder builderRemoved;
-			builders.TryRemove (builder.ProjectPath, out builderRemoved);
+			Runtime.RunInMainThread (()  => {
+				DnxProject matchedProject = FindProjectByProjectJsonFileName (project.Path);
+				if (matchedProject != null) {
+					if (message.Framework != null && message.Framework.FrameworkName == matchedProject.CurrentFramework) {
+						TaskService.Errors.ClearByOwner (matchedProject);
+						var result = message.ToBuildResult (matchedProject);
+						TaskService.Errors.AddRange (result.Errors.Select (error => new TaskListEntry (error, matchedProject)));
+					}
+				}
+			});
 		}
 
 		public void OnCompilationOptionsChanged (ProjectId projectId, CSharpCompilationOptions compilationOptions, CSharpParseOptions parseOptions)

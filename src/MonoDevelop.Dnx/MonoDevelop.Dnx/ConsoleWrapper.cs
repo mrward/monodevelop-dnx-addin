@@ -1,5 +1,5 @@
 ﻿//
-// DiagnosticsMessageExtensions.cs
+// ConsoleWrapper.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -26,44 +26,46 @@
 //
 
 using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using Microsoft.DotNet.ProjectModel.Server.Models;
+using System.IO;
 using MonoDevelop.Core;
-using MonoDevelop.Projects;
+using MonoDevelop.Core.Execution;
 
 namespace MonoDevelop.Dnx
 {
-	public static class DiagnosticsMessageExtensions
+	/// <summary>
+	/// Prevents a disposed error when building .NET Core projects since the
+	/// LogViewProgressMonitor's console will be disposed when the dotnet process
+	/// exits and then again by the MonoDevelop build system.
+	/// </summary>
+	class ConsoleWrapper : OperationConsole
 	{
-		delegate BuildResult AddError (string file, int line, int col, string errorNum, string text);
+		ProgressMonitor monitor;
+		StringReader reader = new StringReader ("");
 
-		public static BuildResult ToBuildResult (this DiagnosticsListMessage message, DnxProject project)
+		public ConsoleWrapper (ProgressMonitor monitor)
+			: base (monitor.CancellationToken)
 		{
-			var result = new BuildResult ();
-			AddErrors (result.AddWarning, message.Warnings, project);
-			AddErrors (result.AddError, message.Errors, project);
-			return result;
+			this.monitor = monitor;
 		}
 
-		static void AddErrors (AddError addError, IEnumerable<DiagnosticMessageView> messages, DnxProject project)
-		{
-			foreach (DiagnosticMessageView message in messages) {
-				BuildError error = CreateBuildError (message);
-				error.SourceTarget = project.Project;
-				addError (error.FileName, error.Line, error.Column, error.ErrorNumber, error.ErrorText);
-			}
+		public override TextReader In {
+			get { return reader; }
 		}
 
-		static BuildError CreateBuildError (DiagnosticMessageView message)
+		public override TextWriter Out {
+			get { return monitor.Log; }
+		}
+
+		public override TextWriter Error {
+			get { return monitor.Log; }
+		}
+
+		public override TextWriter Log {
+			get { return monitor.Log; }
+		}
+
+		public override void Dispose ()
 		{
-			return new BuildError {
-				FileName = message.SourceFilePath,
-				Line =  message.StartLine,
-				Column = message.StartColumn,
-				ErrorNumber = message.ErrorCode,
-				ErrorText = message.Message
-			};
 		}
 	}
 }

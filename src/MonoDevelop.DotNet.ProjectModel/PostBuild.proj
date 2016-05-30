@@ -8,12 +8,9 @@
     <MonoPath Condition=" '$(MonoPath)' == '' ">mono</MonoPath>
     <ILRepackCommand Condition=" '$(OS)' != 'Windows_NT' ">$(MonoPath) --runtime=v4.0.30319 "$(ILRepackExePath)"</ILRepackCommand>
   </PropertyGroup>
-  <ItemGroup>
-    <LicenseItem Include="Licenses\*.txt" />
-    <TemplateItem Include="Templates\**\*.*" />
-    <ProjectModelItem Include="$(OutputPath)MonoDevelop.DotNet.ProjectModel.dll" />
-  </ItemGroup>
   <ItemGroup  Condition=" '$(OS)' != 'Windows_NT'">
+    <ProjectModelItem Include="$(OutputPath)MonoDevelop.DotNet.ProjectModel.dll" />
+    <ProjectModelItem Include="$(OutputPath)MonoDevelop.DotNet.ProjectModel.dll.mdb" />
     <ProjectModelItem Include="$(OutputPath)Microsoft.DotNet.InternalAbstractions.dll" />
     <ProjectModelItem Include="$(OutputPath)Microsoft.DotNet.ProjectModel.dll" />
     <ProjectModelItem Include="$(OutputPath)Microsoft.Extensions.DependencyModel.dll" />
@@ -27,24 +24,8 @@
     <ProjectModelItem Include="$(OutputPath)System.Collections.Immutable.dll" />
     <ProjectModelItem Include="$(OutputPath)System.Reflection.Metadata.dll" />
   </ItemGroup>
-  <ItemGroup>
-      <Reference Include="Microsoft.CodeAnalysis.CSharp">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Collections.Immutable">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.Workspaces">
-      <Private>False</Private>
-    </Reference>
-  </ItemGroup>
   <Target Name="MyPostBuildTarget">
-    <Copy SourceFiles="@(LicenseItem)" DestinationFolder="$(OutputPath)merged\Licenses" />
-    <Copy SourceFiles="@(TemplateItem)" DestinationFolder="$(OutputPath)merged\Templates\%(RecursiveDir)" />
-    <Copy SourceFiles="@(ProjectModelItem)" DestinationFolder="$(OutputPath)merged" />
-    <Exec Command="$(ILRepackCommand) /targetPlatform:v4 /lib:&quot;$(SolutionDir)..\lib&quot; /out:&quot;merged\$(AssemblyName).dll&quot; $(AssemblyName).dll &quot;$(SolutionDir)..\lib\Newtonsoft.Json.dll&quot; &quot;$(SolutionDir)packages\Mono.NuGet.Core.2.8.7\lib\Net40\NuGet.Core.dll&quot;" WorkingDirectory="$(OutputPath)" />
+    <Copy Condition=" '$(OS)' != 'Windows_NT'" SourceFiles="@(ProjectModelItem)" DestinationFolder="$(OutputPath)merged" />
+    <Exec  Condition=" '$(OS)' == 'Windows_NT'" Command="$(ILRepackCommand) /allowdup:System.Collections.Generic.CollectionExtensions /internalize /targetPlatform:v4 /out:&quot;merged\$(AssemblyName).dll&quot; $(AssemblyName).dll MonoDevelop.DotNet.ProjectModel.dll  Microsoft.DotNet.InternalAbstractions.dll Microsoft.DotNet.ProjectModel.dll Microsoft.Extensions.DependencyModel.dll Newtonsoft.Json.dll NuGet.Common.dll NuGet.Frameworks.dll NuGet.Packaging.dll NuGet.Packaging.Core.dll NuGet.Packaging.Core.Types.dll NuGet.RuntimeModel.dll NuGet.Versioning.dll System.Collections.Immutable.dll System.Reflection.Metadata.dll " WorkingDirectory="$(OutputPath)" />
   </Target>
 </Project>

@@ -1,5 +1,5 @@
 ﻿//
-// DnxExecutionTarget.cs
+// DotNetCoreExecutionTarget.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -25,37 +25,35 @@
 // THE SOFTWARE.
 //
 
-using System;
+using MonoDevelop.Core;
 using MonoDevelop.Core.Execution;
 using OmniSharp.Models;
 
 namespace MonoDevelop.Dnx
 {
-	public class DnxExecutionTarget : ExecutionTarget
+	public class DotNetCoreExecutionTarget : ExecutionTarget
 	{
 		string id;
 		string name;
 
 		public static readonly string DefaultTargetId = "Profile";
 
-		DnxExecutionTarget (string id, string name)
+		DotNetCoreExecutionTarget (string id, string name)
 		{
 			this.id = id;
 			this.name = name;
 		}
 
-		public DnxExecutionTarget (string command, DnxFramework framework)
+		public DotNetCoreExecutionTarget (DnxFramework framework)
 		{
-			Command = command;
 			Framework = framework;
 			name = GenerateName ();
-			id = GenerateId (command, framework.ShortName);
+			id = framework.ShortName;
 		}
 
-		public static DnxExecutionTarget CreateDefaultTarget (string command)
+		public static DotNetCoreExecutionTarget CreateDefaultTarget ()
 		{
-			return new DnxExecutionTarget (GenerateId (command, DefaultTargetId), command) {
-				Command = command,
+			return new DotNetCoreExecutionTarget (DefaultTargetId, GettextCatalog.GetString ("Default")) {
 				IsDefaultProfile = true
 			};
 		}
@@ -69,34 +67,20 @@ namespace MonoDevelop.Dnx
 		}
 
 		public DnxFramework Framework { get; private set; }
-		public string Command { get; private set; }
 		public bool IsDefaultProfile { get; private set; }
 
 		string GenerateName ()
 		{
 			if (Framework == null) {
-				return Command;
+				return Id;
 			}
 
-			return String.Format ("{0} {1}", Command, Framework.FriendlyName);
-		}
-
-		static string GenerateId (string command, string framework)
-		{
-			return String.Format ("{0}|{1}", command, framework);
+			return Framework.FriendlyName;
 		}
 
 		public override string ToString ()
 		{
 			return Name;
-		}
-
-		public bool IsCoreClr ()
-		{
-			if (IsDefaultProfile)
-				return false;
-
-			return Framework.IsCoreClr ();
 		}
 	}
 }
