@@ -5,7 +5,7 @@
 	lastModified="22/09/2015">
 
 	<TemplateConfiguration>
-		<_Name>Web App</_Name>
+		<_Name>ASP.NET Core Web Application</_Name>
 		<Category>other/netcore/general</Category>
 		<Icon>md-project-web</Icon>
 		<LanguageName>C#</LanguageName>
