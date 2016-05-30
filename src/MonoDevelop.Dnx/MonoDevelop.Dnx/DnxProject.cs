@@ -244,6 +244,7 @@ namespace MonoDevelop.Dnx
 		public void Update (OmniSharp.Models.DnxProject project)
 		{
 			this.project = project;
+			UpdateCachedProjectInformation ();
 			base.OnExecutionTargetsChanged ();
 		}
 
@@ -727,6 +728,30 @@ namespace MonoDevelop.Dnx
 		}
 
 		public bool IsWebProject { get; set; }
+
+		void UpdateCachedProjectInformation ()
+		{
+			string[] frameworkNames = project.Frameworks.Select (framework => framework.Name).ToArray ();
+
+			RemoveMissingKeys (dependencies, frameworkNames);
+			RemoveMissingKeys (savedFileReferences, frameworkNames);
+			RemoveMissingKeys (savedProjectReferences, frameworkNames);
+			RemoveMissingKeys (preprocessorSymbols, frameworkNames);
+
+			if (CurrentFramework != null) {
+				if (!frameworkNames.Contains (CurrentFramework)) {
+					CurrentFramework = null;
+				}
+			}
+		}
+
+		void RemoveMissingKeys<TKey, TValue>(IDictionary<TKey, TValue> items, TKey[] keys)
+		{
+			TKey[] missingKeys = items.Keys.Where (key => !keys.Contains (key)).ToArray ();
+			foreach (TKey key in missingKeys) {
+				items.Remove (key);
+			}
+		}
 	}
 }
 
