@@ -46,7 +46,6 @@ namespace MonoDevelop.Dnx
 		DnxContext context;
 		DnxProjectSystem projectSystem;
 		MonoDevelopApplicationLifetime applicationLifetime;
-		ConcurrentDictionary<string, DnxProjectBuilder> builders = new ConcurrentDictionary<string, DnxProjectBuilder> ();
 		string initializeError = String.Empty;
 
 		public DnxProjectService ()
