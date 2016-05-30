@@ -5,7 +5,7 @@
 	lastModified="06/09/2015">
 
 	<TemplateConfiguration>
-		<_Name>Console App</_Name>
+		<_Name>Console Application (.NET Core)</_Name>
 		<Category>other/netcore/general</Category>
 		<Icon>md-project-console</Icon>
 		<Image id="md-console-project" />
