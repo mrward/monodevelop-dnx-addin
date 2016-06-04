@@ -81,7 +81,8 @@ namespace MonoDevelop.Dnx
 		{
 			var dotNetCoreExecutionCommand = cmd as DotNetCoreExecutionCommand;
 			if (dotNetCoreExecutionCommand != null) {
-				return DotNetCoreExecutionHandler.ConvertCommand (dotNetCoreExecutionCommand, allowCoreClrDebugging: true);
+				dotNetCoreExecutionCommand.AllowCoreClrDebugging = true;
+				return DotNetCoreExecutionHandler.ConvertCommand (dotNetCoreExecutionCommand);
 			}
 
 			return null;
