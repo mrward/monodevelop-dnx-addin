@@ -240,6 +240,12 @@ namespace MonoDevelop.Dnx
 			} else if (IsBackupFile (fileName)) {
 				return false;
 			}
+
+			fileName = Path.GetFileName (fileName);
+			if (fileName.StartsWith (".", StringComparison.OrdinalIgnoreCase)) {
+				return false;
+			}
+
 			return true;
 		}
 
