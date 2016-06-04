@@ -38,9 +38,11 @@ namespace MonoDevelop.Dnx
 			return command is DotNetCoreExecutionCommand;
 		}
 
-		public static DotNetExecutionCommand ConvertCommand (DotNetCoreExecutionCommand command)
+		public static DotNetExecutionCommand ConvertCommand (
+			DotNetCoreExecutionCommand command,
+			bool allowCoreClrDebugging = false)
 		{
-			command.Initialize ();
+			command.Initialize (allowCoreClrDebugging);
 
 			return new DotNetExecutionCommand (
 				command.GetCommand (),

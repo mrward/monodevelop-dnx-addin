@@ -244,6 +244,7 @@
     <Compile Include="MonoDevelop.Dnx\DotNetCoreDebuggerEngine.cs" />
     <Compile Include="MonoDevelop.Dnx\DotNetCoreExecutionTarget.cs" />
     <Compile Include="Omnisharp\Dnx\CompilerOptionsConverter.cs" />
+    <Compile Include="MonoDevelop.Dnx\VSCodeDebuggerEngine.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

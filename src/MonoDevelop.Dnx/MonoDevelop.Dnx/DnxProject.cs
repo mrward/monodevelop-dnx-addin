@@ -447,7 +447,7 @@ namespace MonoDevelop.Dnx
 
 			executionCommand.Initialize ();
 
-			if (executionCommand.IsExecutable) {
+			if (CanDebug (executionCommand, context)) {
 				await base.OnExecute (monitor, context, configuration);
 				return;
 			}
@@ -469,6 +469,18 @@ namespace MonoDevelop.Dnx
 				LoggingService.LogError (string.Format ("Cannot execute \"{0}\"", Name), ex);
 				monitor.ReportError (GettextCatalog.GetString ("Cannot execute \"{0}\"", Name), ex);
 			}
+		}
+
+		bool CanDebug (DotNetCoreExecutionCommand command, ExecutionContext context)
+		{
+			return command.IsExecutable ||
+				(command.IsAssembly && IsDebug (context) && VSCodeDebuggerEngine.Exists ());
+		}
+
+		bool IsDebug (ExecutionContext context)
+		{
+			return context.ExecutionHandler != null &&
+				context.ExecutionHandler.GetType ().Name == "DebugExecutionHandlerFactory";
 		}
 
 		OperationConsole CreateConsole (DotNetProjectConfiguration config, ExecutionContext context, ProgressMonitor monitor)

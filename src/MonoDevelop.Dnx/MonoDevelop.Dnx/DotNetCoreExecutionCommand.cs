@@ -48,12 +48,13 @@ namespace MonoDevelop.Dnx
 		public string Command { get; private set; }
 		public string Arguments { get; private set; }
 		public bool IsExecutable { get; private set; }
+		public bool IsAssembly { get; private set; }
 
 		public DotNetCoreExecutionTarget DotNetCoreExecutionTarget {
 			get { return Target as DotNetCoreExecutionTarget; }
 		}
 
-		public void Initialize ()
+		public void Initialize (bool allowCoreClrDebugging = false)
 		{
 			var resolver = new MonoDevelop.DotNet.ProjectModel.DotNetProjectBuildOutputAssemblyResolver (WorkingDirectory);
 			string framework = GetFramework ();
@@ -64,8 +65,14 @@ namespace MonoDevelop.Dnx
 				Command = OutputPath;
 				IsExecutable = true;
 			} else if (extension == ".dll") {
-				Command = dotNetRuntimePath;
-				Arguments = String.Format ("\"{0}\"", OutputPath);
+				if (allowCoreClrDebugging) {
+					Command = OutputPath;
+					IsAssembly = true;
+				} else {
+					Command = dotNetRuntimePath;
+					Arguments = String.Format ("\"{0}\"", OutputPath);
+					IsAssembly = true;
+				}
 			} else {
 				Command = dotNetRuntimePath;
 				Arguments = "run";

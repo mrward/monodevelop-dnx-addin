@@ -100,6 +100,11 @@
 
 	<Extension path="/MonoDevelop/Debugging/DebuggerEngines">
 		<DebuggerEngine
+			id="VSCodeDebuggerWrapper"
+			name="VSCode Debugger Wrapper"
+			features="Breakpoints, Pause, Stepping, DebugFile, ConditionalBreakpoints, Tracepoints, Catchpoints, Disassembly, Attaching"
+			type="MonoDevelop.Dnx.VSCodeDebuggerEngine" />
+		<DebuggerEngine
 			id="MonoDevelop.Dnx.DnxDebuggerEngine"
 			name="Mono Soft Debugger for .NET Core"
 			features="Breakpoints, Pause, Stepping, DebugFile, ConditionalBreakpoints, Tracepoints, Catchpoints, Disassembly"
