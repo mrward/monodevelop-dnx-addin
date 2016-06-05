@@ -47,6 +47,7 @@ namespace MonoDevelop.Dnx
 		OmniSharp.Models.DnxProject project;
 		bool addingReferences;
 		bool loadingFiles;
+		ProjectReferenceCollection references = new ProjectReferenceCollection ();
 		Dictionary<string, DependenciesMessage> dependencies = new Dictionary<string, DependenciesMessage> ();
 		Dictionary<string, List<string>> savedFileReferences = new Dictionary<string, List<string>> ();
 		Dictionary<string, List<string>> savedProjectReferences = new Dictionary<string, List<string>> ();
@@ -64,7 +65,7 @@ namespace MonoDevelop.Dnx
 		}
 
 		public ProjectReferenceCollection References {
-			get { return Project.References; }
+			get { return references; }
 		}
 
 		public SolutionItemConfigurationCollection Configurations {
@@ -297,7 +298,7 @@ namespace MonoDevelop.Dnx
 			DnxProject project = ParentSolution.FindProjectByProjectJsonFileName (fileName);
 			if (project != null) {
 				var projectItem = ProjectReference.CreateCustomReference (ReferenceType.Project, project.Name);
-				References.Add (projectItem);
+				Project.References.Add (projectItem);
 			} else {
 				LoggingService.LogDebug ("Unable to find project by json filename '{0}'.", fileName);
 			}
@@ -323,6 +324,7 @@ namespace MonoDevelop.Dnx
 				RemoveExistingReferences ();
 				UpdateReferences (fileReferences);
 				UpdateProjectReferences (projectReferences);
+				Project.NotifyModified ("References");
 			} finally {
 				addingReferences = false;
 			}
@@ -339,6 +341,7 @@ namespace MonoDevelop.Dnx
 		{
 			var oldReferenceItems = Items.OfType<ProjectReference> ().ToList ();
 			Items.RemoveRange (oldReferenceItems);
+			References.Clear ();
 		}
 
 		void UpdateReferences (IEnumerable<string> references)
@@ -656,6 +659,7 @@ namespace MonoDevelop.Dnx
 				RemoveExistingReferences ();
 				RefreshReferences ();
 				RefreshProjectReferences ();
+				Project.NotifyModified ("References");
 			} finally {
 				addingReferences = false;
 			}
@@ -795,7 +799,7 @@ namespace MonoDevelop.Dnx
 		{
 			var references = new List<AssemblyReference> ();
 
-			foreach (ProjectReference reference in Project.References.Where (r => r.ReferenceType != ReferenceType.Project)) {
+			foreach (ProjectReference reference in References.Where (r => r.ReferenceType != ReferenceType.Project)) {
 				foreach (string assembly in reference.GetReferencedFileNames (configuration)) {
 					references.Add (new AssemblyReference (assembly));
 				}
