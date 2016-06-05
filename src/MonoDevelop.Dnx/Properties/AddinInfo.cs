@@ -2,11 +2,11 @@
 
 [assembly:Addin ("Dnx",
 	Namespace = "MonoDevelop",
-	Version = "0.2",
+	Version = "0.3",
 	Category = "IDE extensions")]
 
 [assembly:AddinName ("DNX")]
-[assembly:AddinDescription ("Adds DNX and ASP.NET 5 support.")]
+[assembly:AddinDescription ("Adds .NET Core and ASP.NET Core support.")]
 
 [assembly:AddinDependency ("Core", "6.0")]
 [assembly:AddinDependency ("Ide", "6.0")]
