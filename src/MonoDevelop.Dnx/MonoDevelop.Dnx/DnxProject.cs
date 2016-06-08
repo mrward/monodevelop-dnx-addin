@@ -827,6 +827,10 @@ namespace MonoDevelop.Dnx
 				return;
 
 			UpdateCompilationOptions (options);
+
+			// Force the type system to reload the project otherwise any
+			// warnings that are suppressed are still shown in the text editor.
+			Project.NotifyModified ("References");
 		}
 
 		void UpdateCompilationOptions (CSharpCompilationAndParseOptions options)

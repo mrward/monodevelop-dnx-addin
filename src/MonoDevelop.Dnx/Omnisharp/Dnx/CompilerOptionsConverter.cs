@@ -4,6 +4,7 @@
 // Code based on https://github.com/dotnet/cli/src/Microsoft.DotNet.ProjectModel.Workspaces/ProjectJsonWorkspace.cs
 
 using System;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.DotNet.ProjectModel;
@@ -32,7 +33,9 @@ namespace OmniSharp.Dnx
 				.WithAllowUnsafe(allowUnsafe)
 				.WithPlatform(platform)
 				.WithGeneralDiagnosticOption(warningsAsErrors ? ReportDiagnostic.Error : ReportDiagnostic.Default)
-				.WithOptimizationLevel(optimize ? OptimizationLevel.Release : OptimizationLevel.Debug);
+				.WithOptimizationLevel(optimize ? OptimizationLevel.Release : OptimizationLevel.Debug)
+				.WithSpecificDiagnosticOptions(compilerOptions.SuppressWarnings.ToDictionary(
+					suppress => suppress, _ => ReportDiagnostic.Suppress));
 
 			return options;
 		}
