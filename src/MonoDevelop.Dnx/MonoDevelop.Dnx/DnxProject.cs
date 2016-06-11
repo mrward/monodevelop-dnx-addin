@@ -144,6 +144,11 @@ namespace MonoDevelop.Dnx
 		{
 			var info = new DirectoryInfo (directory);
 			bool excluded = excludedDirectoryNames.Any (name => name.Equals (info.Name, StringComparison.OrdinalIgnoreCase));
+
+			if (!excluded) {
+				excluded = info.Name.StartsWith (".", StringComparison.OrdinalIgnoreCase);
+			}
+
 			if (!excluded) {
 				excluded = IsPathExcluded (directory, excludedDirectories);
 			}
