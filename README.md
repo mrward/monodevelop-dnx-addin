@@ -1,8 +1,8 @@
-# DNX Support for MonoDevelop and Xamarin Studio
+# .NET Core Support for MonoDevelop and Xamarin Studio
 
-Provides [DNX and ASP.NET 5](http://docs.asp.net/en/latest/dnx/index.html) support for MonoDevelop and Xamarin Studio 6.0 or above.
+Provides [.NET Core and ASP.NET Core](https://dotnet.github.io/) support for MonoDevelop and Xamarin Studio 6.0 or above.
 
-This addin uses source code from [OmniSharp](https://github.com/OmniSharp/omnisharp-roslyn) in order to communicate with the DNX host. It also uses source code from [Roslyn](https://github.com/dotnet/roslyn), [Microsoft.AspNet.Hosting](https://github.com/aspnet/Hosting), [Microsoft.Framework.Logging](https://github.com/aspnet/Logging) and [Microsoft.Framework.OptionsModel](https://github.com/aspnet/Options/), since the Roslyn version of OmniSharp uses types from their corresponding NuGet packages.
+This addin uses source code from [OmniSharp](https://github.com/OmniSharp/omnisharp-roslyn) in order to communicate with the .NET Core design time host. It also uses source code from [Roslyn](https://github.com/dotnet/roslyn), [Microsoft.AspNet.Hosting](https://github.com/aspnet/Hosting), [Microsoft.Framework.Logging](https://github.com/aspnet/Logging) and [Microsoft.Framework.OptionsModel](https://github.com/aspnet/Options/), since the Roslyn version of OmniSharp uses types from their corresponding NuGet packages.
 
 # Licenses
 
