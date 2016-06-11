@@ -28,6 +28,7 @@
 using System;
 using MonoDevelop.Projects;
 using MonoDevelop.Core;
+using MonoDevelop.Core.Assemblies;
 
 namespace MonoDevelop.Dnx
 {
@@ -61,6 +62,38 @@ namespace MonoDevelop.Dnx
 		public void SetDefaultNamespace (FilePath fileName)
 		{
 			DefaultNamespace = GetDefaultNamespace (fileName);
+		}
+
+		protected override bool OnSupportsFramework (TargetFramework framework)
+		{
+			if (IsSupportedClientProfile (framework)) {
+				return true;
+			}
+			return base.OnSupportsFramework (framework);
+		}
+
+		/// <summary>
+		/// If .NET Core MSBuild targets are installed on the machine then
+		/// they set the TargetFrameworkProfile to be Client and the
+		/// TargetFramework class indicates the ClrVersion is 4.0 even though the
+		/// framework version 4.5. .NET 4.0 is not supported by .NET Core which
+		/// the XProject indicates in the OnGetSupportedClrVersions method.
+		/// This causes the project to fail to load. So here an explicit 
+		/// check for a Client profile and if it is .NET 4.5 or higher the
+		/// XProject indicates that it is supported.
+		/// </summary>
+		/// <returns>The supported client profile.</returns>
+		/// <param name="framework">Framework.</param>
+		bool IsSupportedClientProfile (TargetFramework framework)
+		{
+			if (framework.Id.Profile == "Client" && framework.Id.Identifier == ".NETFramework") {
+				Version version = null;
+				if (System.Version.TryParse (framework.Id.Version, out version)) {
+					return version.Major >= 4 && version.Minor >= 5;
+				}
+			}
+
+			return false;
 		}
 	}
 }
