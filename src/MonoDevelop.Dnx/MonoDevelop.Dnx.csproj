@@ -245,6 +245,9 @@
     <Compile Include="MonoDevelop.Dnx\DotNetCoreExecutionTarget.cs" />
     <Compile Include="Omnisharp\Dnx\CompilerOptionsConverter.cs" />
     <Compile Include="MonoDevelop.Dnx\VSCodeDebuggerEngine.cs" />
+    <Compile Include="MonoDevelop.Dnx\DotNetCoreBuildOutputTextWriter.cs" />
+    <Compile Include="MonoDevelop.Dnx\DotNetCoreBuildOutputParser.cs" />
+    <Compile Include="Microsoft.Build.Utilities\MSBuildErrorParser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -403,6 +406,7 @@
     <Folder Include="MonoDevelop.Dnx.Commands\" />
     <Folder Include="MonoDevelop.Dnx.Gui\" />
     <Folder Include="Microsoft.DotNet.ProjectModel.Server.Models\" />
+    <Folder Include="Microsoft.Build.Utilities\" />
   </ItemGroup>
   <ItemGroup>
     <AddinReference Include="MonoDevelop.DesignerSupport" />

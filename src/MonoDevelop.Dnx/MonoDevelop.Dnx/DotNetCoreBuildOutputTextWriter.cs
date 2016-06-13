@@ -1,10 +1,10 @@
 ﻿//
-// ConsoleWrapper.cs
+// DotNetCoreBuildOutputTextWriter.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
 //
-// Copyright (c) 2015 Matthew Ward
+// Copyright (c) 2016 Matthew Ward
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,55 +27,50 @@
 
 using System;
 using System.IO;
-using MonoDevelop.Core;
-using MonoDevelop.Core.Execution;
+using System.Text;
 using MonoDevelop.Projects;
 
 namespace MonoDevelop.Dnx
 {
-	/// <summary>
-	/// Prevents a disposed error when building .NET Core projects since the
-	/// LogViewProgressMonitor's console will be disposed when the dotnet process
-	/// exits and then again by the MonoDevelop build system.
-	/// </summary>
-	class ConsoleWrapper : OperationConsole
+	class DotNetCoreBuildOutputTextWriter : TextWriter
 	{
-		ProgressMonitor monitor;
-		StringReader reader = new StringReader ("");
-		DotNetCoreBuildOutputTextWriter errorWriter;
+		TextWriter writer;
+		DotNetCoreBuildOutputParser parser = new DotNetCoreBuildOutputParser ();
 
-		public ConsoleWrapper (ProgressMonitor monitor)
-			: base (monitor.CancellationToken)
+		public DotNetCoreBuildOutputTextWriter (TextWriter writer)
 		{
-			this.monitor = monitor;
-			errorWriter = new DotNetCoreBuildOutputTextWriter (monitor.Log);
+			this.writer = writer;
 		}
 
-		public override TextReader In {
-			get { return reader; }
+		public override Encoding Encoding {
+			get { return writer.Encoding; }
 		}
 
-		public override TextWriter Out {
-			get { return monitor.Log; }
-		}
-
-		public override TextWriter Error {
-			get { return errorWriter; }
-		}
-
-		public override TextWriter Log {
-			get { return monitor.Log; }
-		}
-
-		public override void Dispose ()
+		public override void Flush ()
 		{
-			errorWriter.Dispose ();
+			writer.Flush ();
 		}
 
-		public BuildResult GetBuildResult ()
+		public override void Write (string value)
+		{
+			parser.ProcessLine (value);
+			writer.Write (value);
+		}
+
+		protected override void Dispose (bool disposing)
+		{
+			parser.ProcessLastLine ();
+			base.Dispose (disposing);
+		}
+
+		public BuildResult GetBuildResults ()
 		{
 			var result = new BuildResult ();
-			result.Append (errorWriter.GetBuildResults ());
+
+			foreach (var error in parser.GetBuildErrors ()) {
+				result.Append (error);
+			}
+
 			return result;
 		}
 	}

@@ -53,33 +53,37 @@ namespace MonoDevelop.Dnx
 		
 		public Task<BuildResult> BuildAsnc (DotNetProjectConfiguration config)
 		{
+			var console = new ConsoleWrapper (monitor);
+
 			ProcessAsyncOperation operation = Runtime.ProcessService.StartConsoleProcess (
 				DnxServices.ProjectService.CurrentDotNetRuntimePath,
 				String.Format ("build --configuration {0} --no-dependencies", config.Name),
 				project.BaseDirectory,
-				GetConsole (),
+				console,
 				null,
 				(sender, e) => { }
 			);
 			return operation.Task.ContinueWith (t => {
-				return CreateBuildResult (operation);
+				return CreateBuildResult (operation, console);
 			});
 		}
 
-		OperationConsole GetConsole ()
+		ConsoleWrapper GetConsole ()
 		{
 			return new ConsoleWrapper (monitor);
 		}
 
-		BuildResult CreateBuildResult (ProcessAsyncOperation operation)
+		BuildResult CreateBuildResult (ProcessAsyncOperation operation, ConsoleWrapper console)
 		{
-			var result = new BuildResult ();
-
 			if (operation.Task.IsFaulted || operation.ExitCode != 0) {
-				result.AddError (GettextCatalog.GetString ("Build failed. Please see the Build Output for more details."));
+				BuildResult result = console.GetBuildResult ();
+				if (!(result.HasErrors || result.HasWarnings)) {
+					result.AddError (GettextCatalog.GetString ("Build failed. Please see the Build Output for more details."));
+				}
+				return result;
 			}
 
-			return result;
+			return console.GetBuildResult ();
 		}
 	}
 }
