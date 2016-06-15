@@ -248,6 +248,7 @@
     <Compile Include="MonoDevelop.Dnx\DotNetCoreBuildOutputTextWriter.cs" />
     <Compile Include="MonoDevelop.Dnx\DotNetCoreBuildOutputParser.cs" />
     <Compile Include="Microsoft.Build.Utilities\MSBuildErrorParser.cs" />
+    <Compile Include="MonoDevelop.Dnx\DnxWorkspaceObjectReader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

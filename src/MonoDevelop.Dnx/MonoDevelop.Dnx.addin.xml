@@ -201,4 +201,8 @@
 			</ItemSet>
 		</Condition>
 	</Extension>
+
+	<Extension path="/MonoDevelop/ProjectModel/WorkspaceObjectReaders">
+		<Class id="DnxWorkaround" class="MonoDevelop.Dnx.DnxWorkspaceObjectReader" />
+	</Extension>
 </ExtensionModel>
