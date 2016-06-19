@@ -70,6 +70,7 @@ namespace MonoDevelop.Dnx
 			return port;
 		}
 
+
 		void StartListening (int port)
 		{
 			listeningSocket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -118,7 +119,6 @@ namespace MonoDevelop.Dnx
 			queue.Start ();
 		}
 
-
 		public void Dispose ()
 		{
 			disposed = true;
@@ -143,6 +143,14 @@ namespace MonoDevelop.Dnx
 		{
 			var message = new Message {
 				MessageType = TestMessageTypes.TestSessionTerminate
+			};
+			queue.Post (message);
+		}
+
+		public void StartTestDiscovery ()
+		{
+			var message = new Message {
+				MessageType = TestMessageTypes.TestDiscoveryStart
 			};
 			queue.Post (message);
 		}

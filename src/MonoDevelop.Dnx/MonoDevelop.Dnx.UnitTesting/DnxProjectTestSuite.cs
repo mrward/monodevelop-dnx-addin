@@ -25,26 +25,32 @@
 // THE SOFTWARE.
 //
 
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using MonoDevelop.Core;
 using MonoDevelop.Core.Execution;
 using MonoDevelop.UnitTesting;
 
 namespace MonoDevelop.Dnx.UnitTesting
 {
-	public class DnxProjectTestSuite : UnitTest//UnitTestGroup
+	public class DnxProjectTestSuite : UnitTestGroup
 	{
 		DnxProject project;
+		DnxTestLoader testLoader;
 
 		public DnxProjectTestSuite (XProject xproject, DnxProject project)
 			: base (project.Name, xproject)
 		{
 			this.project = project;
+			testLoader = new DnxTestLoader ();
+			testLoader.DiscoveryCompleted += TestLoaderDiscoveryCompleted;
 		}
 
-		//public override bool HasTests {
-		//	get {
-		//		return true;
-		//	}
-		//}
+		public override bool HasTests {
+			get { return true; }
+		}
 
 		protected override UnitTestResult OnRun (TestContext testContext)
 		{
@@ -56,7 +62,7 @@ namespace MonoDevelop.Dnx.UnitTesting
 					if (testContext.Monitor.CancellationToken.IsCancellationRequested)
 						break;
 
-					System.Threading.Thread.Sleep (100);
+					Thread.Sleep (100);
 				}
 				return runner.TestResult;
 			}
@@ -65,6 +71,49 @@ namespace MonoDevelop.Dnx.UnitTesting
 		protected override bool OnCanRun (IExecutionHandler executionContext)
 		{
 			return false;
+		}
+
+		protected override void OnCreateTests ()
+		{
+			if (!testLoader.IsRunning) {
+				Status = TestStatus.Loading;
+				testLoader.Start (project.BaseDirectory);
+			}
+		}
+
+		public override Task Refresh (CancellationToken ct)
+		{
+			return base.Refresh (ct);
+		}
+
+		public override int CountTestCases ()
+		{
+			return base.CountTestCases ();
+		}
+
+		public override void Dispose ()
+		{
+			testLoader.DiscoveryCompleted -= TestLoaderDiscoveryCompleted;
+			testLoader.Dispose ();
+			base.Dispose ();
+		}
+
+		void TestLoaderDiscoveryCompleted (object sender, EventArgs e)
+		{
+			testLoader.BuildTestInfo ();
+			var tests = testLoader.GetTests ().ToList ();
+
+			Runtime.RunInMainThread (() => {
+				Status = TestStatus.Ready;
+
+				Tests.Clear ();
+
+				foreach (UnitTest test in tests) {
+					Tests.Add (test);
+				}
+
+				OnTestChanged ();
+			});
 		}
 	}
 }

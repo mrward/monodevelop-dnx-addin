@@ -30,7 +30,6 @@ using Microsoft.DotNet.ProjectModel.Server.Models;
 using Microsoft.DotNet.Tools.Test;
 using Microsoft.Extensions.Testing.Abstractions;
 using MonoDevelop.Core;
-using MonoDevelop.Core.Execution;
 using MonoDevelop.UnitTesting;
 
 namespace MonoDevelop.Dnx.UnitTesting
@@ -84,6 +83,8 @@ namespace MonoDevelop.Dnx.UnitTesting
 				} else if (m.MessageType == TestMessageTypes.TestRunnerTestResult) {
 					var val = m.Payload.ToObject<TestResultMessage> ();
 					AddTestResult (val);
+				} else if (m.MessageType == TestMessageTypes.TestRunnerTestStarted) {
+					var val = m.Payload.ToObject<TestStartedMessage> ();
 				} else if (m.MessageType == TestMessageTypes.TestExecutionCompleted) {
 					testServer.TerminateTestSession ();
 					IsCompleted = true;

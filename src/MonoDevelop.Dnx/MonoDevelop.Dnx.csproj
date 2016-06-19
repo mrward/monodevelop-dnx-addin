@@ -261,6 +261,11 @@
     <Compile Include="Microsoft.DotNet.Tools.Test\Test.cs" />
     <Compile Include="Microsoft.DotNet.Tools.Test\TestOutcome.cs" />
     <Compile Include="MonoDevelop.Dnx.UnitTesting\DotNetCoreTestConsoleWrapper.cs" />
+    <Compile Include="MonoDevelop.Dnx.UnitTesting\DnxTestLoader.cs" />
+    <Compile Include="MonoDevelop.Dnx.UnitTesting\DnxUnitTest.cs" />
+    <Compile Include="Microsoft.DotNet.Tools.Test\TestStartedMessage.cs" />
+    <Compile Include="MonoDevelop.Dnx.UnitTesting\DnxNamespaceTestGroup.cs" />
+    <Compile Include="MonoDevelop.Dnx.UnitTesting\DnxTestClass.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
