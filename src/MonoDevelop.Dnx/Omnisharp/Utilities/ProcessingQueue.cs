@@ -11,6 +11,7 @@ namespace OmniSharp
     {
         private readonly BinaryReader _reader;
         private readonly BinaryWriter _writer;
+        bool stop;
 
         public event Action<Message> OnReceive;
 
@@ -29,6 +30,12 @@ namespace OmniSharp
             new Thread(ReceiveMessages) { IsBackground = true }.Start();
         }
 
+        public void Stop()
+        {
+            stop = true;
+            _reader.Close();
+        }
+
         public void Post(Message message)
         {
             lock (_writer)
@@ -44,7 +51,7 @@ namespace OmniSharp
 
         private void ReceiveMessages()
         {
-            while (true)
+            while (!stop)
             {
                 try
                 {

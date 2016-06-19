@@ -14,3 +14,4 @@
 [assembly:AddinDependency ("Debugger", "6.0")]
 [assembly:AddinDependency ("Debugger.Soft", "6.0")]
 [assembly:AddinDependency ("SourceEditor2", "6.0")]
+[assembly:AddinDependency ("UnitTesting", "6.0")]

@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 //
 
+using System;
 using System.Collections.Generic;
 using MonoDevelop.Core;
 using MonoDevelop.Projects;
@@ -177,6 +178,15 @@ namespace MonoDevelop.Dnx
 			}
 
 			return frameworks;
+		}
+
+		public bool HasTestRunner ()
+		{
+			JToken testRunner;
+			if (!jsonObject.TryGetValue ("testRunner", out testRunner))
+				return false;
+
+			return !String.IsNullOrEmpty (testRunner.ToString ());
 		}
 	}
 }

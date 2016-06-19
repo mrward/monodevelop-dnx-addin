@@ -45,6 +45,7 @@ namespace MonoDevelop.Dnx
 	public class DnxProject : DotNetProjectExtension
 	{
 		OmniSharp.Models.DnxProject project;
+		bool? hasTestRunner;
 		bool addingReferences;
 		bool loadingFiles;
 		ProjectReferenceCollection references = new ProjectReferenceCollection ();
@@ -565,6 +566,7 @@ namespace MonoDevelop.Dnx
 		public void OnPackageRestoreFinished ()
 		{
 			IsRestoringPackages = false;
+			hasTestRunner = null;
 
 			var handler = PackageRestoreFinished;
 			if (handler != null)
@@ -902,6 +904,26 @@ namespace MonoDevelop.Dnx
 			foreach (TKey key in missingKeys) {
 				items.Remove (key);
 			}
+		}
+
+		public bool HasTestRunner ()
+		{
+			if (hasTestRunner.HasValue)
+				return hasTestRunner.Value;
+
+			try {
+				var jsonFile = ProjectJsonFile.Read (this);
+				if (jsonFile.Exists) {
+					hasTestRunner = jsonFile.HasTestRunner ();
+					return hasTestRunner.Value;
+				}
+			}
+			catch (Exception ex)
+			{
+				LoggingService.LogError ("Unable to read project.json file", ex);
+			}
+
+			return false;
 		}
 	}
 }

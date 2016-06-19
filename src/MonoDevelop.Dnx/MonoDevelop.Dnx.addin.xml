@@ -205,4 +205,8 @@
 	<Extension path="/MonoDevelop/ProjectModel/WorkspaceObjectReaders">
 		<Class id="DnxWorkaround" class="MonoDevelop.Dnx.DnxWorkspaceObjectReader" />
 	</Extension>
+
+	<Extension path="/MonoDevelop/UnitTesting/TestProviders">
+		<Class id="DnxTestProvider" class="MonoDevelop.Dnx.UnitTesting.DnxTestProvider" />
+	</Extension>
 </ExtensionModel>

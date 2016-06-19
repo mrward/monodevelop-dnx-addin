@@ -249,6 +249,18 @@
     <Compile Include="MonoDevelop.Dnx\DotNetCoreBuildOutputParser.cs" />
     <Compile Include="Microsoft.Build.Utilities\MSBuildErrorParser.cs" />
     <Compile Include="MonoDevelop.Dnx\DnxWorkspaceObjectReader.cs" />
+    <Compile Include="MonoDevelop.Dnx.UnitTesting\DnxTestProvider.cs" />
+    <Compile Include="MonoDevelop.Dnx.UnitTesting\DnxProjectTestSuite.cs" />
+    <Compile Include="MonoDevelop.Dnx.UnitTesting\DnxTestRunner.cs" />
+    <Compile Include="MonoDevelop.Dnx.UnitTesting\DotNetCoreTestServer.cs" />
+    <Compile Include="Microsoft.DotNet.Tools.Test\TestMessageTypes.cs" />
+    <Compile Include="Microsoft.DotNet.Tools.Test\ErrorMessage.cs" />
+    <Compile Include="Microsoft.DotNet.Tools.Test\RunTestsMessage.cs" />
+    <Compile Include="Microsoft.DotNet.Tools.Test\TestStartInfo.cs" />
+    <Compile Include="Microsoft.DotNet.Tools.Test\TestResultMessage.cs" />
+    <Compile Include="Microsoft.DotNet.Tools.Test\Test.cs" />
+    <Compile Include="Microsoft.DotNet.Tools.Test\TestOutcome.cs" />
+    <Compile Include="MonoDevelop.Dnx.UnitTesting\DotNetCoreTestConsoleWrapper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -408,6 +420,8 @@
     <Folder Include="MonoDevelop.Dnx.Gui\" />
     <Folder Include="Microsoft.DotNet.ProjectModel.Server.Models\" />
     <Folder Include="Microsoft.Build.Utilities\" />
+    <Folder Include="MonoDevelop.Dnx.UnitTesting\" />
+    <Folder Include="Microsoft.DotNet.Tools.Test\" />
   </ItemGroup>
   <ItemGroup>
     <AddinReference Include="MonoDevelop.DesignerSupport" />

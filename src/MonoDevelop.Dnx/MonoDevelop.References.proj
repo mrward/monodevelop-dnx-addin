@@ -48,6 +48,10 @@
       <Private>False</Private>
       <HintPath>$(MDBinDir)\MonoDevelop.Ide.dll</HintPath>
     </Reference>
+    <Reference Include="MonoDevelop.UnitTesting">
+      <Private>False</Private>
+      <HintPath>$(MDBinDir)\..\AddIns\MonoDevelop.UnitTesting\MonoDevelop.UnitTesting.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <Private>False</Private>
       <HintPath>$(MDBinDir)\Newtonsoft.Json.dll</HintPath>
