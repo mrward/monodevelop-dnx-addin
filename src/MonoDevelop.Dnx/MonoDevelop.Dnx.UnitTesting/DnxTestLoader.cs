@@ -34,7 +34,7 @@ using Microsoft.Extensions.Testing.Abstractions;
 using MonoDevelop.Core;
 using MonoDevelop.UnitTesting;
 
-namespace MonoDevelop.Dnx
+namespace MonoDevelop.Dnx.UnitTesting
 {
 	public class DnxTestLoader : IDisposable
 	{
@@ -126,11 +126,11 @@ namespace MonoDevelop.Dnx
 			dotNetTestProcess = Process.Start (startInfo);
 		}
 
-		public void BuildTestInfo ()
+		public void BuildTestInfo (DnxProjectTestSuite projectTestSuite)
 		{
 			tests.Sort (OrderByName);
 
-			parentNamespace = new DnxNamespaceTestGroup (null, String.Empty);
+			parentNamespace = new DnxNamespaceTestGroup (projectTestSuite, null, String.Empty);
 			parentNamespace.AddTests (tests);
 		}
 

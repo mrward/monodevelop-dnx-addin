@@ -31,17 +31,19 @@ using Microsoft.Extensions.Testing.Abstractions;
 using MonoDevelop.Core.Execution;
 using MonoDevelop.UnitTesting;
 
-namespace MonoDevelop.Dnx
+namespace MonoDevelop.Dnx.UnitTesting
 {
-	public class DnxNamespaceTestGroup : UnitTestGroup
+	public class DnxNamespaceTestGroup : UnitTestGroup, IDnxTestProvider
 	{
 		DnxNamespaceTestGroup currentNamespace;
 		DnxTestClass currentClass;
+		IDnxTestRunner testRunner;
 
-		public DnxNamespaceTestGroup (UnitTestGroup parent, string name)
+		public DnxNamespaceTestGroup (IDnxTestRunner testRunner, UnitTestGroup parent, string name)
 			: base (name)
 		{
 			currentNamespace = this;
+			this.testRunner = testRunner;
 
 			if (parent == null || String.IsNullOrEmpty (parent.FixtureTypeNamespace)) {
 				FixtureTypeNamespace = name;
@@ -53,7 +55,7 @@ namespace MonoDevelop.Dnx
 		public void AddTests (IEnumerable<TestDiscovered> tests)
 		{
 			foreach (TestDiscovered test in tests) {
-				var dnxTest = new DnxUnitTest (test);
+				var dnxTest = new DnxUnitTest (testRunner, test);
 				AddTest (dnxTest);
 			}
 		}
@@ -63,14 +65,14 @@ namespace MonoDevelop.Dnx
 			string childNamespace = dnxTest.GetChildNamespace (FixtureTypeNamespace);
 			if (String.IsNullOrEmpty (childNamespace)) {
 				if (currentClass == null || currentClass.FixtureTypeName != dnxTest.FixtureTypeName) {
-					currentClass = new DnxTestClass (dnxTest.FixtureTypeName);
+					currentClass = new DnxTestClass (testRunner, dnxTest.FixtureTypeName);
 					Tests.Add (currentClass);
 				}
 				currentClass.Tests.Add (dnxTest);
 			} else if (currentNamespace.Name == childNamespace) {
 				currentNamespace.AddTest (dnxTest);
 			} else {
-				currentNamespace = new DnxNamespaceTestGroup (currentNamespace, childNamespace);
+				currentNamespace = new DnxNamespaceTestGroup (testRunner, currentNamespace, childNamespace);
 				currentNamespace.AddTest (dnxTest);
 				Tests.Add (currentNamespace);
 			}
@@ -83,6 +85,20 @@ namespace MonoDevelop.Dnx
 
 		public override bool HasTests {
 			get { return true; }
+		}
+
+		protected override UnitTestResult OnRun (TestContext testContext)
+		{
+			return testRunner.RunTest (testContext, this);
+		}
+
+		public IEnumerable<string> GetTests ()
+		{
+			foreach (IDnxTestProvider testProvider in Tests) {
+				foreach (string childTest in testProvider.GetTests ()) {
+					yield return childTest;
+				}
+			}
 		}
 	}
 }

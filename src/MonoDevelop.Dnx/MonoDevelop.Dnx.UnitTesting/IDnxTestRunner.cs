@@ -1,5 +1,5 @@
 ﻿//
-// DnxTestClass.cs
+// IDnxTestRunner.cs
 //
 // Author:
 //       Matt Ward <ward.matt@gmail.com>
@@ -25,46 +25,13 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-using MonoDevelop.Core.Execution;
 using MonoDevelop.UnitTesting;
 
 namespace MonoDevelop.Dnx.UnitTesting
 {
-	public class DnxTestClass : UnitTestGroup, IDnxTestProvider
+	public interface IDnxTestRunner
 	{
-		IDnxTestRunner testRunner;
-
-		public DnxTestClass (IDnxTestRunner testRunner, string name)
-			: base (name)
-		{
-			this.testRunner = testRunner;
-			FixtureTypeName = name;
-		}
-
-		protected override UnitTestResult OnRun (TestContext testContext)
-		{
-			return testRunner.RunTest (testContext, this);
-		}
-
-		protected override bool OnCanRun (IExecutionHandler executionContext)
-		{
-			return false;
-		}
-
-		public override bool HasTests {
-			get { return true; }
-		}
-
-		public IEnumerable<string> GetTests ()
-		{
-			foreach (IDnxTestProvider testProvider in Tests) {
-				foreach (string childTest in testProvider.GetTests ()) {
-					yield return childTest;
-				}
-			}
-		}
+		UnitTestResult RunTest (TestContext testContext, IDnxTestProvider testProvider);
 	}
 }
 

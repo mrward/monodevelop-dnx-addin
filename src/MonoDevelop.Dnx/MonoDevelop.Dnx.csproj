@@ -267,6 +267,8 @@
     <Compile Include="MonoDevelop.Dnx.UnitTesting\DnxNamespaceTestGroup.cs" />
     <Compile Include="MonoDevelop.Dnx.UnitTesting\DnxTestClass.cs" />
     <Compile Include="Microsoft.DotNet.Tools.Test\TestDiscovered.cs" />
+    <Compile Include="MonoDevelop.Dnx.UnitTesting\IDnxTestProvider.cs" />
+    <Compile Include="MonoDevelop.Dnx.UnitTesting\IDnxTestRunner.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

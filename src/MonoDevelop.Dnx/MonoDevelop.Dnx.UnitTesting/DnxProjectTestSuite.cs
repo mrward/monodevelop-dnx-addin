@@ -26,6 +26,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,7 +38,7 @@ using MonoDevelop.UnitTesting;
 
 namespace MonoDevelop.Dnx.UnitTesting
 {
-	public class DnxProjectTestSuite : UnitTestGroup
+	public class DnxProjectTestSuite : UnitTestGroup, IDnxTestProvider, IDnxTestRunner
 	{
 		DnxProject project;
 		DnxTestLoader testLoader;
@@ -61,7 +62,12 @@ namespace MonoDevelop.Dnx.UnitTesting
 
 		protected override UnitTestResult OnRun (TestContext testContext)
 		{
-			using (var runner = new DnxTestRunner (testContext, this)) {
+			return RunTest (testContext, this);
+		}
+
+		public UnitTestResult RunTest (TestContext testContext, IDnxTestProvider testProvider)
+		{
+			using (var runner = new DnxTestRunner (testContext, testProvider)) {
 				runner.WorkingDirectory = project.BaseDirectory;
 				runner.Run ();
 
@@ -110,7 +116,7 @@ namespace MonoDevelop.Dnx.UnitTesting
 
 		void TestLoaderDiscoveryCompleted (object sender, EventArgs e)
 		{
-			testLoader.BuildTestInfo ();
+			testLoader.BuildTestInfo (this);
 			var tests = testLoader.GetTests ().ToList ();
 
 			Runtime.RunInMainThread (() => {
@@ -146,6 +152,11 @@ namespace MonoDevelop.Dnx.UnitTesting
 			}
 
 			return false;
+		}
+
+		public IEnumerable<string> GetTests ()
+		{
+			return null;
 		}
 	}
 }

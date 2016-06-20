@@ -39,10 +39,10 @@ namespace MonoDevelop.Dnx.UnitTesting
 		TestContext testContext;
 		DotNetCoreTestServer testServer;
 		DotNetCoreTestConsoleWrapper dotNetTestConsole;
-		UnitTest rootTest;
+		IDnxTestProvider rootTest;
 		UnitTest currentTest;
 
-		public DnxTestRunner (TestContext testContext, UnitTest rootTest)
+		public DnxTestRunner (TestContext testContext, IDnxTestProvider rootTest)
 		{
 			this.testContext = testContext;
 			this.rootTest = rootTest;
@@ -79,7 +79,7 @@ namespace MonoDevelop.Dnx.UnitTesting
 		{
 			try {
 				if (m.MessageType == TestMessageTypes.TestSessionConnected) {
-					testServer.GetTestRunnerStartInfo (null);
+					testServer.GetTestRunnerStartInfo (rootTest.GetTests ());
 				} else if (m.MessageType == TestMessageTypes.TestExecutionTestRunnerProcessStartInfo) {
 					var val = m.Payload.ToObject<TestStartInfoMessage> ();
 					RunTestsWithDotNetCoreTest (val);
@@ -200,14 +200,13 @@ namespace MonoDevelop.Dnx.UnitTesting
 			return String.Empty;
 		}
 
-
 		void OnTestStarted (TestStartedMessage message)
 		{
 			string testId = message.Id?.ToString ();
 			if (testId == null)
 				return;
 
-			currentTest = FindTest (rootTest, testId);
+			currentTest = FindTest (rootTest as UnitTest, testId);
 			if (currentTest != null) {
 				testContext.Monitor.BeginTest (currentTest);
 				currentTest.Status = TestStatus.Running;
@@ -217,8 +216,12 @@ namespace MonoDevelop.Dnx.UnitTesting
 		UnitTest FindTest (UnitTest test, string testId)
 		{
 			var testGroup = test as UnitTestGroup;
-			if (testGroup == null)
+			if (testGroup == null) {
+				if (test.TestId == testId) {
+					return test;
+				}
 				return null;
+			}
 
 			foreach (UnitTest child in testGroup.Tests) {
 				if (child.TestId == testId) {
@@ -239,8 +242,8 @@ namespace MonoDevelop.Dnx.UnitTesting
 			UnitTestResult result = AddTestResult (message);
 
 			string testId = message.Test?.Id?.ToString ();
-			if (testId != currentTest.TestId) {
-				currentTest = FindTest (rootTest, testId);
+			if (currentTest == null || testId != currentTest.TestId) {
+				currentTest = FindTest (rootTest as UnitTest, testId);
 			}
 
 			if (currentTest != null) {

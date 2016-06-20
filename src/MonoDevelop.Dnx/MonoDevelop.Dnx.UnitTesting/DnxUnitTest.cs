@@ -26,22 +26,25 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Testing.Abstractions;
 using MonoDevelop.Core.Execution;
 using MonoDevelop.UnitTesting;
 
-namespace MonoDevelop.Dnx
+namespace MonoDevelop.Dnx.UnitTesting
 {
-	public class DnxUnitTest : UnitTest
+	public class DnxUnitTest : UnitTest, IDnxTestProvider
 	{
 		TestDiscovered test;
+		IDnxTestRunner testRunner;
 		string name;
 		SourceCodeLocation sourceCodeLocation;
 
-		public DnxUnitTest (TestDiscovered test)
+		public DnxUnitTest (IDnxTestRunner testRunner, TestDiscovered test)
 			: base (test.DisplayName)
 		{
+			this.testRunner = testRunner;
 			this.test = test;
 
 			Init ();
@@ -71,7 +74,7 @@ namespace MonoDevelop.Dnx
 
 		protected override UnitTestResult OnRun (TestContext testContext)
 		{
-			return null;
+			return testRunner.RunTest (testContext, this);
 		}
 
 		protected override bool OnCanRun (IExecutionHandler executionContext)
@@ -103,6 +106,11 @@ namespace MonoDevelop.Dnx
 			}
 
 			return childNamespace;
+		}
+
+		public IEnumerable<string> GetTests ()
+		{
+			yield return test.FullyQualifiedName;
 		}
 	}
 }
