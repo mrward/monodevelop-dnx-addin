@@ -21,8 +21,6 @@ namespace Microsoft.Extensions.Testing.Abstractions
 
 		public Guid? Id { get; set; }
 
-		public int LineNumber { get; set; }
-
 		public IDictionary<string, object> Properties { get; set; }
 	}
 }

@@ -50,9 +50,9 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		public void AddTests (IEnumerable<Test> tests)
+		public void AddTests (IEnumerable<TestDiscovered> tests)
 		{
-			foreach (Test test in tests) {
+			foreach (TestDiscovered test in tests) {
 				var dnxTest = new DnxUnitTest (test);
 				AddTest (dnxTest);
 			}

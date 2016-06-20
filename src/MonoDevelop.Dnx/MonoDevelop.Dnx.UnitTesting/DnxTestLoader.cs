@@ -40,7 +40,7 @@ namespace MonoDevelop.Dnx
 	{
 		DotNetCoreTestServer testServer;
 		Process dotNetTestProcess;
-		List<Test> tests = new List<Test> ();
+		List<TestDiscovered> tests = new List<TestDiscovered> ();
 		DnxNamespaceTestGroup parentNamespace;
 
 		public void Dispose ()
@@ -93,7 +93,7 @@ namespace MonoDevelop.Dnx
 				if (m.MessageType == TestMessageTypes.TestSessionConnected) {
 					testServer.StartTestDiscovery ();
 				} else if (m.MessageType == TestMessageTypes.TestDiscoveryTestFound) {
-					var val = m.Payload.ToObject<Test> ();
+					var val = m.Payload.ToObject<TestDiscovered> ();
 					tests.Add (val);
 				} else if (m.MessageType == TestMessageTypes.TestDiscoveryCompleted) {
 					testServer.TerminateTestSession ();

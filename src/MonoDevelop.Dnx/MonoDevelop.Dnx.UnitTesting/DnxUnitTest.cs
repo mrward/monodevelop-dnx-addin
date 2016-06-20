@@ -35,11 +35,11 @@ namespace MonoDevelop.Dnx
 {
 	public class DnxUnitTest : UnitTest
 	{
-		Test test;
+		TestDiscovered test;
 		string name;
 		SourceCodeLocation sourceCodeLocation;
 
-		public DnxUnitTest (Test test)
+		public DnxUnitTest (TestDiscovered test)
 			: base (test.DisplayName)
 		{
 			this.test = test;

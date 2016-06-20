@@ -39,10 +39,13 @@ namespace MonoDevelop.Dnx.UnitTesting
 		TestContext testContext;
 		DotNetCoreTestServer testServer;
 		DotNetCoreTestConsoleWrapper dotNetTestConsole;
+		UnitTest rootTest;
+		UnitTest currentTest;
 
-		public DnxTestRunner (TestContext testContext)
+		public DnxTestRunner (TestContext testContext, UnitTest rootTest)
 		{
 			this.testContext = testContext;
+			this.rootTest = rootTest;
 			TestResult = UnitTestResult.CreateSuccess ();
 		}
 
@@ -82,9 +85,10 @@ namespace MonoDevelop.Dnx.UnitTesting
 					RunTestsWithDotNetCoreTest (val);
 				} else if (m.MessageType == TestMessageTypes.TestRunnerTestResult) {
 					var val = m.Payload.ToObject<TestResultMessage> ();
-					AddTestResult (val);
+					OnTestResult (val);
 				} else if (m.MessageType == TestMessageTypes.TestRunnerTestStarted) {
 					var val = m.Payload.ToObject<TestStartedMessage> ();
+					OnTestStarted (val);
 				} else if (m.MessageType == TestMessageTypes.TestExecutionCompleted) {
 					testServer.TerminateTestSession ();
 					IsCompleted = true;
@@ -126,7 +130,7 @@ namespace MonoDevelop.Dnx.UnitTesting
 				});
 		}
 
-		void AddTestResult (TestResultMessage message)
+		UnitTestResult AddTestResult (TestResultMessage message)
 		{
 			var result = new UnitTestResult {
 				ConsoleError = message.ErrorMessage,
@@ -141,6 +145,8 @@ namespace MonoDevelop.Dnx.UnitTesting
 			UpdateCounts (result);
 
 			TestResult.Add (result);
+
+			return result;
 		}
 
 		void UpdateCounts (UnitTestResult result)
@@ -192,6 +198,56 @@ namespace MonoDevelop.Dnx.UnitTesting
 			}
 
 			return String.Empty;
+		}
+
+
+		void OnTestStarted (TestStartedMessage message)
+		{
+			string testId = message.Id?.ToString ();
+			if (testId == null)
+				return;
+
+			currentTest = FindTest (rootTest, testId);
+			if (currentTest != null) {
+				testContext.Monitor.BeginTest (currentTest);
+				currentTest.Status = TestStatus.Running;
+			}
+		}
+
+		UnitTest FindTest (UnitTest test, string testId)
+		{
+			var testGroup = test as UnitTestGroup;
+			if (testGroup == null)
+				return null;
+
+			foreach (UnitTest child in testGroup.Tests) {
+				if (child.TestId == testId) {
+					return child;
+				}
+
+				var foundTest = FindTest (child, testId);
+				if (foundTest != null) {
+					return foundTest;
+				}
+			}
+
+			return null;
+		}
+
+		void OnTestResult (TestResultMessage message)
+		{
+			UnitTestResult result = AddTestResult (message);
+
+			string testId = message.Test?.Id?.ToString ();
+			if (testId != currentTest.TestId) {
+				currentTest = FindTest (rootTest, testId);
+			}
+
+			if (currentTest != null) {
+				currentTest.RegisterResult (testContext, result);
+				testContext.Monitor.EndTest (currentTest, result);
+				currentTest.Status = TestStatus.Ready;
+			}
 		}
 	}
 }

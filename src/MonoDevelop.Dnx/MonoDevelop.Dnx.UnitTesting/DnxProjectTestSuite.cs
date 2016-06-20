@@ -61,7 +61,7 @@ namespace MonoDevelop.Dnx.UnitTesting
 
 		protected override UnitTestResult OnRun (TestContext testContext)
 		{
-			using (var runner = new DnxTestRunner (testContext)) {
+			using (var runner = new DnxTestRunner (testContext, this)) {
 				runner.WorkingDirectory = project.BaseDirectory;
 				runner.Run ();
 
@@ -71,6 +71,7 @@ namespace MonoDevelop.Dnx.UnitTesting
 
 					Thread.Sleep (100);
 				}
+				Status = TestStatus.Ready;
 				return runner.TestResult;
 			}
 		}
