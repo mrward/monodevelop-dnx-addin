@@ -441,6 +441,7 @@ namespace MonoDevelop.Dnx
 				var config = GetConfiguration (configuration) as DotNetProjectConfiguration;
 				using (var builder = new DnxProjectBuilder (this, monitor)) {
 					BuildResult result = await builder.BuildAsnc (config);
+					LastBuildTime = DateTime.Now;
 					return new TargetEvaluationResult (result);
 				}
 			}
@@ -881,6 +882,7 @@ namespace MonoDevelop.Dnx
 		}
 
 		public bool IsWebProject { get; set; }
+		public DateTime? LastBuildTime { get; private set; }
 
 		void UpdateCachedProjectInformation ()
 		{

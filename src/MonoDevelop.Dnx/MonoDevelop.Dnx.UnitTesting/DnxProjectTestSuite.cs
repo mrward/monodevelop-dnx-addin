@@ -31,6 +31,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using MonoDevelop.Core;
 using MonoDevelop.Core.Execution;
+using MonoDevelop.Ide;
+using MonoDevelop.Projects;
 using MonoDevelop.UnitTesting;
 
 namespace MonoDevelop.Dnx.UnitTesting
@@ -39,13 +41,18 @@ namespace MonoDevelop.Dnx.UnitTesting
 	{
 		DnxProject project;
 		DnxTestLoader testLoader;
+		DateTime? lastBuildTime;
 
 		public DnxProjectTestSuite (XProject xproject, DnxProject project)
 			: base (project.Name, xproject)
 		{
 			this.project = project;
+			lastBuildTime = project.LastBuildTime;
+
 			testLoader = new DnxTestLoader ();
 			testLoader.DiscoveryCompleted += TestLoaderDiscoveryCompleted;
+
+			IdeApp.ProjectOperations.EndBuild += AfterBuild;
 		}
 
 		public override bool HasTests {
@@ -93,6 +100,8 @@ namespace MonoDevelop.Dnx.UnitTesting
 
 		public override void Dispose ()
 		{
+			IdeApp.ProjectOperations.EndBuild -= AfterBuild;
+
 			testLoader.DiscoveryCompleted -= TestLoaderDiscoveryCompleted;
 			testLoader.Dispose ();
 			base.Dispose ();
@@ -114,6 +123,28 @@ namespace MonoDevelop.Dnx.UnitTesting
 
 				OnTestChanged ();
 			});
+		}
+
+		void AfterBuild (object sender, BuildEventArgs args)
+		{
+			if (RefreshRequired ()) {
+				lastBuildTime = project.LastBuildTime.Value;
+
+				UpdateTests ();
+			}
+		}
+
+		bool RefreshRequired ()
+		{
+			DateTime? buildTime = project.LastBuildTime;
+			if (buildTime.HasValue) {
+				if (lastBuildTime.HasValue) {
+					return buildTime > lastBuildTime;
+				}
+				return true;
+			}
+
+			return false;
 		}
 	}
 }
