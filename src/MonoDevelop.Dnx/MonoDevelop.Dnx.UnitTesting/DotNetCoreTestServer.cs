@@ -39,7 +39,7 @@ using MonoDevelop.Dnx.Omnisharp;
 using Newtonsoft.Json.Linq;
 using OmniSharp;
 
-namespace MonoDevelop.Dnx
+namespace MonoDevelop.Dnx.UnitTesting
 {
 	public class DotNetCoreTestServer : IDisposable
 	{

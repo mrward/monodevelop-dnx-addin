@@ -28,7 +28,7 @@
 using System.IO;
 using MonoDevelop.Core.Execution;
 
-namespace MonoDevelop.Dnx
+namespace MonoDevelop.Dnx.UnitTesting
 {
 	/// <summary>
 	/// Prevents a dispose error since the console is shared and the
