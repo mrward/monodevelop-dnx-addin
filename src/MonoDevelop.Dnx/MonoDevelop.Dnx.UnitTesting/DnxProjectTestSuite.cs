@@ -43,6 +43,7 @@ namespace MonoDevelop.Dnx.UnitTesting
 		DnxProject project;
 		DnxTestLoader testLoader;
 		DateTime? lastBuildTime;
+		UnitTest[] oldTests;
 
 		public DnxProjectTestSuite (XProject xproject, DnxProject project)
 			: base (project.Name, xproject)
@@ -90,8 +91,18 @@ namespace MonoDevelop.Dnx.UnitTesting
 		protected override void OnCreateTests ()
 		{
 			if (!testLoader.IsRunning) {
+				AddOldTests ();
 				Status = TestStatus.Loading;
 				testLoader.Start (project.BaseDirectory);
+			}
+		}
+
+		void AddOldTests ()
+		{
+			if (oldTests != null) {
+				foreach (var test in oldTests) {
+					Tests.Add (test);
+				}
 			}
 		}
 
@@ -137,6 +148,8 @@ namespace MonoDevelop.Dnx.UnitTesting
 			if (RefreshRequired ()) {
 				lastBuildTime = project.LastBuildTime.Value;
 
+				SaveOldTests ();
+
 				UpdateTests ();
 			}
 		}
@@ -152,6 +165,14 @@ namespace MonoDevelop.Dnx.UnitTesting
 			}
 
 			return false;
+		}
+
+		void SaveOldTests ()
+		{
+			if (Tests.Count > 0) {
+				oldTests = new UnitTest[Tests.Count];
+				Tests.CopyTo (oldTests, 0);
+			}
 		}
 
 		public IEnumerable<string> GetTests ()
