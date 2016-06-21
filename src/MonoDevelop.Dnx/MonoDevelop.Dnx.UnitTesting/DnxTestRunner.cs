@@ -41,11 +41,13 @@ namespace MonoDevelop.Dnx.UnitTesting
 		DotNetCoreTestConsoleWrapper dotNetTestConsole;
 		IDnxTestProvider rootTest;
 		UnitTest currentTest;
+		bool runningSingleTest;
 
 		public DnxTestRunner (TestContext testContext, IDnxTestProvider rootTest)
 		{
 			this.testContext = testContext;
 			this.rootTest = rootTest;
+			runningSingleTest = rootTest is DnxUnitTest;
 			TestResult = UnitTestResult.CreateSuccess ();
 		}
 
@@ -87,8 +89,10 @@ namespace MonoDevelop.Dnx.UnitTesting
 					var val = m.Payload.ToObject<TestResultMessage> ();
 					OnTestResult (val);
 				} else if (m.MessageType == TestMessageTypes.TestRunnerTestStarted) {
-					var val = m.Payload.ToObject<TestStartedMessage> ();
-					OnTestStarted (val);
+					if (!runningSingleTest) {
+						var val = m.Payload.ToObject<TestStartedMessage> ();
+						OnTestStarted (val);
+					}
 				} else if (m.MessageType == TestMessageTypes.TestExecutionCompleted) {
 					testServer.TerminateTestSession ();
 					IsCompleted = true;
@@ -240,6 +244,9 @@ namespace MonoDevelop.Dnx.UnitTesting
 		void OnTestResult (TestResultMessage message)
 		{
 			UnitTestResult result = AddTestResult (message);
+
+			if (runningSingleTest)
+				return;
 
 			string testId = message.Test?.Id?.ToString ();
 			if (currentTest == null || testId != currentTest.TestId) {
