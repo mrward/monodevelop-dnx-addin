@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -51,10 +52,19 @@ namespace MonoDevelop.Dnx.UnitTesting
 			this.project = project;
 			lastBuildTime = project.LastBuildTime;
 
+			CreateResultsStore ();
+
 			testLoader = new DnxTestLoader ();
 			testLoader.DiscoveryCompleted += TestLoaderDiscoveryCompleted;
 
 			IdeApp.ProjectOperations.EndBuild += AfterBuild;
+		}
+
+		void CreateResultsStore ()
+		{
+			string storeId = Path.GetFileName (project.FileName);
+			string resultsPath = UnitTestService.GetTestResultsDirectory (project.BaseDirectory);
+			ResultsStore = new BinaryResultsStore (resultsPath, storeId);
 		}
 
 		public override bool HasTests {
