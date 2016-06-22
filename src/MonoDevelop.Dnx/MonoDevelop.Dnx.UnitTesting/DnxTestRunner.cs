@@ -26,6 +26,7 @@
 //
 
 using System;
+using System.Linq;
 using Microsoft.DotNet.ProjectModel.Server.Models;
 using Microsoft.DotNet.Tools.Test;
 using Microsoft.Extensions.Testing.Abstractions;
@@ -155,21 +156,26 @@ namespace MonoDevelop.Dnx.UnitTesting
 
 		void UpdateCounts (UnitTestResult result)
 		{
+			UpdateCounts (result, result);
+		}
+
+		void UpdateCounts (UnitTestResult parentResult, UnitTestResult result)
+		{
 			switch (result.Status) {
 				case ResultStatus.Failure:
-					result.Failures++;
+					parentResult.Failures++;
 				break;
 
 				case ResultStatus.Ignored:
-					result.Ignored++;
+					parentResult.Ignored++;
 				break;
 
 				case ResultStatus.Success:
-					result.Passed++;
+					parentResult.Passed++;
 				break;
 
 				case ResultStatus.Inconclusive:
-					result.Inconclusive++;
+					parentResult.Inconclusive++;
 				break;
 			}
 		}
@@ -214,6 +220,7 @@ namespace MonoDevelop.Dnx.UnitTesting
 			if (currentTest != null) {
 				testContext.Monitor.BeginTest (currentTest);
 				currentTest.Status = TestStatus.Running;
+				UpdateParentStatus ();
 			}
 		}
 
@@ -257,7 +264,52 @@ namespace MonoDevelop.Dnx.UnitTesting
 				currentTest.RegisterResult (testContext, result);
 				testContext.Monitor.EndTest (currentTest, result);
 				currentTest.Status = TestStatus.Ready;
+				UpdateParentStatus ();
 			}
+		}
+
+		void UpdateParentStatus ()
+		{
+			var parent = currentTest.Parent as UnitTestGroup;
+
+			while (parent != null && parent != rootTest && !(parent is DnxProjectTestSuite)) {
+				if (currentTest.Status == TestStatus.Running) {
+					OnChildTestRunning (parent);
+				} else if (currentTest.Status == TestStatus.Ready) {
+					OnChildTestReady (parent);
+				}
+
+				parent = parent.Parent as UnitTestGroup;
+			} 
+		}
+
+		void OnChildTestRunning (UnitTestGroup parent)
+		{
+			if (parent.Status != TestStatus.Running) {
+				testContext.Monitor.BeginTest (parent);
+				parent.Status = TestStatus.Running;
+			}
+		}
+
+		void OnChildTestReady (UnitTestGroup parent)
+		{
+			if (parent.Tests.All (test => test.Status == TestStatus.Ready)) {
+				UnitTestResult result = GenerateResultFromChildTests (parent);
+				parent.RegisterResult (testContext, result);
+				testContext.Monitor.EndTest (parent, result);
+				parent.Status = TestStatus.Ready;
+			}
+		}
+
+		UnitTestResult GenerateResultFromChildTests (UnitTestGroup parent)
+		{
+			var result = UnitTestResult.CreateSuccess ();
+			foreach (UnitTest test in parent.Tests) {
+				UnitTestResult childResult = test.GetLastResult ();
+				result.Add (childResult);
+				UpdateCounts (result, childResult);
+			}
+			return result;
 		}
 	}
 }
