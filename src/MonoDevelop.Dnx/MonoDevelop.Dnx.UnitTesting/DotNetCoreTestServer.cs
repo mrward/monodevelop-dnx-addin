@@ -122,8 +122,12 @@ namespace MonoDevelop.Dnx.UnitTesting
 		public void Dispose ()
 		{
 			disposed = true;
-			queue.Stop ();
-			listeningSocket.Close ();
+			if (queue != null) {
+				queue.Stop ();
+			}
+			if (listeningSocket != null) {
+				listeningSocket.Close ();
+			}
 		}
 
 		public void GetTestRunnerStartInfo (IEnumerable<string> tests)

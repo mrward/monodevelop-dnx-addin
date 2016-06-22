@@ -56,6 +56,7 @@ namespace MonoDevelop.Dnx.UnitTesting
 
 			testLoader = new DnxTestLoader ();
 			testLoader.DiscoveryCompleted += TestLoaderDiscoveryCompleted;
+			testLoader.DiscoveryFailed += TestLoaderDiscoveryFailed;
 
 			IdeApp.ProjectOperations.EndBuild += AfterBuild;
 		}
@@ -130,6 +131,7 @@ namespace MonoDevelop.Dnx.UnitTesting
 		{
 			IdeApp.ProjectOperations.EndBuild -= AfterBuild;
 
+			testLoader.DiscoveryFailed -= TestLoaderDiscoveryFailed;
 			testLoader.DiscoveryCompleted -= TestLoaderDiscoveryCompleted;
 			testLoader.Dispose ();
 			base.Dispose ();
@@ -150,6 +152,13 @@ namespace MonoDevelop.Dnx.UnitTesting
 				}
 
 				OnTestChanged ();
+			});
+		}
+
+		void TestLoaderDiscoveryFailed (object sender, EventArgs e)
+		{
+			Runtime.RunInMainThread (() => {
+				Status = TestStatus.LoadError;
 			});
 		}
 
