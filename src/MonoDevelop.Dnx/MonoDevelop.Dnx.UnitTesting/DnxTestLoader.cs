@@ -131,7 +131,7 @@ namespace MonoDevelop.Dnx.UnitTesting
 				Process.GetCurrentProcess ().Id);
 
 			var startInfo = new ProcessStartInfo {
-				FileName = "dotnet",
+				FileName = DnxServices.ProjectService.CurrentDotNetRuntimePath,
 				CreateNoWindow = true,
 				UseShellExecute = false,
 				RedirectStandardError = true,
