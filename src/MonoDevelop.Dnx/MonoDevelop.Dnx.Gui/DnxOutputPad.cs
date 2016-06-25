@@ -56,7 +56,7 @@ namespace MonoDevelop.Dnx
 		{
 			DockItemToolbar toolbar = window.GetToolbar (DockPositionType.Right);
 
-			var clearButton = new Button (new Gtk.Image (Ide.Gui.Stock.Broom, IconSize.Menu));
+			var clearButton = new Button (new ImageView (Ide.Gui.Stock.Broom, IconSize.Menu));
 			clearButton.Clicked += ButtonClearClick;
 			clearButton.TooltipText = GettextCatalog.GetString ("Clear");
 			toolbar.Add (clearButton);
