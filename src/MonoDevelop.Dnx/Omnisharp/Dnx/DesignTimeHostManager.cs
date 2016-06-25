@@ -5,6 +5,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Microsoft.Framework.Logging;
+using MonoDevelop.Core;
+using MonoDevelop.Core.Execution;
+using MonoDevelop.Dnx;
 
 namespace OmniSharp.Dnx
 {
@@ -13,7 +16,7 @@ namespace OmniSharp.Dnx
         private readonly ILogger _logger;
         private readonly DotNetCorePaths _paths;
         private readonly object _processLock = new object();
-        private Process _designTimeHostProcess;
+        ProcessAsyncOperation _designTimeHostOperation;
         private bool _stopped;
 
         public DesignTimeHostManager(ILoggerFactory loggerFactory, DotNetCorePaths paths)
@@ -35,21 +38,25 @@ namespace OmniSharp.Dnx
 
                 int port = GetFreePort();
 
-                var psi = new ProcessStartInfo
-                {
-                    FileName = _paths.DotNet,
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    RedirectStandardError = true,
-                    Arguments = string.Format(@"projectmodel-server --port {0} --host-pid {1} --host-name {2}",
-                                              port,
-                                              Process.GetCurrentProcess().Id,
-                                              hostId),
-                };
+                string arguments = string.Format(@"projectmodel-server --port {0} --host-pid {1} --host-name {2}",
+                    port,
+                    Process.GetCurrentProcess().Id,
+                    hostId);
 
-                _logger.LogVerbose(psi.FileName + " " + psi.Arguments);
+                _logger.LogVerbose(_paths.DotNet + " " + arguments);
 
-                _designTimeHostProcess = Process.Start(psi);
+                _designTimeHostOperation = Runtime.ProcessService.StartConsoleProcess( 
+                    _paths.DotNet,
+                    arguments,
+                    null,
+                    new DotNetCoreOutputOperationConsole (),
+                    null,
+                    (sender, e) => {
+                        _logger.LogWarning("Design time host process ended");
+
+                        Start(hostId, onConnected);
+                    }
+                );
 
                 // Wait a little bit for it to conncet before firing the callback
                 using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
@@ -77,22 +84,14 @@ namespace OmniSharp.Dnx
                     }
                 }
 
-                if (_designTimeHostProcess.HasExited)
+                if (_designTimeHostOperation.IsCompleted)
                 {
                     // REVIEW: Should we quit here or retry?
-                    _logger.LogError(string.Format("Failed to launch DesignTimeHost. Process exited with code {0}.", _designTimeHostProcess.ExitCode));
+                    _logger.LogError(string.Format("Failed to launch DesignTimeHost. Process exited with code {0}.", _designTimeHostOperation.ExitCode));
                     return;
                 }
 
-                _logger.LogInformation(string.Format("Running DesignTimeHost on port {0}, with PID {1}", port, _designTimeHostProcess.Id));
-
-                _designTimeHostProcess.EnableRaisingEvents = true;
-                _designTimeHostProcess.OnExit(() =>
-                {
-                    _logger.LogWarning("Design time host process ended");
-
-                    Start(hostId, onConnected);
-                });
+                _logger.LogInformation(string.Format("Running DesignTimeHost on port {0}, with PID {1}", port, _designTimeHostOperation.ProcessId));
 
                 onConnected(port);
             }
@@ -109,12 +108,12 @@ namespace OmniSharp.Dnx
 
                 _stopped = true;
 
-                if (_designTimeHostProcess != null)
+                if (_designTimeHostOperation != null)
                 {
                     _logger.LogInformation("Shutting down DesignTimeHost");
 
-                    _designTimeHostProcess.KillAll();
-                    _designTimeHostProcess = null;
+                    _designTimeHostOperation.Cancel();
+                    _designTimeHostOperation = null;
                 }
             }
         }
