@@ -252,8 +252,11 @@ namespace MonoDevelop.Dnx.UnitTesting
 		{
 			UnitTestResult result = AddTestResult (message);
 
-			if (runningSingleTest)
+			if (runningSingleTest) {
+				// Ensure test error message is displayed in Test Results window.
+				TestResult = result;
 				return;
+			}
 
 			string testId = message.Test?.Id?.ToString ();
 			if (currentTest == null || testId != currentTest.TestId) {
