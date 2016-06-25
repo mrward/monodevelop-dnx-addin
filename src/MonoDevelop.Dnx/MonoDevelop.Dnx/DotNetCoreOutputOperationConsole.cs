@@ -26,6 +26,7 @@
 //
 
 using System.IO;
+using Microsoft.Framework.Logging;
 using MonoDevelop.Core.Execution;
 using MonoDevelop.Core.ProgressMonitoring;
 using MonoDevelop.Ide.Gui.Components;
@@ -41,19 +42,22 @@ namespace MonoDevelop.Dnx
 		StringReader reader = new StringReader ("");
 		bool disposed;
 
-		public DotNetCoreOutputOperationConsole ()
-			: this (DnxOutputPad.LogView)
+		public DotNetCoreOutputOperationConsole (LogLevel logLevel = LogLevel.Verbose)
+			: this (logLevel, DnxOutputPad.LogView)
 		{
 		}
 
-		public DotNetCoreOutputOperationConsole (LogView logView)
+		public DotNetCoreOutputOperationConsole (LogLevel logLevel, LogView logView)
 		{
+			LogLevel = logLevel;
 			this.logView = logView;
 
-			logger.TextWritten += logView.WriteConsoleLogText;
-			errorLogger.TextWritten += logView.WriteError;
-			outLogger.TextWritten += logView.WriteText;
+			logger.TextWritten += WriteConsoleLogText;
+			errorLogger.TextWritten += WriteError;
+			outLogger.TextWritten += WriteText;
 		}
+
+		public LogLevel LogLevel { get; set; }
 
 		public override TextReader In {
 			get { return reader; }
@@ -72,7 +76,9 @@ namespace MonoDevelop.Dnx
 
 		public override void Debug (int level, string category, string message)
 		{
-			logView.WriteDebug (level, category, message);
+			if (DnxLoggerService.IsEnabled (LogLevel.Debug)) {
+				logView.WriteDebug (level, category, message);
+			}
 		}
 
 		public override void Dispose ()
@@ -80,9 +86,9 @@ namespace MonoDevelop.Dnx
 			if (!disposed) {
 				disposed = true;
 
-				logger.TextWritten -= logView.WriteConsoleLogText;
-				errorLogger.TextWritten -= logView.WriteError;
-				outLogger.TextWritten -= logView.WriteText;
+				logger.TextWritten -= WriteConsoleLogText;
+				errorLogger.TextWritten -= WriteError;
+				outLogger.TextWritten -= WriteText;
 
 				logger.Dispose ();
 				outLogger.Dispose ();
@@ -90,6 +96,25 @@ namespace MonoDevelop.Dnx
 			}
 
 			base.Dispose ();
+		}
+
+		void WriteText (string text)
+		{
+			if (DnxLoggerService.IsEnabled (LogLevel)) {
+				logView.WriteText (text);
+			}
+		}
+
+		void WriteError (string text)
+		{
+			logView.WriteError (text);
+		}
+
+		void WriteConsoleLogText (string text)
+		{
+			if (DnxLoggerService.IsEnabled (LogLevel)) {
+				logView.WriteConsoleLogText (text);
+			}
 		}
 	}
 }
