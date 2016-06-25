@@ -32,6 +32,7 @@ using Microsoft.DotNet.ProjectModel.Server.Models;
 using Microsoft.DotNet.Tools.Test;
 using Microsoft.Extensions.Testing.Abstractions;
 using MonoDevelop.Core;
+using MonoDevelop.Core.Execution;
 using MonoDevelop.UnitTesting;
 
 namespace MonoDevelop.Dnx.UnitTesting
@@ -39,11 +40,10 @@ namespace MonoDevelop.Dnx.UnitTesting
 	public class DnxTestLoader : IDisposable
 	{
 		DotNetCoreTestServer testServer;
-		Process dotNetTestProcess;
+		ProcessAsyncOperation dotNetTestOperation;
 		List<TestDiscovered> tests = new List<TestDiscovered> ();
 		DnxNamespaceTestGroup parentNamespace;
 		bool discoveryCompleted;
-
 		public void Dispose ()
 		{
 			IsRunning = false;
@@ -58,12 +58,11 @@ namespace MonoDevelop.Dnx.UnitTesting
 			}
 
 			try {
-				if (dotNetTestProcess != null) {
-					dotNetTestProcess.Exited -= DotNetTestProcessExited;
-					if (!dotNetTestProcess.HasExited) {
-						dotNetTestProcess.Kill ();
-						dotNetTestProcess = null;
+				if (dotNetTestOperation != null) {
+					if (!dotNetTestOperation.IsCompleted) {
+						dotNetTestOperation.Cancel ();
 					}
+					dotNetTestOperation = null;
 				}
 			} catch (Exception ex) {
 				LoggingService.LogError ("Test loader dispose error.", ex);
@@ -111,15 +110,17 @@ namespace MonoDevelop.Dnx.UnitTesting
 				} else if (m.MessageType == TestMessageTypes.TestDiscoveryCompleted) {
 					discoveryCompleted = true;
 					testServer.TerminateTestSession ();
+					DnxOutputPad.WriteText (GettextCatalog.GetString ("Test discovery completed."));
 					OnDiscoveryCompleted ();
 					Stop ();
 				} else if (m.MessageType == "Error") {
 					var val = m.Payload.ToObject<Microsoft.DotNet.Tools.Test.ErrorMessage> ();
-					LoggingService.LogError ("Test loader error: {0}", val.Message);
+					DnxOutputPad.WriteError (val.Message);
 					OnDiscoveryFailed ();
 				}
 			} catch (Exception ex) {
 				LoggingService.LogError ("Test loader error", ex);
+				DnxOutputPad.WriteError (ex.Message);
 				OnDiscoveryFailed ();
 			}
 		}
@@ -130,21 +131,16 @@ namespace MonoDevelop.Dnx.UnitTesting
 				testServer.Port,
 				Process.GetCurrentProcess ().Id);
 
-			var startInfo = new ProcessStartInfo {
-				FileName = DnxServices.ProjectService.CurrentDotNetRuntimePath,
-				CreateNoWindow = true,
-				UseShellExecute = false,
-				RedirectStandardError = true,
-				Arguments = arguments,
-				WorkingDirectory = projectDirectory,
-			};
+			DnxOutputPad.WriteText (GettextCatalog.GetString ("Starting test discovery..."));
+			DnxOutputPad.WriteText (String.Format ("{0} {1}", DnxServices.ProjectService.CurrentDotNetRuntimePath, arguments));
 
-			dotNetTestProcess = Process.Start (startInfo);
-			dotNetTestProcess.EnableRaisingEvents = true;
-			dotNetTestProcess.Exited += DotNetTestProcessExited;
-			if (dotNetTestProcess.HasExited) {
-				OnDotNetTestProcessExitedBeforeCompleted ();
-			}
+			dotNetTestOperation = Runtime.ProcessService.StartConsoleProcess (
+				DnxServices.ProjectService.CurrentDotNetRuntimePath,
+				arguments,
+				projectDirectory,
+				new DotNetCoreOutputOperationConsole (),
+				null,
+				DotNetTestProcessExited);
 		}
 
 		public void BuildTestInfo (DnxProjectTestSuite projectTestSuite)
@@ -170,6 +166,7 @@ namespace MonoDevelop.Dnx.UnitTesting
 		void OnError (Exception ex)
 		{
 			LoggingService.LogError ("Test loader error", ex);
+			DnxOutputPad.WriteError (ex.Message);
 			OnDiscoveryFailed ();
 		}
 
@@ -188,8 +185,7 @@ namespace MonoDevelop.Dnx.UnitTesting
 
 		void OnDotNetTestProcessExitedBeforeCompleted ()
 		{
-			int? exitCode = dotNetTestProcess?.ExitCode;
-			LoggingService.LogError ("dotnet test exited. {0}", exitCode);
+			DnxOutputPad.WriteError ("dotnet test exited before discovery completed.");
 			OnDiscoveryFailed ();
 		}
 	}
