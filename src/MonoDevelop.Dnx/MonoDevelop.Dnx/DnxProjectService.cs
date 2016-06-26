@@ -232,9 +232,9 @@ namespace MonoDevelop.Dnx
 				DnxProject matchedProject = FindProjectByProjectJsonFileName (project.Path);
 				if (matchedProject != null) {
 					if (message.Framework != null && message.Framework.FrameworkName == matchedProject.CurrentFramework) {
-						TaskService.Errors.ClearByOwner (matchedProject);
+						TaskService.Errors.ClearByOwner (matchedProject.Project);
 						var result = message.ToBuildResult (matchedProject);
-						TaskService.Errors.AddRange (result.Errors.Select (error => new TaskListEntry (error, matchedProject)));
+						TaskService.Errors.AddRange (result.Errors.Select (error => new TaskListEntry (error, matchedProject.Project)));
 					}
 				}
 			});

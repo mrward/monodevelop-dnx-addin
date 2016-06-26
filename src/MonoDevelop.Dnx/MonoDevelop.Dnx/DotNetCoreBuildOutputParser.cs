@@ -89,7 +89,7 @@ namespace MonoDevelop.Dnx
 			}
 		}
 
-		public IEnumerable<BuildError> GetBuildErrors ()
+		public IEnumerable<BuildError> GetBuildErrors (DnxProject project)
 		{
 			foreach (var result in results) {
 				yield return new BuildError {
@@ -100,6 +100,7 @@ namespace MonoDevelop.Dnx
 					EndColumn = result.EndColumn,
 					ErrorNumber = result.Code,
 					ErrorText = result.Message,
+					SourceTarget = project.Project,
 					Subcategory = result.Subcategory,
 					IsWarning = !result.IsError
 				};

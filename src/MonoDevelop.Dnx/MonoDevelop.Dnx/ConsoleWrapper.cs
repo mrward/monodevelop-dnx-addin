@@ -72,10 +72,11 @@ namespace MonoDevelop.Dnx
 			errorWriter.Dispose ();
 		}
 
-		public BuildResult GetBuildResult ()
+		public BuildResult GetBuildResult (DnxProject project)
 		{
 			var result = new BuildResult ();
-			result.Append (errorWriter.GetBuildResults ());
+			result.Append (errorWriter.GetBuildResults (project));
+			result.SourceTarget = project.Project;
 			return result;
 		}
 	}

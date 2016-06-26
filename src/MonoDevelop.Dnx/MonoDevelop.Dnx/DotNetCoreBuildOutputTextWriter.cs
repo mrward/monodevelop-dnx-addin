@@ -63,11 +63,12 @@ namespace MonoDevelop.Dnx
 			base.Dispose (disposing);
 		}
 
-		public BuildResult GetBuildResults ()
+		public BuildResult GetBuildResults (DnxProject project)
 		{
 			var result = new BuildResult ();
+			result.SourceTarget = project.Project;
 
-			foreach (var error in parser.GetBuildErrors ()) {
+			foreach (var error in parser.GetBuildErrors (project)) {
 				result.Append (error);
 			}
 

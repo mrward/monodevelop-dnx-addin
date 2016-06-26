@@ -43,6 +43,7 @@ namespace MonoDevelop.Dnx
 			var result = new BuildResult ();
 			AddErrors (result.AddWarning, message.Warnings, project);
 			AddErrors (result.AddError, message.Errors, project);
+			result.SourceTarget = project.Project;
 			return result;
 		}
 

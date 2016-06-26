@@ -76,14 +76,14 @@ namespace MonoDevelop.Dnx
 		BuildResult CreateBuildResult (ProcessAsyncOperation operation, ConsoleWrapper console)
 		{
 			if (operation.Task.IsFaulted || operation.ExitCode != 0) {
-				BuildResult result = console.GetBuildResult ();
+				BuildResult result = console.GetBuildResult (project);
 				if (!(result.HasErrors || result.HasWarnings)) {
 					result.AddError (GettextCatalog.GetString ("Build failed. Please see the Build Output for more details."));
 				}
 				return result;
 			}
 
-			return console.GetBuildResult ();
+			return console.GetBuildResult (project);
 		}
 	}
 }
