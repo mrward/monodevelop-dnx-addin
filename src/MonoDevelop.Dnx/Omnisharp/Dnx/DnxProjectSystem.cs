@@ -299,7 +299,6 @@ namespace OmniSharp.Dnx
                                 FileName = project.Path,
                                 UnresolvedDependencies = unresolvedDependencies.Select(d => new PackageDependency() { Name = d.Name, Version = d.Version })
                             });
-                            _packagesRestoreTool.Run(project);
                         }
                         _workspace.DependenciesUpdated(project, val);
                     }

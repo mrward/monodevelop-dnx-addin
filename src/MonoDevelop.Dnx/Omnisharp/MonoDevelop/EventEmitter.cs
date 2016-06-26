@@ -43,6 +43,8 @@ namespace MonoDevelop.Dnx.Omnisharp
 				OnPackageRestoreStarted (args);
 			} else if (kind == EventTypes.PackageRestoreFinished) {
 				OnPackageRestoreFinished (args);
+			} else if (kind == EventTypes.UnresolvedDependencies) {
+				OnUnresolvedDependencies (args);
 			}
 		}
 
@@ -71,6 +73,15 @@ namespace MonoDevelop.Dnx.Omnisharp
 				return;
 
 			DnxServices.ProjectService.PackageRestoreFinished (restoreMessage.FileName);
+		}
+
+		void OnUnresolvedDependencies (object args)
+		{
+			var unresolvedDependenciesMessage = args as UnresolvedDependenciesMessage;
+			if (unresolvedDependenciesMessage == null)
+				return;
+
+			DnxServices.ProjectService.OnUnresolvedDependencies (unresolvedDependenciesMessage.FileName);
 		}
 	}
 }

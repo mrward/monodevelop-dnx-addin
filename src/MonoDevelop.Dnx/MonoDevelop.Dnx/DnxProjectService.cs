@@ -300,6 +300,20 @@ namespace MonoDevelop.Dnx
 				projectSystem.Restore (projectPath);
 			}
 		}
+
+		public void OnUnresolvedDependencies (string projectJsonFileName)
+		{
+			if (!RestoreDependencies)
+				return;
+
+			Runtime.RunInMainThread (() => {
+				DnxProject matchedProject = FindProjectByProjectJsonFileName (projectJsonFileName);
+				if (matchedProject != null && matchedProject.RestoredUnresolvedDependenciesAfterLoading) {
+					matchedProject.RestoredUnresolvedDependenciesAfterLoading = false;
+					Restore (projectJsonFileName);
+				}
+			});
+		}
 	}
 }
 

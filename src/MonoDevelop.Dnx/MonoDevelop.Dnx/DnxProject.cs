@@ -59,6 +59,7 @@ namespace MonoDevelop.Dnx
 
 		public DnxProject ()
 		{
+			RestoredUnresolvedDependenciesAfterLoading = DnxServices.ProjectService.RestoreDependencies;
 		}
 
 		public ProjectItemCollection Items {
@@ -927,6 +928,8 @@ namespace MonoDevelop.Dnx
 
 			return false;
 		}
+
+		public bool RestoredUnresolvedDependenciesAfterLoading { get; set; }
 	}
 }
 
