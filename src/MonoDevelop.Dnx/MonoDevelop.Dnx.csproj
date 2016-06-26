@@ -270,6 +270,7 @@
     <Compile Include="MonoDevelop.Dnx.UnitTesting\IDnxTestProvider.cs" />
     <Compile Include="MonoDevelop.Dnx.UnitTesting\IDnxTestRunner.cs" />
     <Compile Include="MonoDevelop.Dnx\DotNetCoreOutputOperationConsole.cs" />
+    <Compile Include="MonoDevelop.Dnx\RestoreProgressMonitor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

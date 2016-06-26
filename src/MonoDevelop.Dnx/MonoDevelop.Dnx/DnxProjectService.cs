@@ -37,7 +37,6 @@ using MonoDevelop.Ide.Tasks;
 using MonoDevelop.Projects;
 using OmniSharp.Dnx;
 using Solution = MonoDevelop.Projects.Solution;
-using System.Collections.Concurrent;
 
 namespace MonoDevelop.Dnx
 {
@@ -46,6 +45,7 @@ namespace MonoDevelop.Dnx
 		DnxContext context;
 		DnxProjectSystem projectSystem;
 		MonoDevelopApplicationLifetime applicationLifetime;
+		RestoreProgressMonitor restoreProgressMonitor = new RestoreProgressMonitor ();
 		string initializeError = String.Empty;
 
 		public DnxProjectService ()
@@ -198,19 +198,21 @@ namespace MonoDevelop.Dnx
 		{
 			DnxProject matchedProject = FindProjectByProjectJsonFileName(projectJsonFileName);
 			if (matchedProject != null) {
+				restoreProgressMonitor.OnRestoreStarted ();
 				matchedProject.OnPackageRestoreStarted ();
 			}
 		}
 
-		public void PackageRestoreFinished (string projectJsonFileName)
+		public void PackageRestoreFinished (string projectJsonFileName, bool success)
 		{
-			Runtime.RunInMainThread (() => OnPackageRestoreFinished(projectJsonFileName));
+			Runtime.RunInMainThread (() => OnPackageRestoreFinished (projectJsonFileName, success));
 		}
 
-		void OnPackageRestoreFinished(string projectJsonFileName)
+		void OnPackageRestoreFinished (string projectJsonFileName, bool success)
 		{
 			DnxProject matchedProject = FindProjectByProjectJsonFileName (projectJsonFileName);
 			if (matchedProject != null) {
+				restoreProgressMonitor.OnRestoreFinished (success);
 				matchedProject.OnPackageRestoreFinished ();
 			}
 		}

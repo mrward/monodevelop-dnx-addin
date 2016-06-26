@@ -72,7 +72,7 @@ namespace MonoDevelop.Dnx.Omnisharp
 			if (restoreMessage == null)
 				return;
 
-			DnxServices.ProjectService.PackageRestoreFinished (restoreMessage.FileName);
+			DnxServices.ProjectService.PackageRestoreFinished (restoreMessage.FileName, restoreMessage.Succeeded);
 		}
 
 		void OnUnresolvedDependencies (object args)
