@@ -433,9 +433,4 @@
     <Folder Include="MonoDevelop.Dnx.UnitTesting\" />
     <Folder Include="Microsoft.DotNet.Tools.Test\" />
   </ItemGroup>
-  <ItemGroup>
-    <AddinReference Include="MonoDevelop.DesignerSupport" />
-    <AddinReference Include="MonoDevelop.Debugger" />
-    <AddinReference Include="MonoDevelop.Debugger.Soft" />
-  </ItemGroup>
 </Project>
