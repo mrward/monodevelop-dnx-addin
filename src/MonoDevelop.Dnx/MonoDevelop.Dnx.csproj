@@ -200,9 +200,7 @@
     <Compile Include="MonoDevelop.PackageManagement\WildcardVersionSpec.cs" />
     <Compile Include="MonoDevelop.PackageManagement.Gui\AddPackagesDialog.cs" />
     <Compile Include="MonoDevelop.PackageManagement.Gui\AddPackagesDialog.UI.cs" />
-    <Compile Include="MonoDevelop.PackageManagement.Gui\AddPackagesDialogRunner.cs">
-      <LogicalName>reference-48.png</LogicalName>
-    </Compile>
+    <Compile Include="MonoDevelop.PackageManagement.Gui\AddPackagesDialogRunner.cs" />
     <Compile Include="MonoDevelop.PackageManagement.Gui\DialogExtensions.cs" />
     <Compile Include="MonoDevelop.PackageManagement.Gui\PackageCellView.cs" />
     <Compile Include="MonoDevelop.PackageManagement.Gui\PackageCellViewCheckBox.cs" />
@@ -275,7 +273,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <EmbeddedResource Include="MonoDevelop.Dnx.addin.xml" />
-
     <EmbeddedResource Include="Icons\nuget-16.png">
       <LogicalName>nuget-16.png</LogicalName>
     </EmbeddedResource>
@@ -300,14 +297,12 @@
     <EmbeddedResource Include="Icons\nuget-16~dark~sel%402x.png">
       <LogicalName>nuget-16~dark~sel@2x.png</LogicalName>
     </EmbeddedResource>
-
     <EmbeddedResource Include="Icons\reference-48.png">
       <LogicalName>reference-48.png</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Icons\reference-48%402x.png">
       <LogicalName>reference-48@2x.png</LogicalName>
     </EmbeddedResource>
-
     <EmbeddedResource Include="Icons\framework-16.png">
       <LogicalName>framework-16.png</LogicalName>
     </EmbeddedResource>
@@ -331,6 +326,78 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Icons\framework-16~dark~sel%402x.png">
       <LogicalName>framework-16~dark~sel@2x.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-aspnet-32.png">
+      <LogicalName>project-aspnet-32.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-aspnet-32%402x.png">
+      <LogicalName>project-aspnet-32@2x.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-aspnet-32~dark.png">
+      <LogicalName>project-aspnet-32~dark.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-aspnet-32~dark%402x.png">
+      <LogicalName>project-aspnet-32~dark@2x.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-aspnet-32~dark~sel.png">
+      <LogicalName>project-aspnet-32~dark~sel.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-aspnet-32~dark~sel%402x.png">
+      <LogicalName>project-aspnet-32~dark~sel@2x.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-aspnet-32~sel.png">
+      <LogicalName>project-aspnet-32~sel.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-aspnet-32~sel%402x.png">
+      <LogicalName>project-aspnet-32~sel@2x.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-console-32.png">
+      <LogicalName>project-console-32.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-console-32%402x.png">
+      <LogicalName>project-console-32@2x.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-console-32~dark.png">
+      <LogicalName>project-console-32~dark.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-console-32~dark%402x.png">
+      <LogicalName>project-console-32~dark@2x.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-console-32~dark~sel.png">
+      <LogicalName>project-console-32~dark~sel.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-console-32~dark~sel%402x.png">
+      <LogicalName>project-console-326~dark~sel@2x.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-console-32~sel.png">
+      <LogicalName>project-console-32~sel.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-console-32~sel%402x.png">
+      <LogicalName>project-console-32~sel@2x.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-library-32.png">
+      <LogicalName>project-library-32.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-library-32%402x.png">
+      <LogicalName>project-library-32@2x.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-library-32~dark.png">
+      <LogicalName>project-library-32~dark.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-library-32~dark%402x.png">
+      <LogicalName>project-library-32~dark@2x.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-library-32~dark~sel.png">
+      <LogicalName>project-library-32~dark~sel.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-library-32~dark~sel%402x.png">
+      <LogicalName>project-library-32~dark~sel@2x.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-library-32~sel.png">
+      <LogicalName>project-library-32~sel.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates\Images\project-library-32~sel%402x.png">
+      <LogicalName>project-library-32~sel@2x.png</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

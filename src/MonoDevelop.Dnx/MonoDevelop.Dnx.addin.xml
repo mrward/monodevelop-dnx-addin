@@ -209,4 +209,10 @@
 	<Extension path="/MonoDevelop/UnitTesting/TestProviders">
 		<Class id="DnxTestProvider" class="MonoDevelop.Dnx.UnitTesting.DnxTestProvider" />
 	</Extension>
+
+	<Extension path="/MonoDevelop/Core/StockIcons">
+		<StockIcon stockid="md-project-web-copy" resource="project-aspnet-32.png" size="Dnd" />
+		<StockIcon stockid="md-project-library-copy" resource="project-library-32.png" size="Dnd" />
+		<StockIcon stockid="md-project-console-copy" resource="project-console-32.png" size="Dnd" />
+	</Extension>
 </ExtensionModel>

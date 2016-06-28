@@ -7,7 +7,7 @@
 	<TemplateConfiguration>
 		<_Name>Class Library (.NET Core)</_Name>
 		<Category>other/netcore/general</Category>
-		<Icon>md-project-library</Icon>
+		<Icon>md-project-library-copy</Icon>
 		<Image id="md-library-project" />
 		<LanguageName>C#</LanguageName>
 		<_Description>Creates a new .NET Core class library project.</_Description>

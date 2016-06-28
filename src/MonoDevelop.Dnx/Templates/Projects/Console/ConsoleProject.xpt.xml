@@ -7,7 +7,7 @@
 	<TemplateConfiguration>
 		<_Name>Console Application (.NET Core)</_Name>
 		<Category>other/netcore/general</Category>
-		<Icon>md-project-console</Icon>
+		<Icon>md-project-console-copy</Icon>
 		<Image id="md-console-project" />
 		<LanguageName>C#</LanguageName>
 		<_Description>Creates a new .NET Core console project.</_Description>
