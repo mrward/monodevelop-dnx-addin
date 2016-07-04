@@ -37,8 +37,7 @@ namespace MonoDevelop.Dnx.Omnisharp
 
 		public MetadataReference GetMetadataReference (string path)
 		{
-			string key = path.ToLowerInvariant ();
-			return cache.GetOrAdd (key, filePath => {
+			return cache.GetOrAdd (path, filePath => {
 				return MetadataReference.CreateFromFile (filePath);
 			});
 		}
