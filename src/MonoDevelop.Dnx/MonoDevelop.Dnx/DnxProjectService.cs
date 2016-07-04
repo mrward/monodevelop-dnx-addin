@@ -26,6 +26,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -92,9 +93,18 @@ namespace MonoDevelop.Dnx
 					LoadDnxProjectSystem (solution);
 				}
 			} catch (Exception ex) {
-				LoggingService.LogError (".NET Core project system initialize failed.", ex);
 				UnloadProjectSystem ();
-				initializeError = "Unable to initialize .NET Core project system. " + ex.Message;
+
+				if (ex is DotNetCoreNotFoundException) {
+					var notFoundException = (DotNetCoreNotFoundException)ex;
+					DnxMessageService.ShowDotNetCoreNotInstalledError (notFoundException);
+					initializeError = notFoundException.Message + " " + notFoundException.Details;
+					DnxOutputPad.LogView.WriteError (initializeError);
+				} else {
+					LoggingService.LogError (".NET Core project system initialize failed.", ex);
+					initializeError = GettextCatalog.GetString ("Unable to initialize .NET Core project system. {0}", ex.Message);
+				}
+
 				OnProjectSystemFailed ();
 			}
 		}
@@ -117,7 +127,15 @@ namespace MonoDevelop.Dnx
 			context = new DnxContext ();
 			var factory = new DnxProjectSystemFactory ();
 			projectSystem = factory.CreateProjectSystem (solution, applicationLifetime, context);
-			projectSystem.Initalize ();
+			try {
+				projectSystem.Initalize ();
+			} catch (Win32Exception ex) {
+				if (ex.NativeErrorCode == 2) {
+					throw new DotNetCoreNotFoundException ();
+				} else {
+					throw;
+				}
+			}
 		}
 
 		public void OnReferencesUpdated (ProjectId projectId, FrameworkProject frameworkProject)

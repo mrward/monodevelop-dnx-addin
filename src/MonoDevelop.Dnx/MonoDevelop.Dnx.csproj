@@ -269,6 +269,8 @@
     <Compile Include="MonoDevelop.Dnx.UnitTesting\IDnxTestRunner.cs" />
     <Compile Include="MonoDevelop.Dnx\DotNetCoreOutputOperationConsole.cs" />
     <Compile Include="MonoDevelop.Dnx\RestoreProgressMonitor.cs" />
+    <Compile Include="MonoDevelop.Dnx.Gui\DnxMessageService.cs" />
+    <Compile Include="MonoDevelop.Dnx\DotNetCoreNotFoundException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
