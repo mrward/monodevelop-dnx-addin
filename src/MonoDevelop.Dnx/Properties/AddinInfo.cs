@@ -6,7 +6,7 @@
 	Category = "IDE extensions")]
 
 [assembly:AddinName ("DNX")]
-[assembly:AddinDescription ("Adds .NET Core and ASP.NET Core support.")]
+[assembly:AddinDescription ("Adds .NET Core and ASP.NET Core support.\n\nPlease uninstall any older version of the addin and restart the application before installing this new version.")]
 
 [assembly:AddinDependency ("Core", "6.0")]
 [assembly:AddinDependency ("Ide", "6.0")]
