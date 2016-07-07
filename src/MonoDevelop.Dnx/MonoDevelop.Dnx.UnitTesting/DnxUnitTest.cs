@@ -55,10 +55,9 @@ namespace MonoDevelop.Dnx.UnitTesting
 			TestId = test.Id?.ToString ();
 			sourceCodeLocation = new SourceCodeLocation (test.CodeFilePath, test.LineNumber, 0);
 
-			int index = test.DisplayName.LastIndexOf ('.');
+			int index = test.FullyQualifiedName.LastIndexOf ('.');
 			if (index > 0) {
-				name = test.DisplayName.Substring (index + 1);
-				FixtureTypeName = test.DisplayName.Substring (0, index);
+				FixtureTypeName = test.FullyQualifiedName.Substring (0, index);
 
 				index = FixtureTypeName.LastIndexOf ('.');
 				if (index > 0) {
@@ -67,6 +66,14 @@ namespace MonoDevelop.Dnx.UnitTesting
 				} else {
 					FixtureTypeNamespace = String.Empty;
 				}
+			} else {
+				FixtureTypeNamespace = String.Empty;
+				FixtureTypeName = String.Empty;
+			}
+
+			index = test.DisplayName.LastIndexOf ('.');
+			if (index > 0) {
+				name = test.DisplayName.Substring (index + 1);
 			} else {
 				name = test.DisplayName;
 			}
