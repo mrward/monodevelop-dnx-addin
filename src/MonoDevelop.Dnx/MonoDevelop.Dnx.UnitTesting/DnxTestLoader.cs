@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Timers;
 using Microsoft.DotNet.ProjectModel.Server.Models;
 using Microsoft.DotNet.Tools.Test;
 using Microsoft.Extensions.Testing.Abstractions;
@@ -44,9 +45,23 @@ namespace MonoDevelop.Dnx.UnitTesting
 		List<TestDiscovered> tests = new List<TestDiscovered> ();
 		DnxNamespaceTestGroup parentNamespace;
 		bool discoveryCompleted;
+		bool testFound;
+		Timer shutdownTimer;
+
 		public void Dispose ()
 		{
 			IsRunning = false;
+
+			try {
+				if (shutdownTimer != null) {
+					shutdownTimer.Stop ();
+					shutdownTimer.Elapsed -= ShutdownTimerElapsed;
+					shutdownTimer.Dispose ();
+					shutdownTimer = null;
+				}
+			} catch (Exception ex) {
+				LoggingService.LogError ("Test loader dispose error.", ex);
+			}
 
 			try {
 				if (testServer != null) {
@@ -75,10 +90,13 @@ namespace MonoDevelop.Dnx.UnitTesting
 		{
 			try {
 				discoveryCompleted = false;
+				testFound = false;
 
 				tests.Clear ();
 				testServer = new DotNetCoreTestServer (OnMessageReceived);
 				testServer.Open ();
+
+				StartShutdownTimer ();
 
 				RunDotNetCoreTest (projectDirectory);
 				IsRunning = true;
@@ -107,6 +125,8 @@ namespace MonoDevelop.Dnx.UnitTesting
 				} else if (m.MessageType == TestMessageTypes.TestDiscoveryTestFound) {
 					var val = m.Payload.ToObject<TestDiscovered> ();
 					tests.Add (val);
+					testFound = true;
+					shutdownTimer.Stop ();
 				} else if (m.MessageType == TestMessageTypes.TestDiscoveryCompleted) {
 					discoveryCompleted = true;
 					testServer.TerminateTestSession ();
@@ -187,6 +207,22 @@ namespace MonoDevelop.Dnx.UnitTesting
 		{
 			DnxOutputPad.WriteError ("dotnet test exited before discovery completed.");
 			OnDiscoveryFailed ();
+		}
+
+		void StartShutdownTimer ()
+		{
+			shutdownTimer = new Timer (10000);
+			shutdownTimer.AutoReset = false;
+			shutdownTimer.Elapsed += ShutdownTimerElapsed;
+			shutdownTimer.Enabled = true;
+		}
+
+		void ShutdownTimerElapsed (object sender, ElapsedEventArgs e)
+		{
+			if (!discoveryCompleted && !testFound) {
+				DnxOutputPad.WriteError ("Timed out waiting for dotnet test to discover any tests.");
+				OnDiscoveryFailed ();
+			}
 		}
 	}
 }
