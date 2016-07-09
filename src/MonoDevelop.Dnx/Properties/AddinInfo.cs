@@ -2,7 +2,7 @@
 
 [assembly:Addin ("Dnx",
 	Namespace = "MonoDevelop",
-	Version = "0.5",
+	Version = "0.6",
 	Category = "IDE extensions")]
 
 [assembly:AddinName ("DNX")]
