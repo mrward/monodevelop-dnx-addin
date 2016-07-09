@@ -39,7 +39,7 @@ namespace MonoDevelop.Dnx.UnitTesting
 				return null;
 
 			var dnxProject = xproject.GetFlavor<DnxProject> ();
-			if (dnxProject.HasTestRunner ()) {
+			if (dnxProject != null) {
 				return new DnxProjectTestSuite (xproject, dnxProject);
 			}
 

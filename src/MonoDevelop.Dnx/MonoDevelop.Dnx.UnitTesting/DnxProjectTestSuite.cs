@@ -45,12 +45,14 @@ namespace MonoDevelop.Dnx.UnitTesting
 		DnxTestLoader testLoader;
 		DateTime? lastBuildTime;
 		UnitTest[] oldTests;
+		bool projectHasTestRunner;
 
 		public DnxProjectTestSuite (XProject xproject, DnxProject project)
 			: base (project.Name, xproject)
 		{
 			this.project = project;
 			lastBuildTime = project.LastBuildTime;
+			projectHasTestRunner = project.HasTestRunner ();
 
 			CreateResultsStore ();
 
@@ -79,6 +81,12 @@ namespace MonoDevelop.Dnx.UnitTesting
 
 		public UnitTestResult RunTest (TestContext testContext, IDnxTestProvider testProvider)
 		{
+			if (!projectHasTestRunner) {
+				string message = GettextCatalog.GetString ("Project has no testRunner defined.");
+				DnxOutputPad.WriteError (message);
+				throw new ApplicationException (message);
+			}
+
 			using (var runner = new DnxTestRunner (testContext, testProvider)) {
 				runner.WorkingDirectory = project.BaseDirectory;
 				runner.Run ();
@@ -101,6 +109,9 @@ namespace MonoDevelop.Dnx.UnitTesting
 
 		protected override void OnCreateTests ()
 		{
+			if (!projectHasTestRunner)
+				return;
+
 			if (!testLoader.IsRunning) {
 				AddOldTests ();
 				Status = TestStatus.Loading;
@@ -164,6 +175,9 @@ namespace MonoDevelop.Dnx.UnitTesting
 
 		void AfterBuild (object sender, BuildEventArgs args)
 		{
+			if (!CheckProjectHasTestRunner ())
+				return;
+
 			if (RefreshRequired ()) {
 				lastBuildTime = project.LastBuildTime.Value;
 
@@ -197,6 +211,26 @@ namespace MonoDevelop.Dnx.UnitTesting
 		public IEnumerable<string> GetTests ()
 		{
 			return null;
+		}
+
+		bool CheckProjectHasTestRunner ()
+		{
+			if (!projectHasTestRunner) {
+				Runtime.RunInMainThread (() => {
+					projectHasTestRunner = project.HasTestRunner ();
+				}).Wait ();
+			}
+
+			return projectHasTestRunner;
+		}
+
+		public override string Name {
+			get {
+				if (projectHasTestRunner) {
+					return base.Name;
+				}
+				return base.Name + " " + GettextCatalog.GetString ("(Project has no testRunner)");
+			}
 		}
 	}
 }
