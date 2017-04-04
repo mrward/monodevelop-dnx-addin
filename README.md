@@ -1,6 +1,8 @@
 # .NET Core Support for MonoDevelop and Xamarin Studio
 
-Provides [.NET Core and ASP.NET Core](https://dotnet.github.io/) support for MonoDevelop and Xamarin Studio 6.0 or above.
+Provides [.NET Core and ASP.NET Core](https://dotnet.github.io/) support for .NET Core .xproj and project.json files in MonoDevelop and Xamarin Studio 6.0 or higher.
+
+Please note that this does not support .NET Core 1.0 and higher which use SDK style .csproj files without an associated project.json file. Visual Studio for Mac and MonoDevelop 7.0 have built-in support .NET Core 1.0 and the new SDK style .csproj files.
 
 This addin uses source code from [OmniSharp](https://github.com/OmniSharp/omnisharp-roslyn) in order to communicate with the .NET Core design time host. It also uses source code from [Roslyn](https://github.com/dotnet/roslyn), [Microsoft.AspNet.Hosting](https://github.com/aspnet/Hosting), [Microsoft.Framework.Logging](https://github.com/aspnet/Logging) and [Microsoft.Framework.OptionsModel](https://github.com/aspnet/Options/), since the Roslyn version of OmniSharp uses types from their corresponding NuGet packages.
 
